@@ -1,0 +1,103 @@
+---
+// About page - content will be managed in Sanity in Phase 1b
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>About - Strange Water Podcast</title>
+    <meta name="description" content="Learn about Strange Water, a podcast exploring Ethereum and Web3 through conversations with builders, researchers, and visionaries." />
+  </head>
+  <body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
+    <Header />
+
+    <main class="max-w-4xl mx-auto px-4 py-12 flex-grow">
+      <!-- Page Header -->
+      <div class="mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">About Strange Water</h1>
+      </div>
+
+      <!-- About Content -->
+      <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+        <h2 class="text-2xl font-semibold mb-4">The Show</h2>
+        <p class="text-lg text-gray-700 leading-relaxed mb-6">
+          Strange Water brings you deep conversations with the people building the future of Ethereum and Web3.
+          From protocol developers to researchers, entrepreneurs to artists, we explore the ideas, technology,
+          and philosophy shaping decentralized systems.
+        </p>
+        <p class="text-lg text-gray-700 leading-relaxed mb-6">
+          Each episode dives into the technical challenges, philosophical questions, and real-world applications
+          of blockchain technology, making complex topics accessible without losing depth.
+        </p>
+        <p class="text-lg text-gray-700 leading-relaxed">
+          Whether you're a developer, investor, researcher, or simply curious about the future of decentralized
+          technology, Strange Water offers insights from the people at the forefront of this revolution.
+        </p>
+      </div>
+
+      <!-- Host Section -->
+      <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+        <h2 class="text-2xl font-semibold mb-4">The Host</h2>
+        <p class="text-lg text-gray-700 leading-relaxed mb-4">
+          Strange Water is hosted by Rex Kirshner, a longtime Ethereum enthusiast and builder in the Web3 space.
+        </p>
+        <p class="text-lg text-gray-700 leading-relaxed">
+          With a background in technology and a passion for decentralization, Rex brings thoughtful questions
+          and deep curiosity to every conversation.
+        </p>
+      </div>
+
+      <!-- Subscribe CTA -->
+      <div class="bg-blue-50 rounded-lg p-8 text-center">
+        <h3 class="text-2xl font-semibold mb-3">Subscribe to Strange Water</h3>
+        <p class="text-gray-600 mb-6">
+          Get notified when new episodes are released
+        </p>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <a
+            href="https://open.spotify.com/show/strangewater"
+            class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Spotify
+          </a>
+          <a
+            href="https://podcasts.apple.com/strangewater"
+            class="px-6 py-3 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Apple Podcasts
+          </a>
+          <a
+            href="https://www.youtube.com/@strangewater"
+            class="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            YouTube
+          </a>
+        </div>
+      </div>
+
+      <!-- Contact/Feedback Section -->
+      <div class="mt-8 text-center">
+        <p class="text-gray-600">
+          Have feedback or want to suggest a guest?
+          <a href="mailto:hello@strangewater.xyz" class="text-blue-600 hover:text-blue-700 font-medium">
+            Get in touch
+          </a>
+        </p>
+      </div>
+    </main>
+
+    <Footer />
+  </body>
+</html>

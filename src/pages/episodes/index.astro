@@ -1,0 +1,85 @@
+---
+// Episodes list page - will be populated from Sanity in Phase 1b
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import "../../styles/global.css";
+
+// Hardcoded episodes array - will be replaced with Sanity query
+const episodes = [
+  {
+    number: 1,
+    slug: "1",
+    title: "Vitalik Buterin - The Future of Ethereum",
+    description: "Exploring the future of decentralized technology, the merge to proof-of-stake, and the vision for Web3.",
+    publishDate: "2022-03-15",
+    duration: "1:24:30",
+  },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>All Episodes - Strange Water Podcast</title>
+    <meta name="description" content="Browse all episodes of Strange Water, exploring Ethereum and Web3 through conversations with builders and researchers." />
+  </head>
+  <body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
+    <Header />
+
+    <main class="max-w-6xl mx-auto px-4 py-12 flex-grow">
+      <!-- Page Header -->
+      <div class="mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">All Episodes</h1>
+        <p class="text-lg text-gray-600">
+          Explore conversations with builders, researchers, and visionaries shaping the future of Ethereum and Web3.
+        </p>
+      </div>
+
+      <!-- Episodes Grid -->
+      <div class="grid grid-cols-1 gap-6">
+        {episodes.map((episode) => (
+          <a
+            href={`/episodes/${episode.slug}`}
+            class="block bg-white rounded-lg shadow-md hover:shadow-lg transition p-6"
+          >
+            <div class="flex items-start gap-6">
+              <!-- Episode Number Badge -->
+              <div class="flex-shrink-0 w-20 h-20 bg-blue-100 rounded-lg flex items-center justify-center">
+                <span class="text-2xl font-bold text-blue-600">{episode.number}</span>
+              </div>
+
+              <!-- Episode Content -->
+              <div class="flex-grow">
+                <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
+                  Episode {episode.number}
+                </p>
+                <h2 class="text-2xl font-semibold text-gray-900 mb-2 hover:text-blue-600 transition">
+                  {episode.title}
+                </h2>
+                <p class="text-gray-600 mb-3 line-clamp-2">
+                  {episode.description}
+                </p>
+                <div class="flex gap-4 text-sm text-gray-500">
+                  <span>{episode.publishDate}</span>
+                  <span>•</span>
+                  <span>{episode.duration}</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Coming Soon Message (temporary) -->
+      <div class="mt-12 text-center text-gray-500">
+        <p class="text-lg">More episodes coming soon...</p>
+        <p class="text-sm mt-2">Subscribe to get notified when new episodes are released</p>
+      </div>
+    </main>
+
+    <Footer />
+  </body>
+</html>

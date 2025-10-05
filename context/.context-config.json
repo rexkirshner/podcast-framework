@@ -1,0 +1,181 @@
+{
+  "version": "1.7.0",
+  "owner": "Rex Kirshner",
+  "project": {
+    "name": "Podcast Website Framework",
+    "type": "web-app",
+    "initialized": "2025-10-05"
+  },
+  "preferences": {
+    "documentation": {
+      "location": "context/",
+      "autoCreate": true,
+      "updateFrequency": "every-session",
+      "includeTimestamps": true,
+      "gitTracking": true,
+      "pruneInterval": "monthly"
+    },
+    "workflow": {
+      "requirePlanApproval": true,
+      "requirePushApproval": true,
+      "preferSimpleChanges": true,
+      "noTemporaryFixes": true,
+      "fullCodeFlowTracing": true,
+      "testBeforeCommit": true,
+      "useTodoList": true
+    },
+    "communication": {
+      "summaryStyle": "high-level",
+      "verbosity": "concise",
+      "includeLineNumbers": true,
+      "skipPreamble": true,
+      "useEmojis": false,
+      "explainComplex": false
+    },
+    "codeReview": {
+      "thoroughnessLevel": "comprehensive",
+      "makeNoChanges": true,
+      "timeConstraintWarning": true,
+      "separateFixSession": true,
+      "focusAreas": [
+        "simplicity",
+        "root-causes",
+        "security",
+        "performance",
+        "testing",
+        "accessibility",
+        "seo"
+      ]
+    },
+    "sessionManagement": {
+      "autoSaveInterval": null,
+      "captureCommandHistory": true,
+      "trackFileChanges": true,
+      "preserveWIPState": true,
+      "detailedSessionLogs": true
+    }
+  },
+  "commands": {
+    "enabled": [
+      "/init-context",
+      "/save-context",
+      "/review-context",
+      "/code-review"
+    ],
+    "aliases": {
+      "/save": "/save-context",
+      "/review": "/review-context",
+      "/init": "/init-context"
+    },
+    "customCommands": []
+  },
+  "documentation": {
+    "required": [
+      "CLAUDE.md",
+      "PRD.md",
+      "ARCHITECTURE.md",
+      "DECISIONS.md",
+      "CODE_STYLE.md",
+      "KNOWN_ISSUES.md",
+      "SESSIONS.md",
+      "tasks/next-steps.md",
+      "tasks/todo.md"
+    ],
+    "optional": [
+      "DEPLOYMENT.md",
+      "TESTING.md",
+      "API.md",
+      "SECURITY.md"
+    ],
+    "autoGenerate": true,
+    "templates": {
+      "useDefaults": true,
+      "customPath": null
+    }
+  },
+  "git": {
+    "autoCommit": false,
+    "requireApprovalForPush": true,
+    "commitMessageFormat": "standard",
+    "includeCoAuthor": true,
+    "branchStrategy": "feature"
+  },
+  "quality": {
+    "codeStyle": {
+      "simplicityFirst": true,
+      "noTemporaryFixes": true,
+      "rootCauseOnly": true,
+      "minimalImpact": true,
+      "fullCodeTracing": true
+    },
+    "testing": {
+      "requireTests": true,
+      "coverageCritical": 100,
+      "coverageTarget": 80,
+      "testBeforeCommit": true
+    },
+    "performance": {
+      "measureFirst": true,
+      "optimizeHotPaths": true,
+      "userPerceivedPriority": true
+    },
+    "security": {
+      "validateInput": true,
+      "noSecretsInCode": true,
+      "useEnvVars": true
+    }
+  },
+  "notifications": {
+    "sessionReminders": {
+      "saveContext": {
+        "enabled": true,
+        "intervalMinutes": 30
+      },
+      "reviewContext": {
+        "enabled": true,
+        "onSessionStart": true
+      }
+    },
+    "warnings": {
+      "staleContext": {
+        "enabled": true,
+        "thresholdDays": 3
+      },
+      "uncommittedChanges": {
+        "enabled": true
+      },
+      "missingTests": {
+        "enabled": true
+      }
+    }
+  },
+  "integrations": {
+    "github": {
+      "enabled": false,
+      "autoCreatePR": false,
+      "requireApproval": true
+    },
+    "slack": {
+      "enabled": false,
+      "webhookUrl": null,
+      "notifications": []
+    }
+  },
+  "customRules": {
+    "projectSpecific": [],
+    "filePatterns": {},
+    "exclusions": [
+      "node_modules/",
+      ".next/",
+      "dist/",
+      "build/",
+      ".git/"
+    ]
+  },
+  "metadata": {
+    "createdAt": "2025-10-05",
+    "lastUpdated": "2025-10-05",
+    "configVersion": "1.7.0",
+    "notes": "Configuration for Claude Context System"
+  }
+}

@@ -100,6 +100,145 @@ podcast website/
 
 ---
 
+## Session 2025-10-05B: Day 1 - Project Setup & First Deploy
+
+**Duration:** ~2 hours
+**Phase:** Phase 1a - "Hello World" Deployed Site
+**Status:** ✅ Complete
+
+### What We Did
+
+**1. GitHub Repository:**
+- Created repository: `podcast-framework`
+- Repository URL: https://github.com/rexkirshner/podcast-framework
+- Visibility: Public
+- Description: "Reusable podcast website framework built with Astro, Sanity CMS, and Netlify. Deploy production-ready podcast sites in <4 hours."
+
+**2. Astro Project Initialization:**
+- Initialized Astro project with minimal template
+- Configuration: TypeScript strict mode
+- Workaround: Created in temp directory due to existing files, then moved to root
+- Created files: `astro.config.mjs`, `package.json`, `src/pages/index.astro`, `tsconfig.json`
+
+**3. Tailwind CSS Integration:**
+- Installed Tailwind CSS v4 via Astro integration (`npx astro add tailwind`)
+- Auto-configured `astro.config.mjs` with Vite plugin
+- Created `src/styles/global.css` with Tailwind imports
+
+**4. Project Configuration:**
+- Created `.env.example` with placeholders for Sanity config, analytics, monitoring
+- Updated `README.md` with comprehensive project documentation
+- Git initialization: `git init`, added remote, initial commit
+
+**5. Netlify Deployment:**
+- Created Netlify account, connected to GitHub repository
+- Auto-detected build settings (correct Astro defaults)
+- Deployed successfully to `podcast-framework.netlify.app`
+- Site verified loading (default Astro homepage)
+
+**6. Custom Subdomain Configuration:**
+- Configured `staging.strangewater.xyz` in Netlify
+- Added DNS records in Cloudflare:
+  - TXT record: `subdomain-owner-verification` → `87056d3b8f704ebdcb00be056a4b1121`
+  - CNAME record: `staging` → `podcast-framework.netlify.app` (DNS only, not proxied)
+- DNS propagation in progress (15-30 minutes expected)
+
+### Files Modified/Created
+
+**New files:**
+- `.env.example` - Environment variable template
+- `.gitignore` - Astro defaults
+- `README.md` - Project documentation (125 lines)
+- `astro.config.mjs` - Astro + Tailwind configuration
+- `package.json` - Dependencies (Astro 5.1.4, Tailwind 4.1.14)
+- `src/pages/index.astro` - Default homepage
+- `src/styles/global.css` - Tailwind imports
+- `tsconfig.json` - TypeScript configuration
+
+**Git commits:**
+- `f9800df` - Initial project setup: Astro + Tailwind + Context System (50 files, 27,005 insertions)
+
+### Decisions Made
+
+**1. Astro Installation Workaround:**
+- Problem: `npm create astro@latest .` failed due to non-empty directory
+- Solution: Created in `temp-astro/`, moved files to root, cleaned up
+- Rationale: Preserves existing context system and documentation files
+
+**2. Cloudflare Proxy Configuration:**
+- Decision: Disabled Cloudflare proxy for `staging` subdomain (gray cloud, "DNS only")
+- Rationale: Netlify needs direct DNS access for SSL certificate provisioning
+- Trade-off: Lose Cloudflare CDN/DDoS protection for staging (acceptable for internal staging site)
+
+### Current State
+
+**Project Structure:**
+```
+podcast website/
+├── .claude/                    # Context system
+├── .env.example               # Environment template
+├── .gitignore                 # Astro defaults
+├── archive/                    # Pre-project PRD drafts
+├── astro.config.mjs           # Astro + Tailwind config
+├── context/                    # Documentation
+│   ├── CLAUDE.md              # Developer guide
+│   ├── IMPLEMENTATION_PLAN.md # 120+ tasks
+│   ├── PRD.md                 # Strategic blueprint
+│   ├── SESSIONS.md            # This file
+│   └── tasks/                 # Action tracking
+├── node_modules/              # Dependencies
+├── package.json               # Astro + Tailwind
+├── public/                    # Static assets
+├── README.md                  # Project documentation
+├── scripts/                    # Validation scripts
+├── src/
+│   ├── pages/
+│   │   └── index.astro       # Homepage
+│   └── styles/
+│       └── global.css        # Tailwind imports
+└── tsconfig.json             # TypeScript config
+```
+
+**Deployment Status:**
+- ✅ GitHub repository: https://github.com/rexkirshner/podcast-framework
+- ✅ Netlify deployment: https://podcast-framework.netlify.app (live)
+- 🚧 Custom subdomain: https://staging.strangewater.xyz (DNS propagating, 15-30 min)
+
+**Phase:** Phase 1a - "Hello World" Deployed Site (Day 1 complete)
+**Next Milestone:** Day 2 - First Episode Page (Hardcoded)
+
+### Work In Progress
+
+**None** - All Day 1 tasks complete. Ready for Day 2.
+
+### Next Session
+
+**Primary Goal:** Day 2 - First Episode Page (Hardcoded)
+
+**Morning Tasks (Day 2):**
+- [ ] Task 2.1: Create hardcoded episode page layout (`/episodes/1`)
+- [ ] Task 2.2: Add basic header component
+- [ ] Task 2.3: Add basic footer component
+- [ ] Task 2.4: Embed Spotify audio player (iframe)
+- [ ] Task 2.5: Style with Tailwind CSS
+
+**Afternoon Tasks (Day 2):**
+- [ ] Task 2.6: Test audio playback
+- [ ] Task 2.7: Deploy to staging
+- [ ] Task 2.8: Verify responsive design
+- [ ] Task 2.9: Update homepage to link to episode
+
+**End of Day 2 Goal:** Deployed site with 1 working episode page, playable audio
+
+### Notes
+
+- DNS propagation for `staging.strangewater.xyz` verified via `dig` - CNAME correct, resolves to Netlify IPs
+- Netlify will auto-provision SSL certificate once DNS fully propagates globally
+- GitHub → Netlify auto-deploy pipeline working (push to `main` triggers production build)
+- No branch strategy implemented yet (single `main` branch, will add `develop` for staging in Phase 1b)
+
+---
+
 ## Session Template
 
 ```markdown

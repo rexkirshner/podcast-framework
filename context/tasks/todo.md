@@ -24,6 +24,29 @@ Active tasks for the current work session. Mark complete with ✅ as you go.
 
 ---
 
+## Session: 2025-10-05B (Day 1 - Project Setup & First Deploy)
+
+### Completed ✅
+- ✅ Task 1.1: Create GitHub repository `podcast-framework`
+- ✅ Task 1.2: Run npm create astro@latest (minimal template, TypeScript)
+- ✅ Task 1.3: Install Tailwind CSS
+- ✅ Task 1.4: Create .env.example file
+- ✅ Task 1.5: Update README.md with project name and purpose
+- ✅ Task 1.6: Initial commit + push to GitHub
+- ✅ Task 1.7: Create Netlify account, connect to GitHub repo
+- ✅ Task 1.8: Configure Netlify build settings
+- ✅ Task 1.9: Deploy to Netlify
+- ✅ Task 1.10: Verify site loads
+- ✅ Task 1.11: Configure custom subdomain staging.strangewater.xyz
+
+### In Progress 🚧
+- None
+
+### Next Session
+- Begin Day 2 implementation (see next-steps.md)
+
+---
+
 ## Template for Next Session
 
 ```markdown

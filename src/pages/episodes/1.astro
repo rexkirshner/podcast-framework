@@ -1,0 +1,116 @@
+---
+// Hardcoded episode page - will be replaced with dynamic data in Phase 1b
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+const episode = {
+  number: 1,
+  title: "Vitalik Buterin - The Future of Ethereum",
+  publishDate: "2022-03-15",
+  duration: "1:24:30",
+  // Using a real Strange Water Spotify episode ID for testing
+  // This will be replaced with actual episode data from Sanity in Phase 1b
+  spotifyEpisodeId: "3ScJswwFUJ8fCXVQcqYWk8",
+  description: `In this inaugural episode of Strange Water, we sit down with Ethereum co-founder Vitalik Buterin to discuss the future of decentralized technology, the upcoming merge to proof-of-stake, and his vision for Web3.
+
+We explore the technical challenges of scaling Ethereum, the philosophy behind decentralization, and what it takes to build technology that could reshape how society coordinates and transacts.`,
+  showNotes: [
+    "Introduction to Ethereum and its origins",
+    "The merge to proof-of-stake explained",
+    "Scalability challenges and solutions (rollups, sharding)",
+    "Philosophy of decentralization",
+    "Building in public and open source",
+  ],
+};
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Episode {episode.number}: {episode.title} - Strange Water Podcast</title>
+    <meta name="description" content={episode.description.substring(0, 160)} />
+  </head>
+  <body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
+    <Header />
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12 flex-grow">
+      <!-- Episode Header -->
+      <div class="mb-8">
+        <p class="text-sm text-gray-500 uppercase tracking-wide mb-2">
+          Episode {episode.number}
+        </p>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+          {episode.title}
+        </h1>
+        <div class="flex gap-4 text-sm text-gray-600">
+          <span>{episode.publishDate}</span>
+          <span>•</span>
+          <span>{episode.duration}</span>
+        </div>
+      </div>
+
+      <!-- Audio Player Section -->
+      <div class="mb-12 bg-white rounded-lg shadow-sm p-6">
+        <iframe
+          style="border-radius:12px"
+          src={`https://open.spotify.com/embed/episode/${episode.spotifyEpisodeId}?utm_source=generator`}
+          width="100%"
+          height="152"
+          frameBorder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      </div>
+
+      <!-- Episode Description -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-semibold mb-4">About This Episode</h2>
+        <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+          {episode.description}
+        </p>
+      </div>
+
+      <!-- Show Notes -->
+      <div class="mb-12">
+        <h2 class="text-2xl font-semibold mb-4">Show Notes</h2>
+        <ul class="space-y-2">
+          {episode.showNotes.map((note) => (
+            <li class="flex items-start">
+              <span class="text-blue-600 mr-2">•</span>
+              <span class="text-gray-700">{note}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Subscribe CTA -->
+      <div class="bg-blue-50 rounded-lg p-6 text-center">
+        <h3 class="text-xl font-semibold mb-2">Subscribe to Strange Water</h3>
+        <p class="text-gray-600 mb-4">
+          Get notified when new episodes are released
+        </p>
+        <div class="flex gap-4 justify-center">
+          <a
+            href="https://open.spotify.com/show/strangewater"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            Spotify
+          </a>
+          <a
+            href="https://podcasts.apple.com/strangewater"
+            class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition"
+          >
+            Apple Podcasts
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <Footer />
+  </body>
+</html>

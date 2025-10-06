@@ -9,12 +9,16 @@ import 'dotenv/config';
 import { createClient } from '@sanity/client';
 
 const client = createClient({
-  projectId: 'ej6443ov',
-  dataset: 'production',
+  projectId: process.env.SANITY_PROJECT_ID,
+  dataset: process.env.SANITY_DATASET || 'production',
   useCdn: false,
   apiVersion: '2024-01-01',
   token: process.env.SANITY_API_TOKEN,
 });
+
+if (!process.env.SANITY_PROJECT_ID) {
+  throw new Error('Missing SANITY_PROJECT_ID environment variable');
+}
 
 async function deleteAllEpisodes() {
   console.log('🔍 Finding all episodes...\n');
@@ -40,8 +44,27 @@ async function deleteAllEpisodes() {
   }
   console.log('');
 
+  // Confirmation prompt
+  console.log('⚠️  WARNING: This will permanently delete all episodes!');
+  const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  const answer = await new Promise((resolve) => {
+    readline.question('Type "DELETE" to confirm: ', (answer) => {
+      readline.close();
+      resolve(answer);
+    });
+  });
+
+  if (answer !== 'DELETE') {
+    console.log('\n❌ Deletion cancelled');
+    return;
+  }
+
   // Delete all episodes
-  console.log('🗑️  Deleting all episodes...\n');
+  console.log('\n🗑️  Deleting all episodes...\n');
 
   let deleteCount = 0;
   let errorCount = 0;

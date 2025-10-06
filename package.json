@@ -1,5 +1,5 @@
 {
-  "name": "temp-astro",
+  "name": "podcast-framework",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -12,7 +12,9 @@
     "import:rss": "node scripts/import-from-rss.js",
     "import:guests": "node scripts/import-guests-from-web.js",
     "link:guests": "node scripts/link-guests-to-episodes.js",
-    "delete:episodes": "node scripts/delete-all-episodes.js"
+    "delete:episodes": "node scripts/delete-all-episodes.js",
+    "fix:guests-keys": "node scripts/fix-guests-keys.js",
+    "upload:photos": "node scripts/upload-guest-photos.js"
   },
   "dependencies": {
     "@sanity/client": "^7.12.0",

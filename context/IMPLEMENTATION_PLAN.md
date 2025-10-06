@@ -207,9 +207,14 @@ Broken into **sub-phases** delivering vertical slices with continuous deployment
 **Afternoon (2-3 hours) - Hosted Studio:**
 - [ ] **Task 7.7:** Deploy Sanity Studio to hosted URL (`sanity deploy`)
 - [ ] **Task 7.8:** Configure CORS settings (allow Netlify domains)
-- [ ] **Task 7.9:** Set up user accounts for Content Coordinator role (editor permissions)
-- [ ] **Task 7.10:** Test publishing workflow: create episode in hosted Studio → triggers Netlify rebuild
-- [ ] **Task 7.11:** Update navigation (header) to include Episodes, Guests, About links
+- [ ] **Task 7.9:** Set up Sanity webhook to Netlify (manual: Sanity dashboard → Webhooks → add build hook URL)
+  - Create build hook in Netlify (Settings → Build hooks)
+  - Add webhook in Sanity (https://sanity.io/manage → API → Webhooks)
+  - Configure to trigger on create/update/delete for production dataset
+  - Test: publish content change → verify Netlify auto-builds
+- [ ] **Task 7.10:** Set up user accounts for Content Coordinator role (editor permissions)
+- [ ] **Task 7.11:** Test publishing workflow: create episode in hosted Studio → triggers Netlify rebuild
+- [ ] **Task 7.12:** Update navigation (header) to include Episodes, Guests, About links
 
 **End of Day 7 Checkpoint:**
 - ✅ Guest directory & profiles live

@@ -47,6 +47,28 @@ Active tasks for the current work session. Mark complete with ✅ as you go.
 
 ---
 
+## Session: 2025-10-06F (Code Review Fixes - Critical Issues)
+
+### Completed ✅
+- ✅ Code review completed (22 issues found, B grade)
+- ✅ Improvement plan created
+
+### In Progress 🚧
+- 🚧 Fix C1: Move Sanity project ID to env vars
+- 🚧 Fix H2: Extract duplicate helpers to utils
+- 🚧 Fix H4: Implement functional mobile menu
+- 🚧 Fix M1: Add confirmation to delete script
+- 🚧 Fix M4: Rename package to podcast-framework
+
+### Deferred ⏳
+- ⏳ Setup Sanity webhook (manual process via dashboard - see PRD Phase 1c)
+
+### Next Session
+- Continue with code review fixes
+- Days 6-7 QA & testing
+
+---
+
 ## Template for Next Session
 
 ```markdown

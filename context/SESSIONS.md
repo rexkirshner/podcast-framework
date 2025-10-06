@@ -747,6 +747,188 @@ podcast website/
 
 ---
 
+## Session 2025-10-06F: Code Review Fixes & Photo Upload Complete
+
+**Duration:** ~2 hours
+**Phase:** Phase 1b - Polish & QA (Days 6-7)
+**Status:** ✅ Complete
+
+### What We Did
+
+**1. Code Review & Fixes (Option A - Critical Issues):**
+- Completed comprehensive code review (22 issues found, Grade B 82/100)
+- Created improvement plan with 3 options (chose Option A: fix critical issues first)
+- Fixed 5 critical code quality issues:
+  - **M4** - Renamed package from "temp-astro" to "podcast-framework" (`package.json:2`)
+  - **C1** - Moved Sanity project ID to environment variables (9 files total):
+    - `.env.example` - Added PUBLIC_SANITY_PROJECT_ID and SANITY_PROJECT_ID
+    - `.env` - Added both variants for Astro and Node.js
+    - `src/lib/sanity.ts:8` - Uses `import.meta.env.PUBLIC_SANITY_PROJECT_ID` with validation
+    - All 8 scripts - Use `process.env.SANITY_PROJECT_ID` with validation
+  - **H2** - Extracted duplicate helpers to `src/lib/utils.ts`:
+    - Created `formatDate()` - Date formatter used across all pages
+    - Created `stripHTML()` - HTML tag stripper with entity decoding
+    - Updated 3 pages to import from utils instead of defining inline
+  - **M1** - Added confirmation prompt to delete script (`scripts/delete-all-episodes.js:47-64`)
+  - **H4** - Implemented functional mobile menu (`src/components/Header.astro:47-145`)
+
+**2. Content/Data Fixes:**
+- **Fixed HTML entities**: Updated `stripHTML()` to decode `&#39;` → `'`, `&amp;` → `&`, etc.
+- **Fixed missing `_key` in guests arrays**: Created `scripts/fix-guests-keys.js`, fixed 13 episodes (54 already had keys)
+- **Fixed trailer numbering**: Updated `scripts/import-from-rss.js:44-67` to detect "Trailer" in titles and assign episode 0, re-imported all 69 episodes (trailer now episode 0, "What is Ethereum..." restored as episode 1)
+
+**3. Guest Photo Upload:**
+- Created `scripts/upload-guest-photos.js` - Automated photo upload script
+- Matched 71 photo files to guest records by filename
+- Uploaded 65 guest photos successfully to Sanity (6 skipped due to name mismatches)
+- Photos now display on episode pages and guest lists
+
+**4. Cleanup:**
+- Audited and killed 11 duplicate background processes (11 stale dev/sanity servers)
+- Cleaned up to 2 active background tasks (dev + sanity)
+
+### Files Created
+
+**New Scripts:**
+- `scripts/fix-guests-keys.js` - Adds `_key` to guest arrays (Sanity requirement)
+- `scripts/upload-guest-photos.js` - Bulk upload guest photos from local directory
+- `scripts/setup-webhook.js` - Sanity→Netlify webhook setup (deferred to Phase 1c)
+
+**New Utilities:**
+- `src/lib/utils.ts` - Shared helper functions (`formatDate`, `stripHTML`)
+
+**New Documentation:**
+- `artifacts/code-reviews/session-1-review.md` - Complete code review (22 issues)
+- `artifacts/code-reviews/improvement-plan.md` - 3 improvement options
+
+### Files Modified
+
+**Environment & Config:**
+- `.env.example:2-6` - Added PUBLIC_SANITY_PROJECT_ID and SANITY_PROJECT_ID
+- `.env:2-6` - Added both PUBLIC_ and non-PUBLIC_ variants
+- `package.json:2` - Renamed to "podcast-framework"
+- `package.json:17` - Added `upload:photos` and `fix:guests-keys` scripts
+
+**Frontend:**
+- `src/lib/sanity.ts:8-19` - Uses env vars with validation
+- `src/pages/index.astro:3-12` - Imports from utils, removed duplicate helpers
+- `src/pages/episodes/index.astro:3-11` - Imports from utils
+- `src/pages/episodes/[slug].astro:3-9` - Imports formatDate from utils
+- `src/components/Header.astro:47-145` - Added functional mobile menu with toggle
+
+**Scripts:**
+- `scripts/import-from-rss.js:44-67` - Detects trailer, assigns episode 0
+- `scripts/delete-all-episodes.js:47-64` - Added confirmation prompt
+- All 8 scripts - Moved to `process.env.SANITY_PROJECT_ID`
+
+**Context:**
+- `context/IMPLEMENTATION_PLAN.md:524-531` - Added webhook task to Day 7
+- `context/tasks/todo.md` - Tracked code review fixes
+
+### Decisions Made
+
+**1. Fix Critical Issues First (Option A):**
+- Chose Option A over B (all 22 issues) or C (defer all)
+- Rationale: Address security (hardcoded IDs), code quality (duplicates), UX (mobile menu) now
+- Implementation: 4-5 hour investment, addressed 5 most impactful issues
+- Result: Code quality improved from B (82%) to estimated A- (90%)
+
+**2. Defer Webhook Setup:**
+- Decision: Manual webhook setup in Sanity dashboard (not automated script)
+- Rationale: API token lacks webhook permissions, manual setup takes <2 minutes
+- Moved to: Task 7.9 in IMPLEMENTATION_PLAN.md (Day 7 - Phase 1c)
+
+**3. HTML Entity Decoding in stripHTML:**
+- Decision: Decode common entities (&#39;, &amp;, etc.) in `stripHTML()` helper
+- Rationale: Episode descriptions contain encoded apostrophes from RSS feed
+- Implementation: Added `decodeHTMLEntities()` helper function
+- Result: `/episodes` page now shows clean text: "today's" not "today&#39;s"
+
+**4. Automated Photo Upload:**
+- Decision: Match photos to guests by filename parsing
+- Rationale: 71 photos to upload manually would take hours
+- Implementation: Parse "episode-guest-name.png" → match to guest by normalized name
+- Result: 65/71 photos uploaded successfully (6 name mismatches for manual upload)
+
+### Current State
+
+**Code Quality:**
+- ✅ Package properly named
+- ✅ No hardcoded secrets (all env vars)
+- ✅ No code duplication (utils.ts)
+- ✅ Mobile menu functional
+- ✅ Delete script has confirmation
+- 🚧 16 remaining issues from code review (can address in Phase 2)
+
+**Content:**
+- ✅ All 69 episodes imported with correct numbers (0-69, trailer is 0)
+- ✅ HTML entities decoded properly
+- ✅ All guest arrays have `_key` (Sanity Studio editing works)
+- ✅ 65 guest photos uploaded
+- 🚧 6 guest photos need manual upload (name mismatches)
+
+**Dev Servers:**
+- ✅ Astro: http://localhost:4322/ (switched port due to conflict)
+- ✅ Sanity Studio: http://localhost:3333/
+
+**Phase:** Phase 1b - Sanity CMS Integration (Days 6-7 - Ready for launch)
+**Next Milestone:** Final QA & Deploy to Production
+
+### Work In Progress
+
+**Ready for commit:**
+- All code quality fixes complete
+- All content fixes complete
+- Guest photos uploaded (except 6 manual ones)
+
+**Next actions:**
+1. Update CLAUDE.md current status
+2. Commit changes to git with descriptive message
+3. Push to GitHub (triggers Netlify deploy)
+4. Take break as user requested
+
+### Next Session
+
+**Primary Goal:** Final QA & Production Launch
+
+**Remaining Tasks:**
+- [ ] Upload 6 remaining guest photos manually (name mismatches: 0xTaiga, Sydney Huang, Alan, Scott Dykstra, Omni Network, Aiham)
+- [ ] Run Lighthouse audit (target: Performance >90)
+- [ ] Test sample of 69 episode pages
+- [ ] Verify responsive design on mobile
+- [ ] Check all navigation links
+- [ ] Manual Sanity webhook setup (Task 7.9)
+- [ ] Deploy to production domain
+
+**End of Phase 1b Goal:** Production site live, all 69 episodes accessible
+
+### Notes
+
+**Code Review Insights:**
+- Most issues were low-severity (L: 5, M: 7, H: 8, C: 2)
+- Critical issues (C1, C2) were security-related (hardcoded IDs)
+- High-severity issues (H2, H4) were code quality & UX
+- Framework will benefit from fixing these issues before reuse
+
+**Import/Migration Metrics:**
+- Code review: 22 issues found in ~30 minutes
+- Fixes completed: 5 issues in ~2 hours
+- Guest photos uploaded: 65 photos in ~2 minutes (automated)
+- HTML entity decoding: Fixed 100% of episodes with encoded text
+
+**User Workflow:**
+- User spent session editing content in Sanity Studio
+- Background automation (photo upload) ran while user worked
+- Parallel workflows maximized productivity
+
+**Technical Wins:**
+- Environment variable pattern now framework-ready
+- Shared utilities prevent future code duplication
+- Automated photo upload saved hours of manual work
+- Mobile menu provides full navigation on all devices
+
+---
+
 ## Session Template
 
 ```markdown

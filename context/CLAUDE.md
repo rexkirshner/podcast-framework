@@ -137,10 +137,22 @@ sanity deploy                     # Deploy hosted Sanity Studio
 
 ## Current Status
 
-**Phase:** Phase 1b - Sanity CMS Integration (Day 5 complete)
+**Phase:** Phase 1b - Sanity CMS Integration (Day 5 complete, code review fixes complete)
 **Next Milestone:** Polish & QA (Days 6-7)
 
-**Completed in Session 2025-10-06E (Day 5):**
+**Completed in Session 2025-10-06F (Day 5 - Code Review Fixes):**
+- ✅ Code review fixes (5 critical issues: M4, C1, H2, M1, H4)
+- ✅ Environment variables pattern (all scripts + frontend)
+- ✅ Shared utilities extracted (formatDate, stripHTML)
+- ✅ Mobile menu implemented (functional navigation)
+- ✅ Delete confirmation added (safety)
+- ✅ HTML entity decoding (fixes &#39; display issues)
+- ✅ Missing _key fix (Sanity guest editing unblocked)
+- ✅ Trailer detection (episode 0, episode 1 restored)
+- ✅ Automated guest photo upload (65/71 uploaded)
+- ✅ Background process cleanup (11 duplicates killed)
+
+**Completed in Session 2025-10-06E (Day 5 - Data Migration):**
 - ✅ RSS import script - 69 episodes imported automatically
 - ✅ Guest web scraper - 72 guests imported from strangewater.xyz
 - ✅ Automated guest-to-episode linking (63/67 auto-linked)
@@ -152,37 +164,44 @@ sanity deploy                     # Deploy hosted Sanity Studio
 
 **Sanity CMS Data:**
 - 69 episodes (all metadata, correct durations, clean slugs)
-- 72 guests (names, social links, profile image URLs)
+- 72 guests (names, social links, 65 profile photos uploaded)
 - 63 episodes linked to guests automatically
-- 4 episodes flagged for manual review
-- Profile images: User uploading via Sanity Studio (in progress)
+- All guest arrays have _key property (editing functional)
+- Trailer = episode 0, episode 1 restored
+- Profile images: 65 uploaded, 6 manual uploads pending
 
 **Import Scripts (Framework Feature):**
 - `scripts/import-from-rss.js` - RSS feed parser & episode importer
 - `scripts/import-guests-from-web.js` - Web scraper for guest data
 - `scripts/link-guests-to-episodes.js` - Automated guest-episode linking
-- `scripts/delete-all-episodes.js` - Bulk delete utility
+- `scripts/delete-all-episodes.js` - Bulk delete utility (with confirmation)
 - `scripts/check-duplicate-guests.js` - Duplicate detection
 - `scripts/delete-draft-guests.js` - Draft cleanup
 - `scripts/fix-draft-references.js` - Reference repair
+- `scripts/fix-guests-keys.js` - Add _key to guest arrays
+- `scripts/upload-guest-photos.js` - Automated photo upload
 
 **Key Commands:**
 - `npm run import:rss` - Import/update episodes from RSS
 - `npm run import:guests` - Scrape and import guests
 - `npm run link:guests` - Auto-link guests to episodes
 - `npm run delete:episodes` - Clean slate for re-import
+- `npm run fix:guests-keys` - Fix missing _key properties
+- `npm run upload:photos` - Upload guest photos
 
 **Dev Servers:**
-- Astro: http://localhost:4321/ (all 69 episodes live)
+- Astro: http://localhost:4322/ (all 69 episodes live)
 - Sanity Studio: http://localhost:3333/ (local, not yet deployed)
 
 **Next Steps (Days 6-7 - Polish & QA):**
-1. Test all 69 episode pages (spot check sample)
-2. Verify responsive design on mobile/tablet
-3. Run Lighthouse audit (target: Performance >90)
-4. Test Spotify audio playback across browsers
-5. Verify staging deployment matches local
-6. Final QA before Phase 1 launch
+1. Upload 6 remaining guest photos manually (name mismatches)
+2. Test all 69 episode pages (spot check sample)
+3. Verify responsive design on mobile/tablet
+4. Run Lighthouse audit (target: Performance >90)
+5. Test Spotify audio playback across browsers
+6. Verify staging deployment matches local
+7. Setup Sanity webhook (manual, Task 7.9)
+8. Final QA before Phase 1 launch
 
 ---
 
@@ -243,4 +262,4 @@ sanity deploy                     # Deploy hosted Sanity Studio
 
 ---
 
-**Last Context Save:** 2025-10-05 Session 4 (Day 4 - Sanity Integration Complete)
+**Last Context Save:** 2025-10-06 Session F (Day 5 - Code Review Fixes & Photo Upload Complete)

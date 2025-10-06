@@ -4,26 +4,12 @@ import Footer from "../components/Footer.astro";
 import { SITE_CONFIG } from "../config/site";
 import "../styles/global.css";
 import { getAllEpisodes, getPodcastInfo } from "../lib/sanity";
+import { formatDate, stripHTML } from "../lib/utils";
 
 // Fetch latest episode and podcast info
 const episodes = await getAllEpisodes();
 const latestEpisode = episodes[0]; // Episodes are already sorted by episodeNumber desc
 const podcastInfo = await getPodcastInfo();
-
-// Format date helper
-function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
-
-// Strip HTML tags for preview text
-function stripHTML(html: string) {
-  return html.replace(/<[^>]*>/g, '').trim();
-}
 ---
 
 <html lang="en">

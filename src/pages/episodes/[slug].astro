@@ -6,6 +6,7 @@ import { SITE_CONFIG } from "../../config/site";
 import "../../styles/global.css";
 import { getAllEpisodes, getEpisodeBySlug, getPodcastInfo } from "../../lib/sanity";
 import type { Episode } from "../../lib/sanity";
+import { formatDate } from "../../lib/utils";
 
 // Generate static paths for all episodes at build time
 export async function getStaticPaths() {
@@ -22,16 +23,6 @@ const { episode } = Astro.props as { episode: Episode };
 
 // Fetch podcast info for isActive status
 const podcastInfo = await getPodcastInfo();
-
-// Format date helper
-function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
 
 // Use show-level Spotify embed (episode-specific IDs from Anchor RSS aren't valid Spotify IDs)
 const spotifyEmbedUrl = `https://open.spotify.com/embed/show/${SITE_CONFIG.spotifyShowId}?utm_source=generator`;

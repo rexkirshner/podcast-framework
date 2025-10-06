@@ -13,12 +13,17 @@ import xml2js from 'xml2js';
 
 // Sanity client configuration
 const client = createClient({
-  projectId: 'ej6443ov',
-  dataset: 'production',
+  projectId: process.env.SANITY_PROJECT_ID,
+  dataset: process.env.SANITY_DATASET || 'production',
   useCdn: false, // We need write access
   apiVersion: '2024-01-01',
   token: process.env.SANITY_API_TOKEN, // Requires write token
 });
+
+// Validation
+if (!process.env.SANITY_PROJECT_ID) {
+  throw new Error('Missing SANITY_PROJECT_ID environment variable. Copy .env.example to .env and configure.');
+}
 
 // RSS feed URL
 const RSS_FEED_URL = 'https://anchor.fm/s/dcf17d04/podcast/rss';
@@ -37,19 +42,27 @@ function generateSlug(title) {
  * Extract episode number from title or iTunes tag
  */
 function extractEpisodeNumber(item, index, totalEpisodes) {
+  const title = item.title[0];
+
+  // Check if this is a trailer episode - assign episode 0
+  if (title.toLowerCase().includes('trailer')) {
+    return 0;
+  }
+
   // Try iTunes episode tag first
   if (item['itunes:episode'] && item['itunes:episode'][0]) {
     return parseInt(item['itunes:episode'][0], 10);
   }
 
   // Try parsing from title (e.g., "Episode 44: Title")
-  const match = item.title[0].match(/episode\s+(\d+)/i);
+  const match = title.match(/episode\s+(\d+)/i);
   if (match) {
     return parseInt(match[1], 10);
   }
 
   // Fallback: reverse chronological numbering
   // (newest episodes first in feed, so reverse the index)
+  // Subtract 1 if there's a trailer (episode 0) to account for it
   return totalEpisodes - index;
 }
 

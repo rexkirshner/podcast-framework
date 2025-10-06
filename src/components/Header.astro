@@ -44,9 +44,14 @@ const podcastInfo = await getPodcastInfo();
         </a>
       </nav>
 
-      <!-- Mobile Menu Button (placeholder) -->
-      <button class="md:hidden p-2 text-gray-700 hover:text-blue-600">
+      <!-- Mobile Menu Button -->
+      <button
+        id="mobile-menu-button"
+        class="md:hidden p-2 text-gray-700 hover:text-blue-600 transition"
+        aria-label="Toggle mobile menu"
+      >
         <svg
+          id="menu-icon"
           class="w-6 h-6"
           fill="none"
           stroke="currentColor"
@@ -59,7 +64,82 @@ const podcastInfo = await getPodcastInfo();
             d="M4 6h16M4 12h16M4 18h16"
           ></path>
         </svg>
+        <svg
+          id="close-icon"
+          class="w-6 h-6 hidden"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
       </button>
     </div>
+
+    <!-- Mobile Menu Panel -->
+    <nav
+      id="mobile-menu"
+      class="md:hidden hidden border-t border-gray-200 py-4"
+    >
+      <div class="flex flex-col gap-4">
+        <a
+          href="/"
+          class="text-gray-700 hover:text-blue-600 transition px-2 py-2 rounded hover:bg-gray-50"
+        >
+          Home
+        </a>
+        <a
+          href="/episodes"
+          class="text-gray-700 hover:text-blue-600 transition px-2 py-2 rounded hover:bg-gray-50"
+        >
+          Episodes
+        </a>
+        <a
+          href="/about"
+          class="text-gray-700 hover:text-blue-600 transition px-2 py-2 rounded hover:bg-gray-50"
+        >
+          About
+        </a>
+      </div>
+    </nav>
   </div>
 </header>
+
+<script>
+  // Mobile menu toggle functionality
+  const menuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
+
+  menuButton?.addEventListener('click', () => {
+    const isOpen = !mobileMenu?.classList.contains('hidden');
+
+    if (isOpen) {
+      // Close menu
+      mobileMenu?.classList.add('hidden');
+      menuIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+    } else {
+      // Open menu
+      mobileMenu?.classList.remove('hidden');
+      menuIcon?.classList.add('hidden');
+      closeIcon?.classList.remove('hidden');
+    }
+  });
+
+  // Close mobile menu when clicking a link
+  const mobileMenuLinks = mobileMenu?.querySelectorAll('a');
+  mobileMenuLinks?.forEach((link) => {
+    link.addEventListener('click', () => {
+      mobileMenu?.classList.add('hidden');
+      menuIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+    });
+  });
+</script>

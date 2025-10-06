@@ -2,11 +2,18 @@ import { createClient } from "@sanity/client";
 
 // Create Sanity client
 export const sanityClient = createClient({
-  projectId: "ej6443ov",
-  dataset: "production",
+  projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
+  dataset: import.meta.env.PUBLIC_SANITY_DATASET || "production",
   useCdn: true, // Use CDN for faster response times
   apiVersion: "2024-01-01", // Use current date for latest API features
 });
+
+// Validation - ensure env vars are set
+if (!import.meta.env.PUBLIC_SANITY_PROJECT_ID) {
+  throw new Error(
+    "Missing PUBLIC_SANITY_PROJECT_ID environment variable. Copy .env.example to .env and add your Sanity project ID."
+  );
+}
 
 // TypeScript types for our content
 export interface Guest {

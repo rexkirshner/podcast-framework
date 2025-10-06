@@ -12,12 +12,16 @@ import { createClient } from '@sanity/client';
 
 // Sanity client configuration
 const client = createClient({
-  projectId: 'ej6443ov',
-  dataset: 'production',
+  projectId: process.env.SANITY_PROJECT_ID,
+  dataset: process.env.SANITY_DATASET || 'production',
   useCdn: false,
   apiVersion: '2024-01-01',
   token: process.env.SANITY_API_TOKEN,
 });
+
+if (!process.env.SANITY_PROJECT_ID) {
+  throw new Error('Missing SANITY_PROJECT_ID environment variable');
+}
 
 /**
  * Fetch all episodes

@@ -62,8 +62,8 @@ function extractEpisodeNumber(item, index, totalEpisodes) {
 
   // Fallback: reverse chronological numbering
   // (newest episodes first in feed, so reverse the index)
-  // Subtract 1 if there's a trailer (episode 0) to account for it
-  return totalEpisodes - index;
+  // Subtract 1 to account for trailer being episode 0
+  return totalEpisodes - 1 - index;
 }
 
 /**

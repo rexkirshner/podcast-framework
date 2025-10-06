@@ -7,6 +7,7 @@
 
 import 'dotenv/config';
 import { createClient } from '@sanity/client';
+import * as readline from 'node:readline';
 
 const client = createClient({
   projectId: process.env.SANITY_PROJECT_ID,
@@ -46,14 +47,14 @@ async function deleteAllEpisodes() {
 
   // Confirmation prompt
   console.log('⚠️  WARNING: This will permanently delete all episodes!');
-  const readline = require('readline').createInterface({
+  const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
 
   const answer = await new Promise((resolve) => {
-    readline.question('Type "DELETE" to confirm: ', (answer) => {
-      readline.close();
+    rl.question('Type "DELETE" to confirm: ', (answer) => {
+      rl.close();
       resolve(answer);
     });
   });

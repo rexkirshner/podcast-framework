@@ -65,6 +65,24 @@ export default defineType({
       description: 'The ID from the Spotify episode URL (optional - will use show embed if not provided)',
     }),
     defineField({
+      name: 'spotifyLink',
+      title: 'Spotify Episode Link',
+      type: 'url',
+      description: 'Full Spotify episode URL',
+    }),
+    defineField({
+      name: 'youtubeLink',
+      title: 'YouTube Link',
+      type: 'url',
+      description: 'YouTube episode URL',
+    }),
+    defineField({
+      name: 'applePodcastLink',
+      title: 'Apple Podcast Link',
+      type: 'url',
+      description: 'Apple Podcasts episode URL',
+    }),
+    defineField({
       name: 'coverImage',
       title: 'Cover Image',
       type: 'image',

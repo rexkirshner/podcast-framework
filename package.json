@@ -14,7 +14,8 @@
     "link:guests": "node scripts/link-guests-to-episodes.js",
     "delete:episodes": "node scripts/delete-all-episodes.js",
     "fix:guests-keys": "node scripts/fix-guests-keys.js",
-    "upload:photos": "node scripts/upload-guest-photos.js"
+    "upload:photos": "node scripts/upload-guest-photos.js",
+    "import:platform-links": "node scripts/import-platform-links.js"
   },
   "dependencies": {
     "@sanity/client": "^7.12.0",

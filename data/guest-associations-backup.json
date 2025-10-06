@@ -1,0 +1,412 @@
+{
+  "What is Ethereum and Why Should We Care? w/ Chris Chauvin": [
+    {
+      "_id": "guest-chris-chauvin",
+      "name": "Chris Chauvin"
+    }
+  ],
+  "Building, Upgrading and Documenting Ethereum w/ Ben Edgington (Consensys)": [
+    {
+      "_id": "guest-ben-edgington",
+      "name": "Ben Edgington"
+    }
+  ],
+  "A Sober, Bullish Conversation on NFTs w/ Matt Silverman": [
+    {
+      "_id": "guest-matt-silverman",
+      "name": "Matt Silverman"
+    }
+  ],
+  "Staking with Conviction w/ Jasper the Friendly Ghost (Rocket Pool)": [
+    {
+      "_id": "guest-jasper-the-friendly-ghost",
+      "name": "Jasper the Friendly Ghost"
+    }
+  ],
+  "Next Generation Stablecoins w/ OneTrueKirk (Volt Protocol)": [
+    {
+      "_id": "guest-onetruekirk",
+      "name": "OneTrueKirk"
+    }
+  ],
+  "Lessons from Investing Through 8 Bubbles w/ Dave Levine": [
+    {
+      "_id": "guest-dave-levine",
+      "name": "Dave Levine"
+    }
+  ],
+  "Ethereum, Composability and Creating Options w/ Dan Ugolini (Rysk Finance)": [
+    {
+      "_id": "guest-dan-ugolini",
+      "name": "Dan Ugolini"
+    }
+  ],
+  "Beyond the EVM - Computation and the World Computer w/ 0xToki (Umami Finance)": [
+    {
+      "_id": "guest-toki",
+      "name": "0xToki"
+    }
+  ],
+  "Building Between Chains w/ twMatt (TapiocaDAO)": [
+    {
+      "_id": "guest-matt-marino",
+      "name": "Matt Marino"
+    }
+  ],
+  "Blockchain in the (Trad-Fi) Insurance Industry w/ Brendan Picha (RiskStream Collaborative)": [
+    {
+      "_id": "guest-brendan-picha",
+      "name": "Brendan Picha"
+    }
+  ],
+  "Remember When Ethereum Almost Ended w/ Hudson Jameson": [
+    {
+      "_id": "guest-hudson-jameson",
+      "name": "Hudson Jameson"
+    }
+  ],
+  "Building the Financial System You Want to See w/ Dion Chu (Term Finance)": [
+    {
+      "_id": "guest-dion-chu",
+      "name": "Dion Chu"
+    }
+  ],
+  "Building a Decentralized Banking Institution w/ Sam Kazemian (Frax Finance)": [
+    {
+      "_id": "guest-sam-kazemian",
+      "name": "Sam Kazemian"
+    }
+  ],
+  "Auditing, Security and Safety Inside the EVM w/ 0xTaiga (Consensys Diligence)": [
+    {
+      "_id": "guest-taiga",
+      "name": "Taiga"
+    }
+  ],
+  "The Next Frontier: Trustless Compute w/ Tim, Wolfgang and Rami (RISC Zero)": [
+    {
+      "_id": "guest-tim-carstens",
+      "name": "Tim Carstens"
+    },
+    {
+      "_id": "guest-wolfgang-welz",
+      "name": "Wolfgang Welz"
+    },
+    {
+      "_id": "guest-rami-lukata",
+      "name": "Rami Lukata"
+    }
+  ],
+  "The History, Reality and Future of Off-Shore Finance w/ Alex Golubitsky": [
+    {
+      "_id": "guest-alex-golubitsky",
+      "name": "Alex Golubitsky"
+    }
+  ],
+  "The Integrated ZK Stack: From Hardware to API w/ Omer Shlomovits (Ingonyama)": [
+    {
+      "_id": "guest-omer-shlomovits",
+      "name": "Omer Shlomovits"
+    }
+  ],
+  "Cryptography, AI and the ZKML Prover w/ Daniel Shorr (Modulus Labs)": [
+    {
+      "_id": "guest-daniel-shorr",
+      "name": "Daniel Shorr"
+    }
+  ],
+  "The Past, Present and Future of ChainLink w/ ChainLinkGod": [
+    {
+      "_id": "guest-chainlinkgod",
+      "name": "ChainLinkGod"
+    }
+  ],
+  "Installing Ethereum's ZK Coprocessor w/ Yi Sun (Axiom)": [
+    {
+      "_id": "guest-yi-sun",
+      "name": "Yi Sun"
+    }
+  ],
+  "Credibly Neutral Public Goods Funding w/ Trent Van Epps (Protocol Guild)": [
+    {
+      "_id": "guest-trent-van-epps",
+      "name": "Trent Van Epps"
+    }
+  ],
+  "Reflections from Between Two Cycles w/ Hamzah Khan": [
+    {
+      "_id": "guest-hamzah-khan",
+      "name": "Hamzah Khan"
+    }
+  ],
+  "Living and Investing Across the Pacific w/ Will Patterson (Varys Capital)": [
+    {
+      "_id": "guest-will-patterson",
+      "name": "Will Patterson"
+    }
+  ],
+  "Decentralization Maximalism w/ Superphiz": [
+    {
+      "_id": "guest-superphiz",
+      "name": "Superphiz"
+    }
+  ],
+  "How and Why to Build a ZK-Based System w/ Jason Morton (ezkl)": [
+    {
+      "_id": "guest-jason-morton",
+      "name": "Jason Morton"
+    }
+  ],
+  "The (ERC) Ethereum Upgrade Process w/ Joey Santoro (4626 Alliance)": [
+    {
+      "_id": "guest-joey-santoro",
+      "name": "Joey Santoro"
+    }
+  ],
+  "Danksharding and the KZG Ceremony w/ Carl Beekhuizen (Ethereum Foundation)": [
+    {
+      "_id": "guest-carl-beekhuizen",
+      "name": "Carl Beekhuizen"
+    }
+  ],
+  "Authoring a New Language for the EVM w/ Charles Cooper (Vyper)": [
+    {
+      "_id": "guest-charles-cooper",
+      "name": "Charles Cooper"
+    }
+  ],
+  "ZK Cryptography and the Frontier of Innovation w/ David Wong (ZK Security)": [
+    {
+      "_id": "guest-david-wong",
+      "name": "David Wong"
+    }
+  ],
+  "Ethereum's Next Upgrade: The (Solana) SVM w/ Sydney Huang (Eclipse Foundation)": [
+    {
+      "_id": "guest-sydney-huang",
+      "name": "Sydney Huang"
+    }
+  ],
+  "How Storage Proofs Solve Cross Chain Communication w/ Marcello Bardus (Herodotus)": [
+    {
+      "_id": "guest-marcello-bardus",
+      "name": "Marcello Bardus"
+    }
+  ],
+  "Modularity Maximalism w/ Uma Roy (Succinct Labs)": [
+    {
+      "_id": "guest-uma-roy",
+      "name": "Uma Roy"
+    }
+  ],
+  "Hardware Acceleration for ZK Cryptography w/ Leo Fan (Cysic)": [
+    {
+      "_id": "guest-leo-fan",
+      "name": "Leo Fan"
+    }
+  ],
+  "Building and Fighting for Tomorrow's Technology w/ Alan (Railgun)": [
+    {
+      "_id": "guest-alan-scott",
+      "name": "Alan Scott"
+    }
+  ],
+  "Reflecting on the State of ZK w/ Kobi Gurkan (Geometry)": [
+    {
+      "_id": "guest-kobi-gurkan",
+      "name": "Kobi Gurkan"
+    }
+  ],
+  "From Theory to Practice: Ethereum's ZK Evolution w/ Kartin Wong (Hyper Oracle)": [
+    {
+      "_id": "guest-kartin-wong",
+      "name": "Kartin Wong"
+    }
+  ],
+  "The Next Chapter of Modular Blockchains: Proof of SQL w/ Scott Dykstra (Space and Time)": [
+    {
+      "_id": "guest-scott-dysktra",
+      "name": "Scott Dysktra"
+    }
+  ],
+  "Avalanche, Ethereum and the Future of Distributed Computing w/ Steven Gates (GoGoPool)": [
+    {
+      "_id": "guest-steven-gates",
+      "name": "Steven Gates"
+    }
+  ],
+  "Bringing Treasuries, Bonds and Traditional Investments On-Chain w/ Norton Wang (Cogito)": [
+    {
+      "_id": "guest-norton-wang",
+      "name": "Norton Wang"
+    }
+  ],
+  "Building a ZK-Based Blockchain w/ Steve Pack (o1Labs)": [
+    {
+      "_id": "guest-steve-pack",
+      "name": "Steve Pack"
+    }
+  ],
+  "The Staking Endgame: Distributed Validator Technology (DVT) w/ Brett Li (Obol Labs)": [
+    {
+      "_id": "guest-brett-li",
+      "name": "Brett Li"
+    }
+  ],
+  "How Introducing Competition Fixes De-Fi w/ Anna George and Andrea Canidio (CoW Protocol)": [
+    {
+      "_id": "guest-anna-george",
+      "name": "Anna George"
+    },
+    {
+      "_id": "guest-andrea-canidio",
+      "name": "Andrea Canidio"
+    }
+  ],
+  "Facilitating the Modular Blockchain Revolution w/ Amrit Kumar (AltLayer)": [
+    {
+      "_id": "guest-amrit-kumar",
+      "name": "Amrit Kumar"
+    }
+  ],
+  "The Future of Inevitable Ethereum w/ Jack Melnick (Polygon)": [
+    {
+      "_id": "guest-jack-melnick",
+      "name": "Jack Melnick"
+    }
+  ],
+  "Polygon's Next Chapter: Aggregated Blockchains w/ Brendan Farmer (Polygon)": [
+    {
+      "_id": "guest-brendan-farmer",
+      "name": "Brendan Farmer"
+    }
+  ],
+  "The Frontier of Intellectual Property: Programmable IP w/ Jason Zhao (Story Protocol)": [
+    {
+      "_id": "guest-jason-zhao",
+      "name": "Jason Zhao"
+    }
+  ],
+  "Building Blockchain's Emergency Response Layer w/ Bobafetador (Drosera)": [
+    {
+      "_id": "guest-bobafetador",
+      "name": "Bobafetador"
+    }
+  ],
+  "The Next Chapter of Modular Blockchains: Decentralized RPC w/ Gil Binder (Lava Network)": [
+    {
+      "_id": "guest-gil-binder",
+      "name": "Gil Binder"
+    }
+  ],
+  "Upgrading Smart Contracts with Native Data Analysis w/ Ismael Hishon-Rezaizadeh (Lagrange Labs)": [
+    {
+      "_id": "guest-ismael-hishon-rezaizadeh",
+      "name": "Ismael Hishon-Rezaizadeh"
+    }
+  ],
+  "Block Building and the MEV Supply Chain w/ Kubi Mensah (Titan Builder)": [
+    {
+      "_id": "guest-kubi-mensah",
+      "name": "Kubi Mensah"
+    }
+  ],
+  "Crypto's Service Industry: A Survival Guide w/ Kevin Simback (Delphi Labs)": [
+    {
+      "_id": "guest-kevin-simback",
+      "name": "Kevin Simback"
+    }
+  ],
+  "Decentralized Resiliency: The Story of BadgerDAO w/ Spadaboom (BadgerDAO)": [
+    {
+      "_id": "guest-spadaboom",
+      "name": "Spadaboom"
+    }
+  ],
+  "Solving Fragmentation in the Rollup-Centric Paradigm w/ Austin King (Omni Network)": [
+    {
+      "_id": "guest-austin-king",
+      "name": "Austin King"
+    }
+  ],
+  "An Inside Look into the Ethereum All Core Devs Calls w/ Christine Kim (Galaxy)": [
+    {
+      "_id": "guest-christine-kim",
+      "name": "Christine Kim"
+    }
+  ],
+  "Solutions for Real People's Problems w/ Thomas Mattimore (Reserve Finance)": [
+    {
+      "_id": "guest-thomas-mattimore",
+      "name": "Thomas Mattimore"
+    }
+  ],
+  "The Endgame of Data Availability w/ Prabal Banerjee (Avail)": [
+    {
+      "_id": "guest-prabal-banerjee",
+      "name": "Prabal Banerjee"
+    }
+  ],
+  "Lessons Learned from Building with Terra and Celsius w/ McDavid Stoddard (Aperture Finance) ": [
+    {
+      "_id": "guest-mcdavid-stoddard",
+      "name": "McDavid Stoddard"
+    }
+  ],
+  "The Movement to Make Blockchain Security Sexy w/ Rushi Manche (Movement Labs)": [
+    {
+      "_id": "guest-rushi-manche",
+      "name": "Rushi Manche"
+    }
+  ],
+  "Next-Gen Infrastructure: Decentralized Edge Networks w/ Harrison Hines and Parsa Ghadimi (Fleek)": [
+    {
+      "_id": "guest-parsa-ghadimi",
+      "name": "Parsa Ghadimi"
+    },
+    {
+      "_id": "guest-harrison-hines",
+      "name": "Harrison Hines"
+    }
+  ],
+  "The Endgame Landscape of L1 Blockchains w/ Alejo Pinto (Pontem Network)": [
+    {
+      "_id": "guest-alejo-pinto",
+      "name": "Alejo Pinto"
+    }
+  ],
+  "How and Why to Scale ZK Proof Generation w/ Alex Pruden (Aleo Foundation)": [
+    {
+      "_id": "guest-alex-pruden",
+      "name": "Alex Pruden"
+    }
+  ],
+  "The Motorverse: Cars, Crypto and Web3 Gaming w/ Will Griffiths (Animoca Brands)": [
+    {
+      "_id": "guest-will-griffiths",
+      "name": "Will Griffiths"
+    }
+  ],
+  "Risk Management Maximalism w/ 0xWenMoon (Umami Finance)": [
+    {
+      "_id": "guest-wenmoon",
+      "name": "WenMoon"
+    }
+  ],
+  "Bootstrapping a Career in Crypto w/ Nick Westlake": [
+    {
+      "_id": "guest-nick-westlake",
+      "name": "Nick Westlake"
+    }
+  ],
+  "The Goal: Financial Freedom w/ Aiham and Tenzent (Silo Finance)": [
+    {
+      "_id": "guest-aiham-jaabari",
+      "name": "Aiham Jaabari"
+    },
+    {
+      "_id": "guest-tenzent",
+      "name": "Tenzent"
+    }
+  ]
+}

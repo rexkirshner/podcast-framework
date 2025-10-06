@@ -731,6 +731,12 @@ https://strangewater.xyz/about                     → https://strangewater.xyz/
   - Other platforms (Overcast, Pocket Casts, etc.)
 - **UX Improvement:** Replace generic "Subscribe" CTA with "Listen on:" dropdown showing episode-specific links
 - **Framework Value:** Reusable across all future podcasts (better user experience, higher engagement)
+- **Automation Requirement (Phase 2):** Automated platform link gathering script to replace manual CSV collection process
+  - Parse RSS feed URLs for Spotify/Apple/YouTube episode links
+  - Expand shortened URLs (spoti.fi, apple.co, youtu.be)
+  - API integration with Spotify/Apple/YouTube to fetch episode-specific URLs
+  - Auto-populate platform link fields in Sanity on import
+  - **Impact:** Manual CSV collection took 1 hour for 69 episodes. Automation will save hours per new podcast deployment
 
 ### 8.3 Phase 3 Features (Weeks 9-12 - Future)
 

@@ -47,6 +47,9 @@ export interface Episode {
   showNotes?: any[];
   guests?: Guest[];
   spotifyEpisodeId?: string;
+  spotifyLink?: string;
+  youtubeLink?: string;
+  applePodcastLink?: string;
   coverImage?: {
     asset: {
       _ref: string;
@@ -85,6 +88,9 @@ export async function getAllEpisodes(): Promise<Episode[]> {
     duration,
     description,
     spotifyEpisodeId,
+    spotifyLink,
+    youtubeLink,
+    applePodcastLink,
     "coverImage": coverImage.asset->{url},
     featured,
     "guests": guests[]->{
@@ -114,6 +120,9 @@ export async function getEpisodeBySlug(slug: string): Promise<Episode | null> {
     description,
     showNotes,
     spotifyEpisodeId,
+    spotifyLink,
+    youtubeLink,
+    applePodcastLink,
     "coverImage": coverImage.asset->{url},
     featured,
     "guests": guests[]->{
@@ -142,6 +151,9 @@ export async function getFeaturedEpisodes(): Promise<Episode[]> {
     duration,
     description,
     spotifyEpisodeId,
+    spotifyLink,
+    youtubeLink,
+    applePodcastLink,
     "coverImage": coverImage.asset->{url},
     featured,
     "guests": guests[]->{

@@ -121,11 +121,15 @@ Current action items and priorities. Reference `IMPLEMENTATION_PLAN.md` for full
 
 ## 🎯 Immediate Next Steps (Days 6-7)
 
-**Status:** Ready to Start
+**Status:** In Progress
 **Phase:** Phase 1b - Polish & QA
 **Priority:** High
 
 ### Tasks:
+- [✅] Host/Guest implementation (separate content types, side-by-side layout)
+- [✅] Episode page layout refinements (description above player, platform links)
+- [✅] Dynamic labels (Host/Hosts, Guest/Guests based on count)
+- [ ] Manual upload of episode artwork to Sanity (Strange Water only - 69 episodes)
 - [ ] Test sample of episode pages (verify all 69 work correctly)
 - [ ] Verify responsive design on mobile and tablet
 - [ ] Run Lighthouse audit (target: >90 performance)
@@ -139,10 +143,62 @@ Current action items and priorities. Reference `IMPLEMENTATION_PLAN.md` for full
 
 ---
 
+## 🔮 Future Automation Requirements (Phase 2/3)
+
+**Context:** Strange Water is a completed podcast (manual workflow acceptable)
+**Priority:** Critical for active podcasts in Phase 2+
+
+### Episode Artwork Automation
+
+**Current Limitation:**
+- RSS feed from Anchor.fm is no longer accessible (404 error)
+- Episode artwork visible in Spotify embed but not imported to Sanity
+- Strange Water: Manual upload acceptable (69 episodes, one-time task)
+- **Future podcasts:** MUST have automated artwork import
+
+**Required Solutions (Research & Implement in Phase 2):**
+
+1. **Spotify Web API Integration** (Recommended)
+   - [ ] Research Spotify Web API episode metadata endpoints
+   - [ ] Create Spotify Developer account and app credentials
+   - [ ] Build script to fetch episode data including artwork URLs
+   - [ ] Implement artwork download and Sanity upload
+   - [ ] Test with active podcast feed
+   - **Pros:** Direct source of truth, high-quality images
+   - **Cons:** Requires API credentials, rate limits
+
+2. **Alternative RSS Sources** (Fallback)
+   - [ ] Research Spotify RSS feed alternatives (if available)
+   - [ ] Check Apple Podcasts RSS feed structure
+   - [ ] Evaluate YouTube RSS feeds for video podcasts
+   - [ ] Build multi-source RSS parser with fallbacks
+   - **Pros:** No API credentials needed
+   - **Cons:** Feed availability varies by platform
+
+3. **Webhook-Based Automation** (Ideal)
+   - [ ] Research podcast hosting platform webhooks (Spotify, Anchor, etc.)
+   - [ ] Build webhook receiver endpoint
+   - [ ] Implement automatic Sanity update on new episode publish
+   - [ ] Include artwork, show notes, and all metadata
+   - **Pros:** Real-time, zero manual work
+   - **Cons:** Platform-dependent, complex setup
+
+**Success Criteria for Phase 2:**
+- New episode published → Artwork auto-imported within 5 minutes
+- Zero manual uploads required for active podcasts
+- Framework supports multiple podcast platforms (Spotify, Apple, YouTube)
+
+**Documentation Needed:**
+- API integration guide for Spotify/Apple
+- Webhook setup instructions
+- Troubleshooting guide for artwork import failures
+
+---
+
 ## Current Focus
 
-**Milestone:** Phase 1b - Sanity CMS Integration (Days 4-7)
-**Goal:** Polish, test, and QA before Phase 1 launch
+**Milestone:** Phase 1b - Polish & QA (Days 6-7)
+**Goal:** Complete Strange Water launch with manual artwork upload
 
 **Success Criteria:**
 - ✅ Sanity Studio configured (local)
@@ -151,6 +207,9 @@ Current action items and priorities. Reference `IMPLEMENTATION_PLAN.md` for full
 - ✅ All 69 episodes migrated to Sanity
 - ✅ All 72 guests imported
 - ✅ Guests linked to episodes
+- ✅ Host schema created and implemented
+- ✅ Episode page UI refinements complete
+- ⏳ Episode artwork uploaded manually (Strange Water only)
 - ⏳ All episode pages tested
 - ⏳ Lighthouse audit passing
 - ⏳ Ready for production launch

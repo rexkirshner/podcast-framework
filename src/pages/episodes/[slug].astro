@@ -68,10 +68,47 @@ if (episode.spotifyLink) {
         </div>
       </div>
 
+      <!-- Hosts Section (if any) -->
+      {episode.hosts && episode.hosts.length > 0 && (
+        <div class="mb-8">
+          <h2 class="text-lg font-semibold mb-3">Hosted by</h2>
+          <div class="flex flex-wrap gap-4">
+            {episode.hosts.map((host) => (
+              <div class="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm">
+                {host.photo?.url && (
+                  <img
+                    src={host.photo.url}
+                    alt={host.name}
+                    class="w-12 h-12 rounded-full object-cover"
+                  />
+                )}
+                <div>
+                  <p class="font-semibold text-gray-900">{host.name}</p>
+                  {(host.twitter || host.website || host.linkedin) && (
+                    <div class="flex gap-2 mt-1">
+                      {host.twitter && (
+                        <a
+                          href={`https://twitter.com/${host.twitter}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="text-xs text-blue-600 hover:text-blue-800"
+                        >
+                          @{host.twitter}
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <!-- Guests Section (if any) -->
       {episode.guests && episode.guests.length > 0 && (
         <div class="mb-8">
-          <h2 class="text-lg font-semibold mb-3">Guests</h2>
+          <h2 class="text-lg font-semibold mb-3">Featuring</h2>
           <div class="flex flex-wrap gap-4">
             {episode.guests.map((guest) => (
               <div class="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm">

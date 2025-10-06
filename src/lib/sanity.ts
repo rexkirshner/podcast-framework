@@ -34,6 +34,24 @@ export interface Guest {
   linkedin?: string;
 }
 
+export interface Host {
+  _id: string;
+  name: string;
+  slug: {
+    current: string;
+  };
+  bio?: string;
+  photo?: {
+    asset: {
+      _ref: string;
+      url: string;
+    };
+  };
+  twitter?: string;
+  website?: string;
+  linkedin?: string;
+}
+
 export interface Episode {
   _id: string;
   title: string;
@@ -45,6 +63,7 @@ export interface Episode {
   duration?: string;
   description: string;
   showNotes?: any[];
+  hosts?: Host[];
   guests?: Guest[];
   spotifyEpisodeId?: string;
   spotifyLink?: string;
@@ -93,6 +112,16 @@ export async function getAllEpisodes(): Promise<Episode[]> {
     applePodcastLink,
     "coverImage": coverImage.asset->{url},
     featured,
+    "hosts": hosts[]->{
+      _id,
+      name,
+      slug,
+      bio,
+      "photo": photo.asset->{url},
+      twitter,
+      website,
+      linkedin
+    },
     "guests": guests[]->{
       _id,
       name,
@@ -125,6 +154,16 @@ export async function getEpisodeBySlug(slug: string): Promise<Episode | null> {
     applePodcastLink,
     "coverImage": coverImage.asset->{url},
     featured,
+    "hosts": hosts[]->{
+      _id,
+      name,
+      slug,
+      bio,
+      "photo": photo.asset->{url},
+      twitter,
+      website,
+      linkedin
+    },
     "guests": guests[]->{
       _id,
       name,
@@ -156,6 +195,16 @@ export async function getFeaturedEpisodes(): Promise<Episode[]> {
     applePodcastLink,
     "coverImage": coverImage.asset->{url},
     featured,
+    "hosts": hosts[]->{
+      _id,
+      name,
+      slug,
+      bio,
+      "photo": photo.asset->{url},
+      twitter,
+      website,
+      linkedin
+    },
     "guests": guests[]->{
       _id,
       name,

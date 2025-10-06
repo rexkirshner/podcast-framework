@@ -53,6 +53,12 @@ export default defineType({
       of: [{type: 'block'}],
     }),
     defineField({
+      name: 'hosts',
+      title: 'Hosts',
+      type: 'array',
+      of: [{type: 'reference', to: {type: 'host'}}],
+    }),
+    defineField({
       name: 'guests',
       title: 'Guests',
       type: 'array',

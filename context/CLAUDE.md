@@ -137,44 +137,52 @@ sanity deploy                     # Deploy hosted Sanity Studio
 
 ## Current Status
 
-**Phase:** Phase 1b - Sanity CMS Integration (Day 4 complete)
-**Next Milestone:** Episode Data Migration (Days 5-7)
+**Phase:** Phase 1b - Sanity CMS Integration (Day 5 complete)
+**Next Milestone:** Polish & QA (Days 6-7)
 
-**Completed in Session 2025-10-05D (Day 4):**
-- ✅ Sanity CMS fully integrated with Astro
-- ✅ Three content schemas created (podcast, episode, guest)
-- ✅ Centralized configuration system (`src/config/site.ts`)
-- ✅ All pages fetch from Sanity (SSG, build-time)
-- ✅ Dynamic episode routing with `[slug].astro`
-- ✅ Cover image support with fallback to number badges
-- ✅ Logo from Sanity displaying in header
-- ✅ isActive toggle system for concluded shows
-- ✅ Sample content added and verified
+**Completed in Session 2025-10-06E (Day 5):**
+- ✅ RSS import script - 69 episodes imported automatically
+- ✅ Guest web scraper - 72 guests imported from strangewater.xyz
+- ✅ Automated guest-to-episode linking (63/67 auto-linked)
+- ✅ Data quality cleanup (removed 18 duplicate drafts)
+- ✅ Frontend UI fixes (HTML stripping, logo fallbacks, Spotify embeds)
+- ✅ sw[number] slug format (clean, short URLs)
+- ✅ Duration parsing fixed (HH:MM:SS format from RSS)
+- ✅ All scripts reusable across podcast projects
 
-**Key Architectural Additions:**
-- `src/config/site.ts` - Single source of truth for podcast metadata
-- `src/lib/sanity.ts` - Sanity client, TypeScript types, GROQ queries
-- `sanity/schemaTypes/` - Content schemas (podcast, episode, guest)
-- `src/pages/episodes/[slug].astro` - Dynamic episode pages with getStaticPaths
-- `sanity.config.ts` - Sanity Studio configuration (project: ej6443ov)
+**Sanity CMS Data:**
+- 69 episodes (all metadata, correct durations, clean slugs)
+- 72 guests (names, social links, profile image URLs)
+- 63 episodes linked to guests automatically
+- 4 episodes flagged for manual review
+- Profile images: User uploading via Sanity Studio (in progress)
 
-**isActive Toggle System:**
-- Controls messaging for active vs concluded podcasts
-- Active: "More episodes coming soon..." / "Subscribe to get notified..."
-- Inactive: "This podcast has concluded." / "Explore the complete archive..."
-- Applied to: episodes list page, individual episode pages
+**Import Scripts (Framework Feature):**
+- `scripts/import-from-rss.js` - RSS feed parser & episode importer
+- `scripts/import-guests-from-web.js` - Web scraper for guest data
+- `scripts/link-guests-to-episodes.js` - Automated guest-episode linking
+- `scripts/delete-all-episodes.js` - Bulk delete utility
+- `scripts/check-duplicate-guests.js` - Duplicate detection
+- `scripts/delete-draft-guests.js` - Draft cleanup
+- `scripts/fix-draft-references.js` - Reference repair
+
+**Key Commands:**
+- `npm run import:rss` - Import/update episodes from RSS
+- `npm run import:guests` - Scrape and import guests
+- `npm run link:guests` - Auto-link guests to episodes
+- `npm run delete:episodes` - Clean slate for re-import
 
 **Dev Servers:**
-- Astro: http://localhost:4321/ (all pages working with Sanity data)
+- Astro: http://localhost:4321/ (all 69 episodes live)
 - Sanity Studio: http://localhost:3333/ (local, not yet deployed)
 
-**Next Steps (Day 5 - Data Migration):**
-1. (Optional) Deploy Sanity Studio to hosted URL
-2. Bulk import 69 Strange Water episodes
-3. Add all guest information
-4. Upload episode cover images
-5. Test all episode pages
-6. Verify site performance with full dataset
+**Next Steps (Days 6-7 - Polish & QA):**
+1. Test all 69 episode pages (spot check sample)
+2. Verify responsive design on mobile/tablet
+3. Run Lighthouse audit (target: Performance >90)
+4. Test Spotify audio playback across browsers
+5. Verify staging deployment matches local
+6. Final QA before Phase 1 launch
 
 ---
 

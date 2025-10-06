@@ -1,11 +1,13 @@
 ---
-name: save-context
-description: Update all meta-documentation to reflect current code state
+name: save-full
+description: Comprehensive session documentation for breaks and handoffs (10-15 minutes)
 ---
 
-# /save-context Command
+# /save-full Command
 
-Update context documentation to reflect current state AND enable AI agent review/takeover. **Dual purpose:** low overhead for developer, rich context for AI agents.
+**Comprehensive session documentation** - Creates detailed SESSIONS.md entry with mental models and decision rationale. Use before breaks, handoffs, or milestones.
+
+**For regular session updates, use `/save` (2-3 minutes)**
 
 **Philosophy:**
 - Capture TodoWrite state for productivity tracking
@@ -17,31 +19,38 @@ Update context documentation to reflect current state AND enable AI agent review
 
 ## When to Use This Command
 
-**Always save:**
-- At session end (non-negotiable!)
-- Before breaks (even 5-minute breaks)
-- After completing work
-- After making decisions
+**Use /save-full (comprehensive) when:**
+- Taking break >1 week
+- Handing off to another agent/developer
+- Major milestone completed
+- Want detailed session history entry
 
-**Frequently save:**
-- Every 30-60 minutes during active work
-- When switching tasks
+**Frequency:** ~3-5 times per 20 sessions (occasional, not every session)
 
-**Rule of thumb:** If unsure, run it. Better to save too often than lose context.
+**Target time:** 10-15 minutes
+
+**For regular sessions:** Use `/save` instead (2-3 minutes)
+
+**Rule of thumb:** Most sessions use `/save`. Use `/save-full` when you need comprehensive documentation.
 
 ## What This Command Does
 
-**Dual-purpose approach:**
-1. **Captures TodoWrite state** - preserves your productivity tracking
-2. **Extracts mental models** - AI agents understand your thinking
-3. **Analyzes what changed** - updates only relevant files
-4. **Documents decision rationale** - WHY choices were made (DECISIONS.md)
-5. **Creates comprehensive session log** - structured with depth for AI (40-60 lines)
-6. **Auto-generates QUICK_REF.md** - dashboard for fast orientation
-7. **Suggests new files** when complexity demands it
-8. **Preserves work-in-progress** - exact resume point with mental model
+**Everything /save does:**
+1. Updates STATUS.md (current tasks, blockers, next steps)
+2. Auto-generates QUICK_REF.md (dashboard)
 
-**Not a checklist. Intelligent documentation for both you AND AI agents.**
+**PLUS comprehensive documentation:**
+3. **Creates SESSIONS.md entry** - Structured 40-60 lines with:
+   - What changed and why
+   - Problem solved (issue, constraints, approach, rationale)
+   - Mental models (current understanding, insights, gotchas)
+   - Files modified (with context)
+   - Work in progress (precise resume point)
+   - TodoWrite state (completed vs. pending)
+4. **Updates DECISIONS.md** - If significant decision made
+5. **Optional: Exports JSON** - For multi-agent workflows (--with-json flag)
+
+**Purpose:** Comprehensive context for AI agents to review, understand, and take over development.
 
 ## Execution Steps
 
@@ -319,12 +328,17 @@ Quick verification that docs tell coherent story:
 
 If inconsistencies found → fix them.
 
-### Step 7.5: Export JSON for Multi-Agent Workflows
+### Step 7.5: Export JSON for Multi-Agent Workflows (Optional)
 
-**ACTION:** Export SESSIONS.md to machine-readable JSON:
+**ACTION:** If user provided `--with-json` flag, export SESSIONS.md to machine-readable JSON:
 
 ```bash
-./scripts/export-sessions-json.sh
+if [ "$WITH_JSON" = "true" ]; then
+  echo ""
+  echo "📊 Exporting JSON..."
+  ./scripts/export-sessions-json.sh
+  echo "   ✅ .sessions-data.json created"
+fi
 ```
 
 This creates `context/.sessions-data.json` with structured session history for:
@@ -333,21 +347,23 @@ This creates `context/.sessions-data.json` with structured session history for:
 - Automated QA and reminders
 - AI agent consumption without Markdown parsing
 
-**Note:** This step is automatic and takes <1 second.
+**Usage:** `/save-full --with-json` to include JSON export
+
+**Note:** Optional - only run when you actually need JSON for automation/multi-agent workflows.
 
 ### Step 8: Report Updates
 
 Clear, concise summary:
 
 ```
-✅ Context Updated - Session [N]
+✅ Comprehensive Save Complete - Session [N]
 
 **Core Updates:**
 - SESSIONS.md - Comprehensive session log (Problem Solved, Mental Models, WIP)
 - STATUS.md - Updated current tasks, blockers, next priorities
 - DECISIONS.md - [Documented Decision D[ID] / No new decisions]
 - QUICK_REF.md - Auto-generated dashboard
-- .sessions-data.json - Machine-readable export for multi-agent workflows
+- [.sessions-data.json - Machine-readable export (if --with-json used)]
 
 **Optional Updates:**
 - [ARCHITECTURE.md - Updated system design / Skipped]
@@ -356,12 +372,16 @@ Clear, concise summary:
 **For AI Agents:**
 - Mental models captured in SESSIONS.md
 - Decision rationale in DECISIONS.md
-- Machine-readable JSON available in .sessions-data.json
+- [Machine-readable JSON available in .sessions-data.json]
 - Full context available for review/takeover
+
+**Time Invested:** ~10-15 minutes (comprehensive documentation)
 
 **Current Status:** [One-sentence project status]
 
-**Next Session:** [What to do next - from STATUS.md]
+**Next Session:**
+- Use /save for quick updates (2-3 min)
+- Use /save-full again before next break/handoff
 ```
 
 ## Important Guidelines

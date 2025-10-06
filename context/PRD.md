@@ -717,6 +717,21 @@ https://strangewater.xyz/about                     → https://strangewater.xyz/
 - Chapter markers in player
 - Key takeaways/highlights (manually curated)
 
+#### **Episode-Specific Player & Platform Links:**
+- **Problem:** Currently using show-level Spotify embeds (shows latest episode, not current episode)
+- **Solution:** Extract valid Spotify episode IDs via:
+  - Spotify API integration (search by episode title + podcast name)
+  - Expand shortened spoti.fi URLs from RSS descriptions
+  - Manual entry for legacy episodes
+- **Platform Links:** Direct episode links for:
+  - Spotify (episode-specific, not show-level)
+  - Apple Podcasts (episode-specific)
+  - YouTube (if video episodes available)
+  - RSS (direct MP3 link)
+  - Other platforms (Overcast, Pocket Casts, etc.)
+- **UX Improvement:** Replace generic "Subscribe" CTA with "Listen on:" dropdown showing episode-specific links
+- **Framework Value:** Reusable across all future podcasts (better user experience, higher engagement)
+
 ### 8.3 Phase 3 Features (Weeks 9-12 - Future)
 
 - Multi-language support (i18n via Astro's built-in `astro:i18n`)

@@ -3,11 +3,12 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { SITE_CONFIG } from "../config/site";
 import "../styles/global.css";
-import { getAllEpisodes } from "../lib/sanity";
+import { getAllEpisodes, getPodcastInfo } from "../lib/sanity";
 
-// Fetch latest episode
+// Fetch latest episode and podcast info
 const episodes = await getAllEpisodes();
 const latestEpisode = episodes[0]; // Episodes are already sorted by episodeNumber desc
+const podcastInfo = await getPodcastInfo();
 
 // Format date helper
 function formatDate(dateString: string) {
@@ -17,6 +18,11 @@ function formatDate(dateString: string) {
     month: "long",
     day: "numeric",
   });
+}
+
+// Strip HTML tags for preview text
+function stripHTML(html: string) {
+  return html.replace(/<[^>]*>/g, '').trim();
 }
 ---
 
@@ -76,6 +82,12 @@ function formatDate(dateString: string) {
 									alt={latestEpisode.title}
 									class="flex-shrink-0 w-24 h-24 rounded-lg object-cover"
 								/>
+							) : podcastInfo?.logo?.url ? (
+								<img
+									src={podcastInfo.logo.url}
+									alt={SITE_CONFIG.name}
+									class="flex-shrink-0 w-24 h-24 rounded-lg object-cover"
+								/>
 							) : (
 								<div class="flex-shrink-0 w-24 h-24 bg-blue-100 rounded-lg flex items-center justify-center">
 									<span class="text-3xl font-bold text-blue-600">{latestEpisode.episodeNumber}</span>
@@ -89,7 +101,7 @@ function formatDate(dateString: string) {
 									{latestEpisode.title}
 								</h3>
 								<p class="text-gray-600 mb-3">
-									{latestEpisode.description.substring(0, 150)}...
+									{stripHTML(latestEpisode.description).substring(0, 150)}...
 								</p>
 								<div class="flex gap-4 text-sm text-gray-500">
 									<span>{formatDate(latestEpisode.publishDate)}</span>

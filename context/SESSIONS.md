@@ -549,6 +549,204 @@ podcast website/
 
 ---
 
+## Session 2025-10-06E: Day 5 - Complete Data Migration System
+
+**Duration:** ~3 hours
+**Phase:** Phase 1b - Sanity CMS Integration (Days 5-7)
+**Status:** ✅ Complete
+
+### What We Did
+
+**1. RSS Feed Import Script (`scripts/import-from-rss.js`):**
+- Automatically fetches episodes from Anchor.fm RSS feed (69 episodes)
+- Parses XML using xml2js, extracts all episode metadata
+- Generates clean slugs: `sw[episode-number]` (e.g., `/episodes/sw57`)
+- Deterministic IDs: `episode-sw${episodeNumber}` for conflict-free re-imports
+- Fixed duration parsing to handle HH:MM:SS format from RSS (was returning 0:00)
+- Extracts Spotify episode IDs from RSS links (for future use)
+- Uses `createOrReplace()` API for idempotent updates (safe to re-run)
+- Result: All 69 episodes imported successfully with zero errors
+
+**2. Guest Web Scraper (`scripts/import-guests-from-web.js`):**
+- Scrapes guest data from strangewater.xyz/guests (72 guests)
+- Extracts: names, Twitter handles, websites, LinkedIn URLs, profile image URLs
+- Uses cheerio for HTML parsing
+- Generates clean slugs from guest names (removes 0x prefix, special chars)
+- Converts Twitter URLs to handles (strips domain for schema compliance)
+- Added 200ms delay between requests to be respectful to server
+- Fixed duplicate detection using Set to prevent counting same guest twice
+- Result: 72 guests imported with all social links
+
+**3. Automated Guest-to-Episode Linking (`scripts/link-guests-to-episodes.js`):**
+- Matches guests to episodes by analyzing title + description text
+- Smart name variation matching (handles "0xToki", "Toki", case variations)
+- Excludes host (LogarithmicRex) from all guest lists automatically
+- Special logic for common names (Will Griffiths/Patterson - only match if in title with "w/")
+- Detects duplicate references and prevents adding same guest twice
+- Flags ambiguous cases for manual review (too many matches, no matches)
+- Result: 63 of 67 episodes auto-linked, 4 flagged for manual review
+
+**4. Data Quality Cleanup Scripts:**
+- `scripts/check-duplicate-guests.js` - Identified 18 draft guest duplicates
+- `scripts/delete-draft-guests.js` - Removed draft documents
+- `scripts/fix-draft-references.js` - Updated episode references from drafts to published guests
+- `scripts/delete-all-episodes.js` - Clean slate utility for re-imports
+- Result: Zero duplicates, clean dataset
+
+**5. Frontend UI Fixes:**
+- Added `stripHTML()` helper to remove tags from preview text (episodes list, homepage)
+- Fixed logo fallback hierarchy: episode cover → podcast logo → number badge
+- Updated Spotify embed to use show-level (episode-specific IDs from Anchor RSS aren't valid)
+- Fixed HTML rendering on episode detail pages (use `set:html` directive)
+- Added link styling for episode descriptions (blue, underline, hover effects)
+- Restarted dev server to clear cached build data (fixed durations, slugs)
+
+**6. PRD Updates:**
+- Added Phase 2 feature documentation for episode-specific player & platform links
+- Documented current limitation (show-level Spotify embeds)
+- Outlined solution paths (Spotify API, URL expansion, manual entry)
+
+### Files Created
+
+**Import Scripts:**
+- `scripts/import-from-rss.js` - RSS feed parser & episode importer (274 lines)
+- `scripts/import-guests-from-web.js` - Web scraper for guest data (355 lines)
+- `scripts/link-guests-to-episodes.js` - Automated guest-episode linking (238 lines)
+
+**Utility Scripts:**
+- `scripts/delete-all-episodes.js` - Bulk delete utility (56 lines)
+- `scripts/check-duplicate-guests.js` - Duplicate detection (43 lines)
+- `scripts/delete-draft-guests.js` - Draft cleanup (44 lines)
+- `scripts/fix-draft-references.js` - Reference repair (67 lines)
+
+### Files Modified
+
+- `src/pages/index.astro:45-50` - Added stripHTML helper, logo fallback
+- `src/pages/episodes/index.astro:48-85` - Added stripHTML, logo fallback
+- `src/pages/episodes/[slug].astro:30-35` - Fixed Spotify embed, HTML rendering
+- `package.json:12-14` - Added npm scripts (import:rss, import:guests, link:guests)
+- `context/PRD.md:720-733` - Added Phase 2 feature section
+
+**Deleted:**
+- `src/pages/episodes/1.astro` - Replaced by dynamic [slug].astro routing
+
+### Decisions Made
+
+**1. RSS Import as Framework Feature:**
+- Decision: Build RSS importer as reusable framework tool (not one-off script)
+- Rationale: Every podcast migration needs episode import capability
+- Implementation: Generic enough to work with any Anchor.fm/Spotify RSS feed
+- Future: Could add adapters for Apple Podcasts, Libsyn, Buzzsprout feeds
+
+**2. Deterministic IDs Based on Episode Number:**
+- Decision: Use `episode-sw${episodeNumber}` as document ID
+- Rationale: Prevents duplicates when re-importing same episodes
+- Trade-off: Episode numbers must be stable (can't renumber episodes later)
+- Benefit: `createOrReplace()` safely updates existing episodes
+
+**3. sw[number] Slug Format:**
+- Decision: Use `sw57` instead of long title-based slugs
+- Rationale: Clean, short, memorable URLs
+- Example: `/episodes/sw57` vs `/episodes/decentralized-resiliency-the-story-of-badgerdao`
+- User suggestion: Rex explicitly requested this format
+
+**4. Show-Level Spotify Embeds (MVP):**
+- Decision: Use show embed for all episodes (not episode-specific)
+- Rationale: Anchor RSS episode IDs aren't valid Spotify episode IDs
+- Trade-off: All episodes show same player (starts at latest episode)
+- Phase 2 solution: Implement Spotify API integration or URL expansion
+
+**5. Automated Guest Linking with Manual Review:**
+- Decision: Auto-link where confident (63/67), flag ambiguous cases (4)
+- Rationale: Faster than 100% manual, safer than 100% automated
+- Flagged cases: Missing guests (twMatt, 0xTaiga not in database), trailer/announcement episodes
+- User responsibility: Final verification in Sanity Studio
+
+### Current State
+
+**Sanity CMS Data:**
+- ✅ 69 episodes fully imported (all metadata, correct durations, clean slugs)
+- ✅ 72 guests imported (names, social links, profile image URLs)
+- ✅ 63 episodes linked to guests automatically
+- 🚧 4 episodes flagged for manual review (2 missing guests, 2 no guests expected)
+- 🚧 Profile images not yet uploaded (URLs available in `_profileImageUrl` field)
+- 🚧 Guest bios not yet added (scraped job titles in `_jobTitle` field)
+
+**Dev Servers:**
+- ✅ Astro: http://localhost:4321/ (all pages working with full dataset)
+- ✅ Sanity Studio: http://localhost:3333/ (local, not yet deployed)
+
+**Import Scripts:**
+- ✅ `npm run import:rss` - Import/update episodes from RSS
+- ✅ `npm run import:guests` - Scrape and import guests
+- ✅ `npm run link:guests` - Auto-link guests to episodes
+- ✅ `npm run delete:episodes` - Clean slate for re-import
+
+**Phase:** Phase 1b - Sanity CMS Integration (Day 5 complete, Days 6-7 remaining)
+**Next Milestone:** Polish & QA (Days 6-7), then Phase 1 launch
+
+### Work In Progress
+
+**Sanity Data (User uploading):**
+- User is manually uploading profile photos for all 72 guests via Sanity Studio
+- Profile image URLs preserved in `_profileImageUrl` field for reference
+
+**Git Checkpoint:**
+- All code changes ready to commit
+- Need to push to GitHub to trigger Netlify deployment
+- Sanity data will automatically sync to staging (same project ID/dataset)
+
+**Next immediate actions:**
+1. Update context/CLAUDE.md with Day 5 completion status
+2. Update context/tasks/next-steps.md
+3. Update context/meta/claude-context-feedback.md
+4. Commit all changes to git
+5. Push to GitHub (triggers deploy to staging.strangewater.xyz)
+
+### Next Session
+
+**Primary Goal:** Days 6-7 - Polish, Testing & QA
+
+**Remaining Tasks:**
+- [ ] Upload remaining guest profile photos (in progress)
+- [ ] Test all 69 episode pages (spot check representative sample)
+- [ ] Verify responsive design on mobile/tablet
+- [ ] Run Lighthouse audit (target: Performance >90)
+- [ ] Test Spotify audio playback across browsers
+- [ ] Verify all navigation links work
+- [ ] Check SEO meta tags on all pages
+- [ ] Test 404 page
+- [ ] Verify staging deployment matches local
+
+**End of Days 6-7 Goal:** All episodes live, tested, ready for Phase 1 launch
+
+### Notes
+
+**Key Architectural Wins:**
+- Import scripts are reusable across all podcast projects (RSS standard)
+- Deterministic IDs prevent duplicate chaos during re-imports
+- Guest linking automation saved hours of manual data entry
+- Clean separation: scripts/ for data migration, src/ for application code
+
+**Import Script Metrics:**
+- RSS import: 69 episodes in ~15 seconds (4.6 episodes/second)
+- Guest scraper: 72 guests in ~20 seconds (3.6 guests/second with delay)
+- Guest linking: 67 episodes processed in <1 second
+
+**Data Quality Observations:**
+- RSS feed durations were in HH:MM:SS format (not seconds as expected)
+- Anchor episode IDs from RSS link field aren't valid Spotify IDs
+- Draft documents created by Sanity Studio required cleanup
+- LogarithmicRex (host) was incorrectly included as guest on all episodes
+
+**User Feedback:**
+- User appreciated automated import approach (vs manual entry for 69 episodes)
+- User agreed with show-level embeds as MVP compromise
+- User explicitly requested sw[number] slug format (excellent suggestion)
+- User confirmed automated guest linking was accurate (63/67 auto-linked)
+
+---
+
 ## Session Template
 
 ```markdown

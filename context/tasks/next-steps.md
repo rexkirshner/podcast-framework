@@ -163,6 +163,30 @@ None currently. All prerequisites completed (PRD, Implementation Plan, Context S
 
 ---
 
+## 🔔 Upgrade Reminders
+
+### Claude Context System v2.0.0 Upgrade
+**Status:** Deferred to optimal window
+**Version Available:** v2.0.0 (CONTEXT.md, STATUS.md, DECISIONS.md, QUICK_REF.md)
+**Current Version:** v1.x (CLAUDE.md, SESSIONS.md)
+
+**⚠️ PROACTIVE REMINDER TRIGGERS:**
+1. **After Phase 1 launch complete** (Day 15+) - REMIND USER
+2. **Before Phase 2 planning starts** (Day 16-20) - REMIND USER
+3. **If context duplication pain emerges** - REMIND USER
+4. **Before Phase 3 framework generalization** - REMIND USER
+
+**Why upgrade eventually:**
+- Eliminates status duplication across files
+- Single source of truth (STATUS.md)
+- Decision log for "why" (DECISIONS.md)
+- Streamlined 2-tier workflow
+- Auto-generated dashboard (QUICK_REF.md)
+
+**Upgrade command:** `/update-context-system`
+
+---
+
 ## Notes
 
 - Reference `IMPLEMENTATION_PLAN.md` for complete Day 1-60 task breakdown

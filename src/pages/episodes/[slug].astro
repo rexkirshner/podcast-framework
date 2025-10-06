@@ -24,8 +24,15 @@ const { episode } = Astro.props as { episode: Episode };
 // Fetch podcast info for isActive status
 const podcastInfo = await getPodcastInfo();
 
-// Use show-level Spotify embed (episode-specific IDs from Anchor RSS aren't valid Spotify IDs)
-const spotifyEmbedUrl = `https://open.spotify.com/embed/show/${SITE_CONFIG.spotifyShowId}?utm_source=generator`;
+// Extract Spotify episode ID from spotifyLink and build embed URL
+let spotifyEmbedUrl = `https://open.spotify.com/embed/show/${SITE_CONFIG.spotifyShowId}?utm_source=generator`;
+if (episode.spotifyLink) {
+  // Extract episode ID from URL like: https://open.spotify.com/episode/5vQKPYz3yNPqVYZqWqWqWq
+  const episodeIdMatch = episode.spotifyLink.match(/episode\/([a-zA-Z0-9]+)/);
+  if (episodeIdMatch && episodeIdMatch[1]) {
+    spotifyEmbedUrl = `https://open.spotify.com/embed/episode/${episodeIdMatch[1]}?utm_source=generator`;
+  }
+}
 ---
 
 <html lang="en">

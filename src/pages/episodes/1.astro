@@ -2,6 +2,7 @@
 // Hardcoded episode page - will be replaced with dynamic data in Phase 1b
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import { SITE_CONFIG } from "../../config/site";
 import "../../styles/global.css";
 
 const episode = {
@@ -9,9 +10,6 @@ const episode = {
   title: "Vitalik Buterin - The Future of Ethereum",
   publishDate: "2022-03-15",
   duration: "1:24:30",
-  // Using a real Strange Water Spotify episode ID for testing
-  // This will be replaced with actual episode data from Sanity in Phase 1b
-  spotifyEpisodeId: "3ScJswwFUJ8fCXVQcqYWk8",
   description: `In this inaugural episode of Strange Water, we sit down with Ethereum co-founder Vitalik Buterin to discuss the future of decentralized technology, the upcoming merge to proof-of-stake, and his vision for Web3.
 
 We explore the technical challenges of scaling Ethereum, the philosophy behind decentralization, and what it takes to build technology that could reshape how society coordinates and transacts.`,
@@ -31,7 +29,7 @@ We explore the technical challenges of scaling Ethereum, the philosophy behind d
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>Episode {episode.number}: {episode.title} - Strange Water Podcast</title>
+    <title>{episode.title} - {SITE_CONFIG.name}</title>
     <meta name="description" content={episode.description.substring(0, 160)} />
   </head>
   <body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
@@ -58,9 +56,9 @@ We explore the technical challenges of scaling Ethereum, the philosophy behind d
       <div class="mb-12 bg-white rounded-lg shadow-sm p-6">
         <iframe
           style="border-radius:12px"
-          src={`https://open.spotify.com/embed/episode/${episode.spotifyEpisodeId}?utm_source=generator`}
+          src={`https://open.spotify.com/embed/show/${SITE_CONFIG.spotifyShowId}?utm_source=generator`}
           width="100%"
-          height="152"
+          height="232"
           frameBorder="0"
           allowfullscreen=""
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
@@ -91,20 +89,24 @@ We explore the technical challenges of scaling Ethereum, the philosophy behind d
 
       <!-- Subscribe CTA -->
       <div class="bg-blue-50 rounded-lg p-6 text-center">
-        <h3 class="text-xl font-semibold mb-2">Subscribe to Strange Water</h3>
+        <h3 class="text-xl font-semibold mb-2">Subscribe to {SITE_CONFIG.name}</h3>
         <p class="text-gray-600 mb-4">
           Get notified when new episodes are released
         </p>
         <div class="flex gap-4 justify-center">
           <a
-            href="https://open.spotify.com/show/strangewater"
+            href={SITE_CONFIG.links.spotify}
             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Spotify
           </a>
           <a
-            href="https://podcasts.apple.com/strangewater"
+            href={SITE_CONFIG.links.apple}
             class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Apple Podcasts
           </a>

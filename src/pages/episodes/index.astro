@@ -1,20 +1,23 @@
 ---
-// Episodes list page - will be populated from Sanity in Phase 1b
+// Episodes list page - fetching from Sanity
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import "../../styles/global.css";
+import { getAllEpisodes, getPodcastInfo } from "../../lib/sanity";
 
-// Hardcoded episodes array - will be replaced with Sanity query
-const episodes = [
-  {
-    number: 1,
-    slug: "1",
-    title: "Vitalik Buterin - The Future of Ethereum",
-    description: "Exploring the future of decentralized technology, the merge to proof-of-stake, and the vision for Web3.",
-    publishDate: "2022-03-15",
-    duration: "1:24:30",
-  },
-];
+// Fetch all episodes and podcast info from Sanity
+const episodes = await getAllEpisodes();
+const podcastInfo = await getPodcastInfo();
+
+// Format date helper
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 ---
 
 <html lang="en">
@@ -42,19 +45,27 @@ const episodes = [
       <div class="grid grid-cols-1 gap-6">
         {episodes.map((episode) => (
           <a
-            href={`/episodes/${episode.slug}`}
+            href={`/episodes/${episode.slug.current}`}
             class="block bg-white rounded-lg shadow-md hover:shadow-lg transition p-6"
           >
             <div class="flex items-start gap-6">
-              <!-- Episode Number Badge -->
-              <div class="flex-shrink-0 w-20 h-20 bg-blue-100 rounded-lg flex items-center justify-center">
-                <span class="text-2xl font-bold text-blue-600">{episode.number}</span>
-              </div>
+              <!-- Episode Cover Image or Number Badge -->
+              {episode.coverImage?.url ? (
+                <img
+                  src={episode.coverImage.url}
+                  alt={episode.title}
+                  class="flex-shrink-0 w-20 h-20 rounded-lg object-cover"
+                />
+              ) : (
+                <div class="flex-shrink-0 w-20 h-20 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <span class="text-2xl font-bold text-blue-600">{episode.episodeNumber}</span>
+                </div>
+              )}
 
               <!-- Episode Content -->
               <div class="flex-grow">
                 <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
-                  Episode {episode.number}
+                  Episode {episode.episodeNumber}
                 </p>
                 <h2 class="text-2xl font-semibold text-gray-900 mb-2 hover:text-blue-600 transition">
                   {episode.title}
@@ -63,9 +74,13 @@ const episodes = [
                   {episode.description}
                 </p>
                 <div class="flex gap-4 text-sm text-gray-500">
-                  <span>{episode.publishDate}</span>
-                  <span>•</span>
-                  <span>{episode.duration}</span>
+                  <span>{formatDate(episode.publishDate)}</span>
+                  {episode.duration && (
+                    <>
+                      <span>•</span>
+                      <span>{episode.duration}</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -73,11 +88,18 @@ const episodes = [
         ))}
       </div>
 
-      <!-- Coming Soon Message (temporary) -->
-      <div class="mt-12 text-center text-gray-500">
-        <p class="text-lg">More episodes coming soon...</p>
-        <p class="text-sm mt-2">Subscribe to get notified when new episodes are released</p>
-      </div>
+      <!-- Coming Soon or Archive Message -->
+      {podcastInfo?.isActive ? (
+        <div class="mt-12 text-center text-gray-500">
+          <p class="text-lg">More episodes coming soon...</p>
+          <p class="text-sm mt-2">Subscribe to get notified when new episodes are released</p>
+        </div>
+      ) : (
+        <div class="mt-12 text-center text-gray-500">
+          <p class="text-lg">This podcast has concluded.</p>
+          <p class="text-sm mt-2">Explore the complete archive of episodes above</p>
+        </div>
+      )}
     </main>
 
     <Footer />

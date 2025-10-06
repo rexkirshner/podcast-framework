@@ -1,5 +1,6 @@
 ---
 // Basic footer component - will be enhanced with config in Phase 1b
+import { SITE_CONFIG } from "../config/site";
 const currentYear = new Date().getFullYear();
 ---
 
@@ -8,10 +9,9 @@ const currentYear = new Date().getFullYear();
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
       <!-- Brand Section -->
       <div>
-        <h3 class="text-white font-bold text-lg mb-3">Strange Water</h3>
+        <h3 class="text-white font-bold text-lg mb-3">{SITE_CONFIG.name}</h3>
         <p class="text-sm text-gray-400">
-          Exploring Ethereum and Web3 through conversations with builders,
-          researchers, and visionaries.
+          {SITE_CONFIG.description}
         </p>
       </div>
 
@@ -37,7 +37,7 @@ const currentYear = new Date().getFullYear();
         <ul class="space-y-2 text-sm">
           <li>
             <a
-              href="https://open.spotify.com/show/strangewater"
+              href={SITE_CONFIG.links.spotify}
               class="hover:text-white transition"
               target="_blank"
               rel="noopener noreferrer"
@@ -47,7 +47,7 @@ const currentYear = new Date().getFullYear();
           </li>
           <li>
             <a
-              href="https://podcasts.apple.com/strangewater"
+              href={SITE_CONFIG.links.apple}
               class="hover:text-white transition"
               target="_blank"
               rel="noopener noreferrer"
@@ -57,7 +57,7 @@ const currentYear = new Date().getFullYear();
           </li>
           <li>
             <a
-              href="https://www.youtube.com/@strangewater"
+              href={SITE_CONFIG.links.youtube}
               class="hover:text-white transition"
               target="_blank"
               rel="noopener noreferrer"
@@ -71,7 +71,7 @@ const currentYear = new Date().getFullYear();
 
     <!-- Copyright -->
     <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
-      <p>&copy; {currentYear} Strange Water. All rights reserved.</p>
+      <p>&copy; {currentYear} {SITE_CONFIG.name}. All rights reserved.</p>
     </div>
   </div>
 </footer>

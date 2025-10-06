@@ -360,6 +360,195 @@ podcast website/
 
 ---
 
+## Session 2025-10-05D: Day 4 - Sanity CMS Integration Complete
+
+**Duration:** ~3 hours
+**Phase:** Phase 1b - Sanity CMS Integration
+**Status:** ✅ Complete
+
+### What We Did
+
+**1. Sanity CMS Setup:**
+- Installed Sanity packages manually: `sanity`, `@sanity/client`, `@sanity/vision`, `react`, `react-dom`
+- Created three content schemas:
+  - `sanity/schemaTypes/podcast.ts` - Podcast metadata (name, description, logo, spotifyShowId, **isActive** toggle)
+  - `sanity/schemaTypes/episode.ts` - Episodes (title, slug, episodeNumber, publishDate, duration, description, showNotes, guests, spotifyEpisodeId, coverImage, featured)
+  - `sanity/schemaTypes/guest.ts` - Guests (name, bio, photo, social links)
+- Created `sanity.config.ts` with project ID `ej6443ov`, dataset `production`
+- Created `sanity.cli.ts` for deployment commands
+- Sanity Studio running at http://localhost:3333/
+
+**2. Centralized Configuration System:**
+- Created `src/config/site.ts` - Single source of truth for all podcast metadata
+- Contains: name, tagline, description, spotifyShowId, all social links
+- Updated all components (Header, Footer, index, about, episodes) to import from config
+- Eliminates scattered hardcoded URLs throughout codebase
+
+**3. Sanity Client Integration:**
+- Created `src/lib/sanity.ts` with:
+  - TypeScript interfaces: `Podcast`, `Episode`, `Guest`
+  - GROQ queries for all content types
+  - Helper functions: `getAllEpisodes()`, `getEpisodeBySlug()`, `getFeaturedEpisodes()`, `getPodcastInfo()`, `getAllGuests()`
+- All data fetching now happens at build time (SSG)
+
+**4. Updated All Pages to Use Sanity:**
+- `src/pages/index.astro` - Fetches latest episode from Sanity
+- `src/pages/episodes/index.astro` - Lists all episodes from Sanity
+- `src/pages/episodes/[slug].astro` (NEW) - Dynamic episode pages with getStaticPaths
+- `src/components/Header.astro` - Displays logo from Sanity podcast info
+- All pages show cover images if uploaded, fallback to episode number badge
+
+**5. isActive Toggle System (for concluded shows):**
+- Added `isActive` boolean field to podcast schema
+- Controls messaging throughout site:
+  - If active: "More episodes coming soon..." / "Subscribe to get notified..."
+  - If inactive: "This podcast has concluded." / "Explore the complete archive..."
+- Updated: episodes list page, individual episode pages
+- Perfect for Strange Water (concluded podcast with full archive)
+
+**6. Sample Content Added:**
+- Added podcast info in Sanity Studio (Strange Water metadata with logo)
+- Added guest: Chris Chauvin
+- Added Episode 1: "What is Ethereum and Why Should We Care? w/ Chris Chauvin"
+
+### Files Created/Modified
+
+**New files:**
+- `src/config/site.ts` - Centralized configuration
+- `src/lib/sanity.ts` - Sanity client with TypeScript types and GROQ queries
+- `sanity.config.ts` - Sanity Studio configuration
+- `sanity.cli.ts` - Sanity CLI configuration
+- `sanity/schemaTypes/podcast.ts` - Podcast schema with isActive toggle
+- `sanity/schemaTypes/episode.ts` - Episode schema
+- `sanity/schemaTypes/guest.ts` - Guest schema
+- `sanity/schemaTypes/index.ts` - Schema exports
+- `src/pages/episodes/[slug].astro` - Dynamic episode pages
+- `.sanity/` - Sanity runtime files (gitignored)
+
+**Modified files:**
+- `src/pages/index.astro` - Fetches latest episode from Sanity, shows cover image
+- `src/pages/episodes/index.astro` - Fetches all episodes from Sanity, shows cover images, isActive messaging
+- `src/pages/episodes/1.astro` - Updated with centralized config (will be replaced by [slug].astro)
+- `src/components/Header.astro` - Fetches and displays logo from Sanity
+- `src/components/Footer.astro` - Uses centralized config
+- `src/pages/about.astro` - Uses centralized config
+- `.env.example` - Updated with Sanity project ID
+- `package.json` - Added dependencies: sanity, @sanity/client, @sanity/vision, react, react-dom, styled-components
+- `package-lock.json` - Lockfile updates
+
+### Decisions Made
+
+**1. Manual Sanity Setup (not CLI):**
+- Problem: `npm create sanity@latest` authentication flow got stuck (browser redirect issue)
+- Solution: Manually installed packages and created config files
+- Rationale: User already created project via Sanity web UI
+- Result: Full control, same outcome, no authentication issues
+
+**2. Centralized Configuration Pattern:**
+- Problem: Podcast URLs scattered across Header, Footer, index, about, episodes
+- Solution: Created `src/config/site.ts` as single source of truth
+- Rationale: User explicitly identified this as a problem ("we aren't storing links in a centralized place")
+- Benefits: Easy updates, no URL hunting, clean imports
+
+**3. isActive Toggle for Concluded Shows:**
+- Problem: Strange Water is a concluded podcast (won't release new episodes)
+- Solution: Added `isActive` boolean to podcast schema
+- Rationale: Different messaging for active vs archived shows
+- Implementation: Conditional text throughout site based on toggle
+- Example: "More episodes coming soon" → "This podcast has concluded"
+
+**4. Cover Images with Fallback:**
+- Implementation: Check for `coverImage?.url` first, fallback to number badge
+- Rationale: Episodes may or may not have custom cover art
+- Result: Graceful degradation, consistent visual hierarchy
+
+### Current State
+
+**Sanity Studio:**
+- ✅ Running locally at http://localhost:3333/
+- ✅ Three schemas configured (podcast, episode, guest)
+- ✅ Sample content added
+- 🚧 Not yet deployed to hosted URL (requires hostname selection)
+
+**Astro Site:**
+- ✅ All pages fetch from Sanity
+- ✅ Dynamic episode routes working
+- ✅ Cover images displaying correctly
+- ✅ Logo from Sanity showing in header
+- ✅ isActive toggle system operational
+
+**Project Structure:**
+```
+podcast website/
+├── src/
+│   ├── config/
+│   │   └── site.ts              ✅ NEW (centralized config)
+│   ├── lib/
+│   │   └── sanity.ts            ✅ NEW (client + GROQ queries)
+│   ├── pages/
+│   │   ├── episodes/
+│   │   │   ├── [slug].astro     ✅ NEW (dynamic routes)
+│   │   │   ├── index.astro      ✅ (fetches from Sanity)
+│   │   │   └── 1.astro          🚧 (legacy, can delete)
+│   │   └── index.astro          ✅ (fetches from Sanity)
+├── sanity/
+│   ├── schemaTypes/
+│   │   ├── podcast.ts           ✅ NEW
+│   │   ├── episode.ts           ✅ NEW
+│   │   ├── guest.ts             ✅ NEW
+│   │   └── index.ts             ✅ NEW
+│   ├── sanity.config.ts         ✅ NEW
+│   └── sanity.cli.ts            ✅ NEW
+└── package.json                 ✅ (added Sanity deps)
+```
+
+**Dev Servers:**
+- Astro: http://localhost:4321/
+- Sanity Studio: http://localhost:3333/
+
+**Phase:** Phase 1b - Sanity CMS Integration (Day 4 complete, Days 5-7 remaining)
+**Next Milestone:** Deploy Sanity Studio, migrate real episode data
+
+### Work In Progress
+
+**Ready to commit and push:**
+- All Sanity integration code complete
+- All pages working with Sanity data
+- Dev servers running successfully
+- Sample content verified
+
+**Next actions:**
+1. Deploy Sanity Studio to hosted URL (optional - can use local for now)
+2. Commit all changes to git
+3. Push to GitHub
+4. Delete `src/pages/episodes/1.astro` (replaced by [slug].astro)
+
+### Next Session
+
+**Primary Goal:** Migrate Real Episode Data
+
+**Tasks:**
+- [ ] Deploy Sanity Studio to production (optional)
+- [ ] Bulk import 69 Strange Water episodes
+- [ ] Add all guest information
+- [ ] Upload episode cover images
+- [ ] Test all episode pages
+- [ ] Verify search/filter functionality
+
+**End of Day 5 Goal:** All 69 episodes migrated, site fully powered by Sanity
+
+### Notes
+
+- Sanity authentication via CLI has known issues - manual setup is reliable alternative
+- isActive toggle is architecturally important for framework reusability (supports both active and concluded shows)
+- Centralized config pattern (`src/config/site.ts`) should be template for all podcast instances
+- Dynamic routing with `[slug].astro` + `getStaticPaths()` is core Astro SSG pattern
+- Build-time data fetching (not client-side) preserves zero-JS, instant-load benefits
+- Sanity project ID: `ej6443ov`, dataset: `production`
+- Dev velocity: Completed entire Sanity integration (Day 4 goal) in single session
+
+---
+
 ## Session Template
 
 ```markdown

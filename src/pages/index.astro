@@ -1,7 +1,23 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { SITE_CONFIG } from "../config/site";
 import "../styles/global.css";
+import { getAllEpisodes } from "../lib/sanity";
+
+// Fetch latest episode
+const episodes = await getAllEpisodes();
+const latestEpisode = episodes[0]; // Episodes are already sorted by episodeNumber desc
+
+// Format date helper
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 ---
 
 <html lang="en">
@@ -10,8 +26,8 @@ import "../styles/global.css";
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Strange Water - Exploring Ethereum and Web3</title>
-		<meta name="description" content="Conversations with builders, researchers, and visionaries shaping the future of decentralized technology." />
+		<title>{SITE_CONFIG.name} - {SITE_CONFIG.tagline}</title>
+		<meta name="description" content={SITE_CONFIG.description} />
 	</head>
 	<body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
 		<Header />
@@ -20,66 +36,82 @@ import "../styles/global.css";
 			<!-- Hero Section -->
 			<section class="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20">
 				<div class="max-w-4xl mx-auto px-4 text-center">
-					<h1 class="text-5xl font-bold mb-4">Strange Water</h1>
+					<h1 class="text-5xl font-bold mb-4">{SITE_CONFIG.name}</h1>
 					<p class="text-xl text-blue-100 mb-8">
-						Exploring Ethereum and Web3 through conversations with builders,
-						researchers, and visionaries
+						{SITE_CONFIG.description}
 					</p>
 					<div class="flex gap-4 justify-center">
 						<a
-							href="https://open.spotify.com/show/strangewater"
+							href={SITE_CONFIG.links.spotify}
 							class="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
+							target="_blank"
+							rel="noopener noreferrer"
 						>
 							Listen on Spotify
 						</a>
-						<a
-							href="/episodes/1"
-							class="px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-600 transition border border-blue-400"
-						>
-							Latest Episode
-						</a>
+						{latestEpisode && (
+							<a
+								href={`/episodes/${latestEpisode.slug.current}`}
+								class="px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-600 transition border border-blue-400"
+							>
+								Latest Episode
+							</a>
+						)}
 					</div>
 				</div>
 			</section>
 
 			<!-- Latest Episode Section -->
-			<section class="max-w-4xl mx-auto px-4 py-16">
-				<h2 class="text-3xl font-bold mb-8">Latest Episode</h2>
-				<a
-					href="/episodes/1"
-					class="block bg-white rounded-lg shadow-md hover:shadow-lg transition p-6"
-				>
-					<div class="flex items-start gap-4">
-						<div class="flex-shrink-0 w-24 h-24 bg-blue-100 rounded-lg flex items-center justify-center">
-							<span class="text-3xl font-bold text-blue-600">1</span>
-						</div>
-						<div class="flex-grow">
-							<p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
-								Episode 1
-							</p>
-							<h3 class="text-xl font-semibold text-gray-900 mb-2">
-								Vitalik Buterin - The Future of Ethereum
-							</h3>
-							<p class="text-gray-600 mb-3">
-								Exploring the future of decentralized technology, the merge to
-								proof-of-stake, and the vision for Web3.
-							</p>
-							<div class="flex gap-4 text-sm text-gray-500">
-								<span>March 15, 2022</span>
-								<span>•</span>
-								<span>1:24:30</span>
+			{latestEpisode && (
+				<section class="max-w-4xl mx-auto px-4 py-16">
+					<h2 class="text-3xl font-bold mb-8">Latest Episode</h2>
+					<a
+						href={`/episodes/${latestEpisode.slug.current}`}
+						class="block bg-white rounded-lg shadow-md hover:shadow-lg transition p-6"
+					>
+						<div class="flex items-start gap-4">
+							{latestEpisode.coverImage?.url ? (
+								<img
+									src={latestEpisode.coverImage.url}
+									alt={latestEpisode.title}
+									class="flex-shrink-0 w-24 h-24 rounded-lg object-cover"
+								/>
+							) : (
+								<div class="flex-shrink-0 w-24 h-24 bg-blue-100 rounded-lg flex items-center justify-center">
+									<span class="text-3xl font-bold text-blue-600">{latestEpisode.episodeNumber}</span>
+								</div>
+							)}
+							<div class="flex-grow">
+								<p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
+									Episode {latestEpisode.episodeNumber}
+								</p>
+								<h3 class="text-xl font-semibold text-gray-900 mb-2">
+									{latestEpisode.title}
+								</h3>
+								<p class="text-gray-600 mb-3">
+									{latestEpisode.description.substring(0, 150)}...
+								</p>
+								<div class="flex gap-4 text-sm text-gray-500">
+									<span>{formatDate(latestEpisode.publishDate)}</span>
+									{latestEpisode.duration && (
+										<>
+											<span>•</span>
+											<span>{latestEpisode.duration}</span>
+										</>
+									)}
+								</div>
 							</div>
 						</div>
-					</div>
-				</a>
-			</section>
+					</a>
+				</section>
+			)}
 
 			<!-- About Section -->
 			<section class="bg-white py-16">
 				<div class="max-w-4xl mx-auto px-4">
 					<h2 class="text-3xl font-bold mb-6">About the Show</h2>
 					<p class="text-lg text-gray-700 leading-relaxed mb-4">
-						Strange Water brings you deep conversations with the people building
+						{SITE_CONFIG.name} brings you deep conversations with the people building
 						the future of Ethereum and Web3. From protocol developers to
 						researchers, entrepreneurs to artists, we explore the ideas,
 						technology, and philosophy shaping decentralized systems.

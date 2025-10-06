@@ -137,46 +137,44 @@ sanity deploy                     # Deploy hosted Sanity Studio
 
 ## Current Status
 
-**Phase:** Phase 1a - "Hello World" Deployed Site ✅ COMPLETE
-**Next Milestone:** Phase 1b - Sanity CMS Integration (Days 4-7)
+**Phase:** Phase 1b - Sanity CMS Integration (Day 4 complete)
+**Next Milestone:** Episode Data Migration (Days 5-7)
 
-**Completed in Phase 1a (Days 1-3):**
-- ✅ GitHub repository created (https://github.com/rexkirshner/podcast-framework)
-- ✅ Astro project initialized with TypeScript + Tailwind CSS v4
-- ✅ Deployed to Netlify (https://podcast-framework.netlify.app)
-- ✅ Custom subdomain configured (staging.strangewater.xyz)
-- ✅ GitHub → Netlify auto-deploy pipeline working
-- ✅ Header/Footer components created
-- ✅ First episode page with working Spotify player
-- ✅ Episodes list page
-- ✅ About page
-- ✅ Custom 404 page
-- ✅ BaseLayout component with full SEO meta tags
-- ✅ Favicon and robots.txt
-- ✅ All navigation working
-- ✅ Fully responsive design
+**Completed in Session 2025-10-05D (Day 4):**
+- ✅ Sanity CMS fully integrated with Astro
+- ✅ Three content schemas created (podcast, episode, guest)
+- ✅ Centralized configuration system (`src/config/site.ts`)
+- ✅ All pages fetch from Sanity (SSG, build-time)
+- ✅ Dynamic episode routing with `[slug].astro`
+- ✅ Cover image support with fallback to number badges
+- ✅ Logo from Sanity displaying in header
+- ✅ isActive toggle system for concluded shows
+- ✅ Sample content added and verified
 
-**Key Files Created:**
-- `src/components/Header.astro` - Site header with navigation
-- `src/components/Footer.astro` - Site footer with subscribe links
-- `src/layouts/BaseLayout.astro` - Reusable layout with SEO
-- `src/pages/index.astro` - Homepage with hero section
-- `src/pages/episodes/index.astro` - Episodes list
-- `src/pages/episodes/1.astro` - First episode page
-- `src/pages/about.astro` - About page
-- `src/pages/404.astro` - Custom error page
-- `astro.config.mjs` - Astro + Tailwind configuration
-- `public/favicon.svg` - SVG favicon
-- `public/robots.txt` - Search engine directive
+**Key Architectural Additions:**
+- `src/config/site.ts` - Single source of truth for podcast metadata
+- `src/lib/sanity.ts` - Sanity client, TypeScript types, GROQ queries
+- `sanity/schemaTypes/` - Content schemas (podcast, episode, guest)
+- `src/pages/episodes/[slug].astro` - Dynamic episode pages with getStaticPaths
+- `sanity.config.ts` - Sanity Studio configuration (project: ej6443ov)
 
-**Next Steps (Day 4 - Sanity Setup):**
-1. Initialize Sanity project
-2. Create podcast, episode, and guest schemas
-3. Configure and deploy Sanity Studio
-4. Create Sanity client in Astro
-5. Test GROQ queries
-6. Add sample episode data
-7. Verify data fetching works
+**isActive Toggle System:**
+- Controls messaging for active vs concluded podcasts
+- Active: "More episodes coming soon..." / "Subscribe to get notified..."
+- Inactive: "This podcast has concluded." / "Explore the complete archive..."
+- Applied to: episodes list page, individual episode pages
+
+**Dev Servers:**
+- Astro: http://localhost:4321/ (all pages working with Sanity data)
+- Sanity Studio: http://localhost:3333/ (local, not yet deployed)
+
+**Next Steps (Day 5 - Data Migration):**
+1. (Optional) Deploy Sanity Studio to hosted URL
+2. Bulk import 69 Strange Water episodes
+3. Add all guest information
+4. Upload episode cover images
+5. Test all episode pages
+6. Verify site performance with full dataset
 
 ---
 
@@ -237,4 +235,4 @@ sanity deploy                     # Deploy hosted Sanity Studio
 
 ---
 
-**Last Context Save:** 2025-10-05 Session 2 (Day 1 Complete)
+**Last Context Save:** 2025-10-05 Session 4 (Day 4 - Sanity Integration Complete)

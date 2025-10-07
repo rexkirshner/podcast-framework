@@ -70,11 +70,11 @@ if (episode.spotifyLink) {
 
       <!-- Hosts and Guests Section -->
       {(episode.hosts?.length > 0 || episode.guests?.length > 0) && (
-        <div class="mb-8 flex flex-col md:flex-row gap-6">
+        <div class="mb-8 flex flex-col md:flex-row gap-6 md:items-start">
           <!-- Hosts Section -->
           {episode.hosts && episode.hosts.length > 0 && (
-            <div class="flex-1">
-              <h2 class="text-lg font-semibold mb-3">Hosted by</h2>
+            <div>
+              <h2 class="text-lg font-semibold mb-3">{episode.hosts.length === 1 ? 'Host' : 'Hosts'}</h2>
               <div class="flex flex-wrap gap-4">
                 {episode.hosts.map((host) => (
                   <div class="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm">
@@ -110,8 +110,8 @@ if (episode.spotifyLink) {
 
           <!-- Guests Section -->
           {episode.guests && episode.guests.length > 0 && (
-            <div class="flex-1">
-              <h2 class="text-lg font-semibold mb-3">Featuring</h2>
+            <div>
+              <h2 class="text-lg font-semibold mb-3">{episode.guests.length === 1 ? 'Guest' : 'Guests'}</h2>
               <div class="flex flex-wrap gap-4">
                 {episode.guests.map((guest) => (
                   <div class="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm">
@@ -147,6 +147,12 @@ if (episode.spotifyLink) {
         </div>
       )}
 
+      <!-- Episode Description -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">About This Episode</h2>
+        <div class="text-gray-700 leading-relaxed prose prose-blue max-w-none [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800" set:html={episode.description} />
+      </div>
+
       <!-- Audio Player Section -->
       <div class="mb-8 bg-white rounded-lg shadow-sm p-6">
         <iframe
@@ -163,7 +169,7 @@ if (episode.spotifyLink) {
 
       <!-- Platform Links (if available) -->
       {(episode.spotifyLink || episode.youtubeLink || episode.applePodcastLink) && (
-        <div class="mb-12 bg-blue-50 rounded-lg p-6">
+        <div class="mb-12">
           <h3 class="text-lg font-semibold mb-3 text-center">Listen to this episode on:</h3>
           <div class="flex flex-wrap gap-3 justify-center">
             {episode.spotifyLink && (
@@ -208,12 +214,6 @@ if (episode.spotifyLink) {
           </div>
         </div>
       )}
-
-      <!-- Episode Description -->
-      <div class="mb-12">
-        <h2 class="text-2xl font-semibold mb-4">About This Episode</h2>
-        <div class="text-gray-700 leading-relaxed prose prose-blue max-w-none [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800" set:html={episode.description} />
-      </div>
 
       <!-- Show Notes (if available) -->
       {episode.showNotes && episode.showNotes.length > 0 && (

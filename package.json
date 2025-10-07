@@ -15,6 +15,7 @@
     "delete:episodes": "node scripts/delete-all-episodes.js",
     "fix:guests-keys": "node scripts/fix-guests-keys.js",
     "upload:photos": "node scripts/upload-guest-photos.js",
+    "upload:covers": "node scripts/upload-episode-covers.js",
     "import:platform-links": "node scripts/import-platform-links.js"
   },
   "dependencies": {

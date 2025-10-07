@@ -1,9 +1,9 @@
 # Podcast Website Framework - Developer Guide
 
 **Project Type:** Web Application (Astro + Sanity CMS + Netlify)
-**Status:** Pre-Implementation (PRD Complete, Ready for Day 1)
+**Status:** Phase 1b - Polish & QA (Day 6 in progress)
 **Owner:** Rex Kirshner
-**Last Updated:** 2025-10-05
+**Last Updated:** 2025-10-06
 
 ---
 
@@ -137,8 +137,20 @@ sanity deploy                     # Deploy hosted Sanity Studio
 
 ## Current Status
 
-**Phase:** Phase 1b - Sanity CMS Integration (Day 5 complete, code review fixes complete)
-**Next Milestone:** Polish & QA (Days 6-7)
+**Phase:** Phase 1b - Polish & QA (Day 6 in progress)
+**Next Milestone:** Production Launch (Day 15)
+
+**Completed in Session 2025-10-06G (Day 6 - Host Implementation & Episode Cover Upload):**
+- ✅ Episode-specific Spotify embeds (per-episode audio players)
+- ✅ Host content type created (independent from guests)
+- ✅ Rex Kirshner added as host to all 68 episodes
+- ✅ Episode page UI refinements (hosts/guests side-by-side)
+- ✅ Dynamic labels (Host/Hosts, Guest/Guests based on count)
+- ✅ Episode description moved above player
+- ✅ Platform links styling (removed background)
+- ✅ Episode cover automation documentation (AUTOMATION_NOTES.md)
+- ✅ Automated episode cover upload (66/68 covers uploaded)
+- ✅ All changes committed and pushed to GitHub (7 commits)
 
 **Completed in Session 2025-10-06F (Day 5 - Code Review Fixes):**
 - ✅ Code review fixes (5 critical issues: M4, C1, H2, M1, H4)
@@ -165,8 +177,11 @@ sanity deploy                     # Deploy hosted Sanity Studio
 **Sanity CMS Data:**
 - 69 episodes (all metadata, correct durations, clean slugs)
 - 72 guests (names, social links, 65 profile photos uploaded)
+- 1 host (Rex Kirshner, linked to all 68 episodes)
 - 63 episodes linked to guests automatically
-- All guest arrays have _key property (editing functional)
+- All guest/host arrays have _key property (editing functional)
+- Episode covers: 66/68 uploaded (Episode 0 and 40 missing source files)
+- Episode-specific Spotify embeds (per-episode audio players)
 - Trailer = episode 0, episode 1 restored
 - Profile images: 65 uploaded, 6 manual uploads pending
 
@@ -180,6 +195,10 @@ sanity deploy                     # Deploy hosted Sanity Studio
 - `scripts/fix-draft-references.js` - Reference repair
 - `scripts/fix-guests-keys.js` - Add _key to guest arrays
 - `scripts/upload-guest-photos.js` - Automated photo upload
+- `scripts/create-rex-host.js` - Create host record with deterministic ID
+- `scripts/add-rex-to-all-episodes.js` - Bulk host assignment
+- `scripts/upload-episode-covers.js` - Automated episode cover upload
+- `scripts/check-episode-guests.js` - Diagnostic utility for guest data
 
 **Key Commands:**
 - `npm run import:rss` - Import/update episodes from RSS
@@ -188,20 +207,23 @@ sanity deploy                     # Deploy hosted Sanity Studio
 - `npm run delete:episodes` - Clean slate for re-import
 - `npm run fix:guests-keys` - Fix missing _key properties
 - `npm run upload:photos` - Upload guest photos
+- `npm run upload:covers` - Upload episode cover images
 
 **Dev Servers:**
 - Astro: http://localhost:4322/ (all 69 episodes live)
 - Sanity Studio: http://localhost:3333/ (local, not yet deployed)
 
 **Next Steps (Days 6-7 - Polish & QA):**
-1. Upload 6 remaining guest photos manually (name mismatches)
-2. Test all 69 episode pages (spot check sample)
-3. Verify responsive design on mobile/tablet
-4. Run Lighthouse audit (target: Performance >90)
-5. Test Spotify audio playback across browsers
-6. Verify staging deployment matches local
-7. Setup Sanity webhook (manual, Task 7.9)
-8. Final QA before Phase 1 launch
+1. Test sample of episode pages (verify all 69 work correctly)
+2. Verify responsive design on mobile/tablet
+3. Run Lighthouse audit (target: Performance >90)
+4. Test Spotify audio playback across browsers
+5. Verify all navigation links work correctly
+6. Check SEO meta tags on all page types
+7. Test 404 error page
+8. Verify social sharing (Open Graph, Twitter Cards)
+9. Final visual polish (spacing, typography, colors)
+10. Push to staging and verify deployment
 
 ---
 
@@ -236,6 +258,7 @@ sanity deploy                     # Deploy hosted Sanity Studio
 - `context/SESSIONS.md` - Session history (what happened when)
 - `context/tasks/next-steps.md` - Action items
 - `context/tasks/todo.md` - Current session tasks
+- `context/AUTOMATION_NOTES.md` - Episode artwork automation research (Phase 2)
 
 **Archive:**
 - `archive/pre-project-PRDs/` - All PRD draft versions (v1-v6, codex reviews)
@@ -262,4 +285,4 @@ sanity deploy                     # Deploy hosted Sanity Studio
 
 ---
 
-**Last Context Save:** 2025-10-06 Session F (Day 5 - Code Review Fixes & Photo Upload Complete)
+**Last Context Save:** 2025-10-06 Session G (Day 6 - Host Implementation & Episode Cover Upload Complete)

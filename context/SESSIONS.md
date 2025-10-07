@@ -964,3 +964,129 @@ podcast website/
 - Things to remember
 - Future considerations
 ```
+
+---
+
+## Session 9 - 2025-10-06: Host/Guest Separation, Episode Covers & UI Polish
+
+**Focus:** Implemented host schema, uploaded episode artwork, polished episode page UI
+
+**Accomplishments:**
+
+1. **Platform Links (Context Loss Recovery)**
+   - Resumed from previous context loss regarding platform link imports
+   - Verified 68/69 episodes have platform links (Episode 61 was missing, user added manually)
+   - Fixed episode-specific Spotify embeds by extracting episode IDs from `spotifyLink`
+
+2. **Host/Guest Separation**
+   - Created `sanity/schemaTypes/host.ts` - New content type (separate from guests)
+   - Added `hosts` field to episode schema before guests field
+   - Created Host TypeScript interface in `src/lib/sanity.ts:37-53`
+   - Updated all GROQ queries to fetch hosts alongside guests
+   - Created Rex Kirshner as host (`scripts/create-rex-host.js`)
+   - Added Rex to all 68 episodes (`scripts/add-rex-to-all-episodes.js`)
+
+3. **Episode Page UI Refinements**
+   - `src/pages/episodes/[slug].astro:72-148` - Hosts/guests layout restructured
+   - Changed from `flex-1` (full width) to auto-width containers (no excessive spacing)
+   - Made layout side-by-side: `flex flex-col md:flex-row gap-6`
+   - Dynamic labels: "Host"/"Hosts" and "Guest"/"Guests" based on count
+   - Moved "About This Episode" section above audio player
+   - Removed blue background from platform links section
+
+4. **Episode Artwork Automation**
+   - Discovered Anchor.fm RSS feed no longer accessible (404 error)
+   - Created `context/AUTOMATION_NOTES.md` - Technical research document
+   - Documented 3 automation approaches for Phase 2:
+     - Spotify Web API (recommended, 4-6 hours)
+     - Apple Podcasts RSS (fallback, 2-4 hours)
+     - Webhook system (ideal, 8-12 hours)
+   - Updated `context/tasks/next-steps.md` with Phase 2 automation requirements
+   - Manual upload acceptable for Strange Water (completed podcast)
+
+5. **Episode Cover Upload**
+   - Created `scripts/upload-episode-covers.js` - Automated artwork upload
+   - Uploaded 66/68 episode covers from `~/Desktop/vibe-coding-assets/strange water/episode covers/`
+   - Added `npm run upload:covers` command to `package.json:18`
+   - Missing covers: Episode 0 (trailer) and Episode 40 (no file found)
+
+**Files Modified/Created:**
+
+Core Implementation:
+- `sanity/schemaTypes/host.ts` - New host content type (created)
+- `sanity/schemaTypes/index.ts:5` - Registered host schema
+- `sanity/schemaTypes/episode.ts:85-89` - Added hosts field
+- `src/lib/sanity.ts:37-53` - Host interface and updated queries
+- `src/pages/episodes/[slug].astro:27-35,72-148,150-216` - Episode-specific embeds, hosts/guests UI, description repositioning
+- `scripts/create-rex-host.js` - Host creation automation (created)
+- `scripts/add-rex-to-all-episodes.js` - Bulk host assignment (created)
+- `scripts/upload-episode-covers.js` - Automated cover upload (created)
+- `scripts/check-episode-guests.js` - Diagnostic utility (created)
+- `package.json:18` - Added upload:covers command
+
+Documentation:
+- `context/AUTOMATION_NOTES.md` - Episode artwork automation research (created)
+- `context/tasks/next-steps.md:146-194` - Future automation requirements section
+
+**Current State:**
+
+Sanity Data:
+- 68 episodes with hosts (Rex Kirshner added to all)
+- 72 guests linked to 63 episodes
+- 66 episode covers uploaded (missing: 0, 40)
+- Platform links: 68/69 episodes (Episode 61 added manually)
+
+Episode Page:
+- Episode-specific Spotify embeds working correctly
+- Hosts displayed before guests (side-by-side on desktop)
+- "About This Episode" appears above audio player
+- Dynamic labels based on count (Host/Hosts, Guest/Guests)
+- Platform links without blue background
+
+**Next Steps:**
+
+Immediate (Days 6-7 - Polish & QA):
+1. Test sample of episode pages (verify all work correctly)
+2. Verify responsive design on mobile/tablet
+3. Run Lighthouse audit (target: Performance >90)
+4. Test Spotify audio playback across browsers
+5. Verify all navigation links
+6. Check SEO meta tags on all page types
+
+Future (Phase 2 - Automation):
+1. Research Spotify Web API for episode metadata
+2. Implement automated artwork import for active podcasts
+3. Build multi-platform support (Spotify, Apple, YouTube)
+
+**Technical Decisions:**
+
+1. **Host as Separate Content Type**
+   - Rationale: Clean separation of concerns, scalable for multi-host podcasts
+   - Alternative considered: Reuse guest type with role field (rejected - less clear)
+   - Trade-off: More schemas to manage, but better data model
+
+2. **Manual Artwork Upload for Strange Water**
+   - Rationale: One-time task, podcast is complete, automation not worth immediate investment
+   - Future: MUST automate for active podcasts (Phase 2 requirement)
+   - Documented solutions in AUTOMATION_NOTES.md for future implementation
+
+3. **Episode-Specific Spotify Embeds**
+   - Rationale: Extract episode ID from spotifyLink using regex
+   - Fallback: Show-level embed if no episode link exists
+   - Pattern: `https://open.spotify.com/episode/[ID]` → `/embed/episode/[ID]`
+
+**Commits This Session:**
+- `cf2acef` - Fix episode numbering and import platform links
+- `4dad569` - Add platform link UI to episode pages
+- `c291d7c` - Use episode-specific Spotify embeds
+- `8f2b33a` - Add host support and Rex as host to all episodes
+- `ea272ae` - Make hosts/guests side by side
+- `f2f5e35` - Document episode artwork automation for Phase 2
+- `89a90ec` - Add episode cover upload and UI improvements
+
+**Notes:**
+- Artwork automation is now fully documented for Phase 2 (AUTOMATION_NOTES.md)
+- Strange Water has all metadata except 2 episode covers (acceptable for launch)
+- Framework now supports both hosts and guests (ready for multi-host podcasts)
+- All changes pushed to GitHub (7 commits)
+

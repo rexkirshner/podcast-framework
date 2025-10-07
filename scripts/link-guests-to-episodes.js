@@ -24,7 +24,9 @@ if (!process.env.SANITY_PROJECT_ID) {
 }
 
 /**
- * Fetch all episodes
+ * Fetch all episodes from Sanity
+ * @returns {Promise<Array<Object>>} Array of episode objects with ID, number, title, description, currentGuests
+ * @description Retrieves all episodes sorted by episode number for guest matching
  */
 async function getAllEpisodes() {
   const query = `*[_type == "episode"] | order(episodeNumber asc) {
@@ -39,7 +41,9 @@ async function getAllEpisodes() {
 }
 
 /**
- * Fetch all guests
+ * Fetch all guests from Sanity
+ * @returns {Promise<Array<Object>>} Array of guest objects with ID, name, slug, twitter
+ * @description Retrieves all guests for name matching against episode metadata
  */
 async function getAllGuests() {
   const query = `*[_type == "guest"] {
@@ -53,7 +57,12 @@ async function getAllGuests() {
 }
 
 /**
- * Normalize name for matching (remove special chars, lowercase, etc.)
+ * Normalize name for matching
+ * @param {string} name - Guest or episode name to normalize
+ * @returns {string} Normalized name (lowercase, no special chars, trimmed)
+ * @description Removes special characters, 0x prefix, normalizes whitespace for fuzzy matching
+ * @example
+ * normalizeName("0xJohn Doe!") // Returns "john doe"
  */
 function normalizeName(name) {
   return name
@@ -66,6 +75,11 @@ function normalizeName(name) {
 
 /**
  * Generate possible name variations for matching
+ * @param {string} guestName - Guest name to generate variations for
+ * @returns {Set<string>} Set of name variations (original, lowercase, normalized, twitter handle, etc.)
+ * @description Creates multiple name formats to increase matching accuracy against episode metadata
+ * @example
+ * getNameVariations("@JohnDoe") // Returns Set: ["@JohnDoe", "johndoe", "john doe", ...]
  */
 function getNameVariations(guestName) {
   const variations = new Set();

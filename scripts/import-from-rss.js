@@ -30,6 +30,10 @@ const RSS_FEED_URL = 'https://anchor.fm/s/dcf17d04/podcast/rss';
 
 /**
  * Generate URL-safe slug from title
+ * @param {string} title - Episode title to convert
+ * @returns {string} URL-safe slug (lowercase, hyphenated)
+ * @example
+ * generateSlug("Episode 42: The Future") // Returns "episode-42-the-future"
  */
 function generateSlug(title) {
   return title
@@ -40,6 +44,11 @@ function generateSlug(title) {
 
 /**
  * Extract episode number from title or iTunes tag
+ * @param {Object} item - RSS item object
+ * @param {number} index - Current index in RSS feed
+ * @param {number} totalEpisodes - Total episodes in feed
+ * @returns {number} Episode number (0 for trailers, chronological for episodes)
+ * @description Tries iTunes tag first, then title parsing, then reverse chronological fallback
  */
 function extractEpisodeNumber(item, index, totalEpisodes) {
   const title = item.title[0];
@@ -68,7 +77,13 @@ function extractEpisodeNumber(item, index, totalEpisodes) {
 
 /**
  * Convert iTunes duration to HH:MM:SS or MM:SS format
- * Handles both seconds (integer) and HH:MM:SS string formats
+ * @param {Array<string>} itunesDuration - iTunes duration tag (seconds or formatted)
+ * @returns {string|null} Formatted duration (HH:MM:SS or MM:SS) or null if invalid
+ * @description Handles both seconds (integer) and HH:MM:SS string formats from RSS feed
+ * @example
+ * formatDuration(['3661']) // Returns "1:01:01"
+ * formatDuration(['61']) // Returns "1:01"
+ * formatDuration(['1:01:01']) // Returns "1:01:01" (pass-through)
  */
 function formatDuration(itunesDuration) {
   if (!itunesDuration || !itunesDuration[0]) return null;
@@ -98,7 +113,12 @@ function formatDuration(itunesDuration) {
 
 /**
  * Parse guest names from description
- * Looks for patterns like "w/ Name" or "with Name"
+ * @param {string} description - Episode description from RSS feed
+ * @returns {string|null} Guest name or null if none found
+ * @description Looks for patterns like "w/ Name" or "with Name" in description
+ * @example
+ * parseGuestFromDescription("w/ Norton Wang (EigenLayer)") // Returns "Norton Wang"
+ * parseGuestFromDescription("with John Doe") // Returns "John Doe"
  */
 function parseGuestFromDescription(description) {
   if (!description) return null;
@@ -121,8 +141,12 @@ function parseGuestFromDescription(description) {
 
 /**
  * Extract Spotify episode ID from link
- * Link format: https://podcasters.spotify.com/pod/show/strangeh2opod/episodes/The-Epilogue-e2kjbbk
- * Episode ID is the part after the last hyphen: e2kjbbk
+ * @param {Array<string>} link - Spotify link from RSS feed
+ * @returns {string|null} Spotify episode ID (e.g., "e2kjbbk") or null if not found
+ * @description Link format: https://podcasters.spotify.com/pod/show/strangeh2opod/episodes/The-Epilogue-e2kjbbk
+ *              Episode ID is the part after the last hyphen: e2kjbbk
+ * @example
+ * extractSpotifyEpisodeId(['https://...episodes/Title-e2kjbbk']) // Returns "e2kjbbk"
  */
 function extractSpotifyEpisodeId(link) {
   if (!link || !link[0]) return null;
@@ -142,6 +166,9 @@ function extractSpotifyEpisodeId(link) {
 
 /**
  * Fetch and parse RSS feed
+ * @returns {Promise<Object>} Parsed RSS feed object with channel and items
+ * @throws {Error} If RSS feed fetch fails or XML parsing fails
+ * @description Fetches RSS feed from Anchor.fm and parses XML to JavaScript object
  */
 async function fetchRSSFeed() {
   console.log(`📡 Fetching RSS feed from ${RSS_FEED_URL}...`);

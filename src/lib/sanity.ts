@@ -16,6 +16,49 @@ export const sanityClient = createClient({
   apiVersion: "2024-01-01", // Use current date for latest API features
 });
 
+// ============================================================================
+// Build-Time Cache
+// ============================================================================
+// During SSG builds, the same data is fetched hundreds of times across pages.
+// This in-memory cache prevents redundant API calls during a single build.
+// Cache is cleared between builds (serverless function instances).
+// ============================================================================
+
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const buildCache = new Map<string, CacheEntry<any>>();
+const CACHE_TTL = 60 * 1000; // 1 minute (enough for a build, not too stale)
+
+/**
+ * Cached fetch wrapper for build-time optimization
+ * Only caches during SSG builds, not in dev or production runtime
+ */
+async function cachedFetch<T>(cacheKey: string, fetchFn: () => Promise<T>): Promise<T> {
+  // Only use cache during builds (not dev server or client-side)
+  const isBuild = import.meta.env.MODE === 'production';
+
+  if (!isBuild) {
+    return fetchFn();
+  }
+
+  const cached = buildCache.get(cacheKey);
+  const now = Date.now();
+
+  // Return cached data if fresh
+  if (cached && (now - cached.timestamp) < CACHE_TTL) {
+    return cached.data;
+  }
+
+  // Fetch fresh data and cache it
+  const data = await fetchFn();
+  buildCache.set(cacheKey, { data, timestamp: now });
+
+  return data;
+}
+
 // TypeScript types for our content
 export interface Guest {
   _id: string;
@@ -159,51 +202,53 @@ export interface HomepageConfig {
 
 // Helper function to fetch all episodes
 export async function getAllEpisodes(): Promise<Episode[]> {
-  const query = `*[_type == "episode"] | order(episodeNumber desc) {
-    _id,
-    title,
-    slug,
-    episodeNumber,
-    publishDate,
-    duration,
-    description,
-    spotifyEpisodeId,
-    spotifyLink,
-    youtubeLink,
-    applePodcastLink,
-    "coverImage": coverImage.asset->{url},
-    featured,
-    "hosts": hosts[]->{
+  return cachedFetch('all-episodes', async () => {
+    const query = `*[_type == "episode"] | order(episodeNumber desc) {
       _id,
-      name,
+      title,
       slug,
-      bio,
-      "photo": photo.asset->{url},
-      twitter,
-      website,
-      linkedin
-    },
-    "guests": guests[]->{
-      _id,
-      name,
-      slug,
-      bio,
-      "photo": photo.asset->{url},
-      twitter,
-      website,
-      linkedin
-    }
-  }`;
+      episodeNumber,
+      publishDate,
+      duration,
+      description,
+      spotifyEpisodeId,
+      spotifyLink,
+      youtubeLink,
+      applePodcastLink,
+      "coverImage": coverImage.asset->{url},
+      featured,
+      "hosts": hosts[]->{
+        _id,
+        name,
+        slug,
+        bio,
+        "photo": photo.asset->{url},
+        twitter,
+        website,
+        linkedin
+      },
+      "guests": guests[]->{
+        _id,
+        name,
+        slug,
+        bio,
+        "photo": photo.asset->{url},
+        twitter,
+        website,
+        linkedin
+      }
+    }`;
 
-  try {
-    const episodes = await sanityClient.fetch(query);
-    return episodes || [];
-  } catch (error) {
-    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'episodes-fetch' } })
-    console.error('Failed to fetch episodes from Sanity:', error);
-    // Return empty array for graceful degradation
-    return [];
-  }
+    try {
+      const episodes = await sanityClient.fetch(query);
+      return episodes || [];
+    } catch (error) {
+      // TODO: Replace with Sentry.captureException(error, { extra: { context: 'episodes-fetch' } })
+      console.error('Failed to fetch episodes from Sanity:', error);
+      // Return empty array for graceful degradation
+      return [];
+    }
+  });
 }
 
 // Helper function to fetch a single episode by slug
@@ -263,108 +308,114 @@ export async function getEpisodeBySlug(slug: string): Promise<Episode | null> {
 
 // Helper function to fetch featured episodes
 export async function getFeaturedEpisodes(): Promise<Episode[]> {
-  const query = `*[_type == "episode" && featured == true] | order(publishDate desc) {
-    _id,
-    title,
-    slug,
-    episodeNumber,
-    publishDate,
-    duration,
-    description,
-    spotifyEpisodeId,
-    spotifyLink,
-    youtubeLink,
-    applePodcastLink,
-    "coverImage": coverImage.asset->{url},
-    featured,
-    "hosts": hosts[]->{
+  return cachedFetch('featured-episodes', async () => {
+    const query = `*[_type == "episode" && featured == true] | order(publishDate desc) {
       _id,
-      name,
+      title,
       slug,
-      bio,
-      "photo": photo.asset->{url},
-      twitter,
-      website,
-      linkedin
-    },
-    "guests": guests[]->{
-      _id,
-      name,
-      slug,
-      bio,
-      "photo": photo.asset->{url},
-      twitter,
-      website,
-      linkedin
-    }
-  }`;
+      episodeNumber,
+      publishDate,
+      duration,
+      description,
+      spotifyEpisodeId,
+      spotifyLink,
+      youtubeLink,
+      applePodcastLink,
+      "coverImage": coverImage.asset->{url},
+      featured,
+      "hosts": hosts[]->{
+        _id,
+        name,
+        slug,
+        bio,
+        "photo": photo.asset->{url},
+        twitter,
+        website,
+        linkedin
+      },
+      "guests": guests[]->{
+        _id,
+        name,
+        slug,
+        bio,
+        "photo": photo.asset->{url},
+        twitter,
+        website,
+        linkedin
+      }
+    }`;
 
-  try {
-    const episodes = await sanityClient.fetch(query);
-    return episodes || [];
-  } catch (error) {
-    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'featured-episodes-fetch' } })
-    console.error('Failed to fetch featured episodes from Sanity:', error);
-    return [];
-  }
+    try {
+      const episodes = await sanityClient.fetch(query);
+      return episodes || [];
+    } catch (error) {
+      // TODO: Replace with Sentry.captureException(error, { extra: { context: 'featured-episodes-fetch' } })
+      console.error('Failed to fetch featured episodes from Sanity:', error);
+      return [];
+    }
+  });
 }
 
 // Helper function to fetch podcast metadata
 export async function getPodcastInfo(): Promise<Podcast | null> {
-  const query = `*[_type == "podcast"][0] {
-    _id,
-    name,
-    tagline,
-    description,
-    isActive,
-    "logo": logo.asset->{url},
-    "favicon": favicon.asset->{url},
-    spotifyShowId,
-    appleUrl,
-    youtubeUrl,
-    spotifyUrl,
-    rssUrl,
-    twitterUrl,
-    discordUrl
-  }`;
+  return cachedFetch('podcast-info', async () => {
+    const query = `*[_type == "podcast"][0] {
+      _id,
+      name,
+      tagline,
+      description,
+      isActive,
+      "logo": logo.asset->{url},
+      "favicon": favicon.asset->{url},
+      spotifyShowId,
+      appleUrl,
+      youtubeUrl,
+      spotifyUrl,
+      rssUrl,
+      twitterUrl,
+      discordUrl
+    }`;
 
-  try {
-    const podcast = await sanityClient.fetch(query);
+    try {
+      const podcast = await sanityClient.fetch(query);
 
-    if (!podcast) {
-      console.warn('No podcast document found in Sanity CMS.');
+      if (!podcast) {
+        console.warn('No podcast document found in Sanity CMS.');
+        return null;
+      }
+
+      return podcast;
+    } catch (error) {
+      // TODO: Replace with Sentry.captureException(error, { extra: { context: 'podcast-info-fetch' } })
+      console.error('Failed to fetch podcast info from Sanity:', error);
       return null;
     }
-
-    return podcast;
-  } catch (error) {
-    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'podcast-info-fetch' } })
-    console.error('Failed to fetch podcast info from Sanity:', error);
-    return null;
-  }
+  });
 }
 
 // Helper function to get all guests
 export async function getAllGuests(): Promise<Guest[]> {
-  const query = `*[_type == "guest"] | order(name asc) {
-    _id,
-    name,
-    slug,
-    bio,
-    "photo": photo.asset->{url},
-    twitter,
-    website,
-    linkedin
-  }`;
+  return cachedFetch('all-guests', async () => {
+    const query = `*[_type == "guest"] | order(name asc) {
+      _id,
+      name,
+      slug,
+      bio,
+      "photo": photo.asset->{url},
+      twitter,
+      website,
+      linkedin
+    }`;
 
-  try {
-    const guests = await sanityClient.fetch(query);
-    return guests || [];
-  } catch (error) {
-    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'guests-fetch' } })
-    console.error('Failed to fetch guests from Sanity:', error);
-    return [];
-  }
+    try {
+      const guests = await sanityClient.fetch(query);
+      return guests || [];
+    } catch (error) {
+      // TODO: Replace with Sentry.captureException(error, { extra: { context: 'guests-fetch' } })
+      console.error('Failed to fetch guests from Sanity:', error);
+      return [];
+    }
+  });
 }
 
 // Helper function to get homepage configuration

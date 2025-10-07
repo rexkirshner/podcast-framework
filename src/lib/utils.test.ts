@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatDate, stripHTML, decodeHTMLEntities } from './utils';
+import { formatDate, stripHTML, decodeHTMLEntities, sanitizeHTML } from './utils';
 
 describe('formatDate', () => {
   it('should format date in MMMM DD, YYYY format', () => {
@@ -143,6 +143,89 @@ describe('decodeHTMLEntities', () => {
   });
 });
 
+describe('sanitizeHTML', () => {
+  it('should remove script tags and their contents', () => {
+    const malicious = '<p>Hello</p><script>alert("XSS")</script><p>World</p>';
+    const result = sanitizeHTML(malicious);
+    expect(result).not.toContain('<script');
+    expect(result).not.toContain('alert');
+    expect(result).toContain('<p>Hello</p>');
+    expect(result).toContain('<p>World</p>');
+  });
+
+  it('should remove inline event handlers (onclick)', () => {
+    const malicious = '<div onclick="alert(\'XSS\')">Click me</div>';
+    const result = sanitizeHTML(malicious);
+    expect(result).not.toContain('onclick');
+    expect(result).toContain('Click me'); // Event handler removed, content preserved
+  });
+
+  it('should remove inline event handlers (onload)', () => {
+    const malicious = '<img src="x" onload="alert(\'XSS\')" />';
+    const result = sanitizeHTML(malicious);
+    expect(result).not.toContain('onload');
+    expect(result).toContain('<img src="x"');
+  });
+
+  it('should remove javascript: protocols', () => {
+    const malicious = '<a href="javascript:alert(\'XSS\')">Click</a>';
+    const result = sanitizeHTML(malicious);
+    expect(result).not.toContain('javascript:');
+  });
+
+  it('should remove data:text/html URIs', () => {
+    const malicious = '<iframe src="data:text/html,<script>alert(\'XSS\')</script>"></iframe>';
+    const result = sanitizeHTML(malicious);
+    expect(result).not.toContain('data:text/html');
+  });
+
+  it('should preserve safe HTML formatting', () => {
+    const safe = '<p>Hello <strong>World</strong></p><ul><li>Item 1</li></ul>';
+    const result = sanitizeHTML(safe);
+    expect(result).toBe(safe); // Should be unchanged
+  });
+
+  it('should handle multiple attack vectors in one string', () => {
+    const malicious = '<p onclick="evil()">Text</p><script>alert("XSS")</script><a href="javascript:void(0)">Link</a>';
+    const result = sanitizeHTML(malicious);
+    expect(result).not.toContain('onclick');
+    expect(result).not.toContain('<script');
+    expect(result).not.toContain('javascript:');
+    expect(result).toContain('Text'); // onclick removed, content preserved
+    expect(result).toContain('Link'); // javascript: protocol removed
+  });
+
+  it('should handle empty string', () => {
+    expect(sanitizeHTML('')).toBe('');
+  });
+
+  it('should handle string with no HTML', () => {
+    const text = 'Plain text';
+    expect(sanitizeHTML(text)).toBe('Plain text');
+  });
+
+  it('should prevent XSS in email generation context', () => {
+    const userInput = '<img src=x onerror="alert(\'XSS\')">';
+    const result = sanitizeHTML(userInput);
+    expect(result).not.toContain('onerror');
+    expect(result).not.toContain('alert');
+  });
+
+  it('should handle case-insensitive javascript protocol', () => {
+    const malicious1 = '<a href="JavaScript:alert(\'XSS\')">Link</a>';
+    const malicious2 = '<a href="JAVASCRIPT:alert(\'XSS\')">Link</a>';
+    expect(sanitizeHTML(malicious1)).not.toContain('JavaScript:');
+    expect(sanitizeHTML(malicious2)).not.toContain('JAVASCRIPT:');
+  });
+
+  it('should handle nested script tags', () => {
+    const malicious = '<script><script>alert("XSS")</script></script>';
+    const result = sanitizeHTML(malicious);
+    expect(result).not.toContain('<script');
+    expect(result).not.toContain('alert');
+  });
+});
+
 describe('Integration tests', () => {
   it('stripHTML should decode entities after removing tags', () => {
     const html = '<p>Hello &amp; <strong>Welcome</strong> &lt;3</p>';
@@ -160,5 +243,28 @@ describe('Integration tests', () => {
     const html = '<div class="content"><h1>Title &amp; Subtitle</h1><p>Content with &lt;code&gt; and &quot;quotes&quot;</p></div>';
     const result = stripHTML(html);
     expect(result).toBe('Title & SubtitleContent with <code> and "quotes"');
+  });
+
+  it('sanitizeHTML should protect against real-world XSS attacks', () => {
+    const userSubmission = {
+      name: '<script>steal_cookies()</script>John Doe',
+      email: 'test@example.com',
+      message: '<img src=x onerror="phishing_attack()">Hello!',
+    };
+
+    // Simulate email generation like in contribute.ts
+    const safeEmail = `
+      <p>Name: ${sanitizeHTML(userSubmission.name)}</p>
+      <p>Email: ${sanitizeHTML(userSubmission.email)}</p>
+      <p>Message: ${sanitizeHTML(userSubmission.message)}</p>
+    `;
+
+    expect(safeEmail).not.toContain('<script');
+    expect(safeEmail).not.toContain('onerror');
+    expect(safeEmail).not.toContain('steal_cookies');
+    expect(safeEmail).not.toContain('phishing_attack');
+    expect(safeEmail).toContain('John Doe');
+    expect(safeEmail).toContain('test@example.com');
+    expect(safeEmail).toContain('Hello!');
   });
 });

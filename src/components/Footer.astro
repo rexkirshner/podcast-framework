@@ -1,7 +1,11 @@
 ---
-// Basic footer component - will be enhanced with config in Phase 1b
-import { SITE_CONFIG } from "../config/site";
+// Footer component with Sanity integration
+import { getPodcastInfo } from "../lib/sanity";
+
+const podcastInfo = await getPodcastInfo();
 const currentYear = new Date().getFullYear();
+const siteName = podcastInfo?.name || "Podcast";
+const siteDescription = podcastInfo?.description || "";
 ---
 
 <footer class="bg-gray-900 text-gray-300 mt-16">
@@ -9,9 +13,9 @@ const currentYear = new Date().getFullYear();
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
       <!-- Brand Section -->
       <div>
-        <h3 class="text-white font-bold text-lg mb-3">{SITE_CONFIG.name}</h3>
+        <h3 class="text-white font-bold text-lg mb-3">{siteName}</h3>
         <p class="text-sm text-gray-400">
-          {SITE_CONFIG.description}
+          {siteDescription}
         </p>
       </div>
 
@@ -35,43 +39,85 @@ const currentYear = new Date().getFullYear();
       <div>
         <h4 class="text-white font-semibold mb-3">Subscribe</h4>
         <ul class="space-y-2 text-sm">
-          <li>
-            <a
-              href={SITE_CONFIG.links.spotify}
-              class="hover:text-white transition"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Spotify
-            </a>
-          </li>
-          <li>
-            <a
-              href={SITE_CONFIG.links.apple}
-              class="hover:text-white transition"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Apple Podcasts
-            </a>
-          </li>
-          <li>
-            <a
-              href={SITE_CONFIG.links.youtube}
-              class="hover:text-white transition"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              YouTube
-            </a>
-          </li>
+          {podcastInfo?.spotifyUrl && (
+            <li>
+              <a
+                href={podcastInfo.spotifyUrl}
+                class="hover:text-white transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Spotify
+              </a>
+            </li>
+          )}
+          {podcastInfo?.appleUrl && (
+            <li>
+              <a
+                href={podcastInfo.appleUrl}
+                class="hover:text-white transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Apple Podcasts
+              </a>
+            </li>
+          )}
+          {podcastInfo?.youtubeUrl && (
+            <li>
+              <a
+                href={podcastInfo.youtubeUrl}
+                class="hover:text-white transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                YouTube
+              </a>
+            </li>
+          )}
+          {podcastInfo?.rssUrl && (
+            <li>
+              <a
+                href={podcastInfo.rssUrl}
+                class="hover:text-white transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                RSS Feed
+              </a>
+            </li>
+          )}
+          {podcastInfo?.twitterUrl && (
+            <li>
+              <a
+                href={podcastInfo.twitterUrl}
+                class="hover:text-white transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Twitter/X
+              </a>
+            </li>
+          )}
+          {podcastInfo?.discordUrl && (
+            <li>
+              <a
+                href={podcastInfo.discordUrl}
+                class="hover:text-white transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Discord
+              </a>
+            </li>
+          )}
         </ul>
       </div>
     </div>
 
     <!-- Copyright -->
     <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
-      <p>&copy; {currentYear} {SITE_CONFIG.name}. All rights reserved.</p>
+      <p>&copy; {currentYear} {siteName}. All rights reserved.</p>
     </div>
   </div>
 </footer>

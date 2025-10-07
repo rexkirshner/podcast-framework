@@ -90,10 +90,19 @@ export interface Podcast {
       url: string;
     };
   };
+  favicon?: {
+    asset: {
+      _ref: string;
+      url: string;
+    };
+  };
   spotifyShowId?: string;
   appleUrl?: string;
   youtubeUrl?: string;
   spotifyUrl?: string;
+  rssUrl?: string;
+  twitterUrl?: string;
+  discordUrl?: string;
 }
 
 // Helper function to fetch all episodes
@@ -229,10 +238,14 @@ export async function getPodcastInfo(): Promise<Podcast | null> {
     description,
     isActive,
     "logo": logo.asset->{url},
+    "favicon": favicon.asset->{url},
     spotifyShowId,
     appleUrl,
     youtubeUrl,
-    spotifyUrl
+    spotifyUrl,
+    rssUrl,
+    twitterUrl,
+    discordUrl
   }`;
 
   return await sanityClient.fetch(query);

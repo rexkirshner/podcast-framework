@@ -1,10 +1,11 @@
 ---
 // Header component with Sanity integration
-import { SITE_CONFIG } from "../config/site";
 import { getPodcastInfo } from "../lib/sanity";
 
-// Fetch podcast info for logo
+// Fetch podcast info for logo, name, and tagline
 const podcastInfo = await getPodcastInfo();
+const siteName = podcastInfo?.name || "Podcast";
+const siteTagline = podcastInfo?.tagline || "";
 ---
 
 <header class="bg-white border-b border-gray-200">
@@ -16,17 +17,17 @@ const podcastInfo = await getPodcastInfo();
           {podcastInfo?.logo?.url ? (
             <img
               src={podcastInfo.logo.url}
-              alt={SITE_CONFIG.name}
+              alt={siteName}
               class="w-10 h-10 rounded-lg object-cover"
             />
           ) : (
             <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-xl">SW</span>
+              <span class="text-white font-bold text-xl">{siteName.substring(0, 2).toUpperCase()}</span>
             </div>
           )}
           <div>
-            <h1 class="text-xl font-bold text-gray-900">{SITE_CONFIG.name}</h1>
-            <p class="text-xs text-gray-500">{SITE_CONFIG.tagline}</p>
+            <h1 class="text-xl font-bold text-gray-900">{siteName}</h1>
+            {siteTagline && <p class="text-xs text-gray-500">{siteTagline}</p>}
           </div>
         </a>
       </div>

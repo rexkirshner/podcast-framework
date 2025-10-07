@@ -19,11 +19,12 @@ export async function getStaticPaths() {
 // Get episode from props (passed from getStaticPaths)
 const { episode } = Astro.props as { episode: Episode };
 
-// Fetch podcast info for isActive status
+// Fetch podcast info for isActive status and branding
 const podcastInfo = await getPodcastInfo();
+const siteName = podcastInfo?.name || "Podcast";
 
 // Extract Spotify episode ID from spotifyLink and build embed URL
-let spotifyEmbedUrl = `https://open.spotify.com/embed/show/${SITE_CONFIG.spotifyShowId}?utm_source=generator`;
+let spotifyEmbedUrl = `https://open.spotify.com/embed/show/${podcastInfo?.spotifyShowId || SITE_CONFIG.spotifyShowId}?utm_source=generator`;
 if (episode.spotifyLink) {
   // Extract episode ID from URL like: https://open.spotify.com/episode/5vQKPYz3yNPqVYZqWqWqWq
   const episodeIdMatch = episode.spotifyLink.match(/episode\/([a-zA-Z0-9]+)/);
@@ -34,8 +35,8 @@ if (episode.spotifyLink) {
 
 // Prepare meta tags
 const metaDescription = stripHTML(episode.description).substring(0, 160);
-const pageTitle = `${episode.title} - ${SITE_CONFIG.name}`;
-const ogImage = episode.coverImage?.asset?.url || "https://cdn.sanity.io/images/ej6443ov/production/398d8e6cd3b0ed0fff212b8fb5feca016fc0eb07-1200x1200.png";
+const pageTitle = `${episode.title} - ${siteName}`;
+const ogImage = episode.coverImage?.asset?.url || podcastInfo?.logo?.url || "https://cdn.sanity.io/images/ej6443ov/production/398d8e6cd3b0ed0fff212b8fb5feca016fc0eb07-1200x1200.png";
 ---
 
 <BaseLayout title={pageTitle} description={metaDescription} ogImage={ogImage}>
@@ -232,36 +233,60 @@ const ogImage = episode.coverImage?.asset?.url || "https://cdn.sanity.io/images/
       <div class="bg-blue-50 rounded-lg p-6 text-center">
         {podcastInfo?.isActive ? (
           <>
-            <h3 class="text-xl font-semibold mb-2">Subscribe to {SITE_CONFIG.name}</h3>
+            <h3 class="text-xl font-semibold mb-2">Subscribe to {siteName}</h3>
             <p class="text-gray-600 mb-4">
               Get notified when new episodes are released
             </p>
           </>
         ) : (
           <>
-            <h3 class="text-xl font-semibold mb-2">Listen to {SITE_CONFIG.name}</h3>
+            <h3 class="text-xl font-semibold mb-2">Listen to {siteName}</h3>
             <p class="text-gray-600 mb-4">
               Explore the complete archive on your favorite platform
             </p>
           </>
         )}
-        <div class="flex gap-4 justify-center">
-          <a
-            href={SITE_CONFIG.links.spotify}
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Spotify
-          </a>
-          <a
-            href={SITE_CONFIG.links.apple}
-            class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Apple Podcasts
-          </a>
+        <div class="flex flex-wrap gap-3 justify-center">
+          {podcastInfo?.spotifyUrl && (
+            <a
+              href={podcastInfo.spotifyUrl}
+              class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Spotify
+            </a>
+          )}
+          {podcastInfo?.appleUrl && (
+            <a
+              href={podcastInfo.appleUrl}
+              class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Apple Podcasts
+            </a>
+          )}
+          {podcastInfo?.youtubeUrl && (
+            <a
+              href={podcastInfo.youtubeUrl}
+              class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              YouTube
+            </a>
+          )}
+          {podcastInfo?.rssUrl && (
+            <a
+              href={podcastInfo.rssUrl}
+              class="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              RSS Feed
+            </a>
+          )}
         </div>
       </div>
     </main>

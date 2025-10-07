@@ -1,29 +1,20 @@
 ---
 // Episodes list page - fetching from Sanity
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
-import "../../styles/global.css";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getAllEpisodes, getPodcastInfo } from "../../lib/sanity";
 import { formatDate, stripHTML } from "../../lib/utils";
 
 // Fetch all episodes and podcast info from Sanity
 const episodes = await getAllEpisodes();
 const podcastInfo = await getPodcastInfo();
+const siteName = podcastInfo?.name || "Podcast";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>All Episodes - Strange Water Podcast</title>
-    <meta name="description" content="Browse all episodes of Strange Water, exploring Ethereum and Web3 through conversations with builders and researchers." />
-  </head>
-  <body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
-    <Header />
-
-    <main class="max-w-6xl mx-auto px-4 py-12 flex-grow">
+<BaseLayout
+  title={`All Episodes - ${siteName}`}
+  description={`Browse all episodes of ${siteName}, exploring Ethereum and Web3 through conversations with builders and researchers.`}
+>
+  <main class="max-w-6xl mx-auto px-4 py-12 flex-grow">
       <!-- Page Header -->
       <div class="mb-12">
         <h1 class="text-4xl font-bold text-gray-900 mb-4">All Episodes</h1>
@@ -97,8 +88,5 @@ const podcastInfo = await getPodcastInfo();
           <p class="text-sm mt-2">Explore the complete archive of episodes above</p>
         </div>
       )}
-    </main>
-
-    <Footer />
-  </body>
-</html>
+  </main>
+</BaseLayout>

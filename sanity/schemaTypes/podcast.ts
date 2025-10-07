@@ -58,5 +58,32 @@ export default defineType({
       title: 'Spotify URL',
       type: 'url',
     }),
+    defineField({
+      name: 'favicon',
+      title: 'Favicon',
+      type: 'image',
+      description: 'Small icon that appears in browser tabs (recommended: 32x32px or 64x64px)',
+      options: {
+        hotspot: true,
+      },
+    }),
+    defineField({
+      name: 'rssUrl',
+      title: 'RSS Feed URL',
+      type: 'url',
+      description: 'RSS feed URL for podcast aggregators',
+    }),
+    defineField({
+      name: 'twitterUrl',
+      title: 'Twitter/X URL',
+      type: 'url',
+      description: 'Link to podcast Twitter/X profile (optional)',
+    }),
+    defineField({
+      name: 'discordUrl',
+      title: 'Discord URL',
+      type: 'url',
+      description: 'Link to podcast Discord server (optional)',
+    }),
   ],
 })

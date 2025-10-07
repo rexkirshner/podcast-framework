@@ -8,6 +8,7 @@ const theme = (await getTheme()) || defaultTheme;
 const currentYear = new Date().getFullYear();
 const siteName = podcastInfo?.name || "Podcast";
 const siteDescription = podcastInfo?.description || "";
+const showContribute = podcastInfo?.isActive === true;
 ---
 
 <footer style="background: var(--color-footer-bg); color: var(--color-footer-text);" class="mt-16">
@@ -31,6 +32,14 @@ const siteDescription = podcastInfo?.description || "";
           <li>
             <a href="/episodes" class="hover:opacity-75 transition">Episodes</a>
           </li>
+          <li>
+            <a href="/guests" class="hover:opacity-75 transition">Guests</a>
+          </li>
+          {showContribute && (
+            <li>
+              <a href="/contribute" class="hover:opacity-75 transition">Contribute</a>
+            </li>
+          )}
           <li>
             <a href="/about" class="hover:opacity-75 transition">About</a>
           </li>

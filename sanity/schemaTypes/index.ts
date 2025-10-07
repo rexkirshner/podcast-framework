@@ -4,5 +4,6 @@ import guest from './guest'
 import host from './host'
 import theme from '../schemas/theme'
 import homepageConfig from '../schemas/homepageConfig'
+import contribution from '../schemas/contribution'
 
-export const schemaTypes = [podcast, episode, guest, host, theme, homepageConfig]
+export const schemaTypes = [podcast, episode, guest, host, theme, homepageConfig, contribution]

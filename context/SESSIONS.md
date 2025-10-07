@@ -1533,3 +1533,109 @@ This separation allows:
 - Testing and verification: 20 minutes
 - Context documentation: 50 minutes
 
+---
+
+## Session 13 | 2025-10-07 | Phase 2a: CMS Theming Refinement
+
+**Duration:** ~2h | **Focus:** Theme color customization & component styling | **Status:** ✅
+
+### Changed
+- ✅ Refined theme colors from dark to light aesthetic matching Strange Water branding
+- ✅ Fixed header/footer styling (colors, spacing, layout)
+- ✅ Integrated theme system into BaseLayout for all-page coverage
+- ✅ Improved episodes page with better archive messaging
+- ✅ Created comprehensive community contribution feature proposal
+- ✅ Committed all theming work with comprehensive message
+
+### Problem Solved
+**Issue:** Theme system was functional but colors were dark/muddy and didn't match Strange Water's branding. Header/footer text invisible on black backgrounds. Theme not applying to all pages.
+
+**Constraints:**
+- Must use CMS-controlled colors (no hardcoding)
+- Maintain SSG compatibility (CSS custom properties only)
+- Match existing Strange Water branding (logo, old website)
+- Preserve Tailwind workflow for page content
+
+**Approach:**
+1. Analyzed logo and old website screenshots to extract brand colors
+2. Transitioned from dark theme to light theme (white background, black header/footer)
+3. Added dedicated headerText/footerText fields to theme schema for independent control
+4. Used secondary color (#67cccc light teal) for accents instead of primary
+5. Fixed BaseLayout to inject theme CSS on all pages (not just homepage)
+6. Used inline styles when Tailwind classes weren't applying due to caching issues
+
+**Why this approach:**
+- Logo/old website revealed light aesthetic was the intended brand
+- Separate header/footer text colors needed because header/footer have black backgrounds
+- Secondary color softer and more visible on black than bright primary
+- BaseLayout integration ensures consistent theming without duplicating theme code
+- Inline styles worked around Tailwind compilation/caching issues during development
+
+### Decisions
+- **Theme Aesthetic:** Light theme with white background, black header/footer, teal accents
+- **Color Usage:** Secondary color (#67cccc) for navigation links and accents, primary (#00a3b5) for hover states and secondary elements
+- **Footer Layout:** Proportional grid (2fr_1fr_1fr) with max-width on description for better balance
+- **Community Feature:** Sanity CMS + serverless function architecture (see requests-proposal.md)
+
+### Files
+**MOD:** `sanity/schemas/theme.ts:1-150` - Added headerText and footerText fields for independent header/footer text color control
+**MOD:** `src/lib/theme.ts:1-100` - Updated ThemeColors interface and generateThemeCSS to include headerText/footerText variables
+**MOD:** `src/components/Header.astro:1-140` - Applied theme colors (secondary for links/tagline, headerText for brand), made links bold
+**MOD:** `src/components/Footer.astro:1-140` - Removed opacity, balanced grid layout, changed "Links" to "Navigation", applied secondary color to headings
+**MOD:** `src/layouts/BaseLayout.astro:20-45` - Added theme system imports and CSS variable injection for all pages
+**MOD:** `src/pages/episodes/index.astro:19-29` - Moved "concluded podcast" message to top, changed "above" to "below", added styled box
+**NEW:** `context/tasks/requests-proposal.md:1-642` - Comprehensive 13-page proposal for community contribution feature
+**NEW:** `scripts/update-theme-light.js` - Script to update theme to final light aesthetic colors
+**NEW:** `scripts/update-theme-header-footer-text.js` - Script to add headerText/footerText fields
+
+### Mental Models
+**Current understanding:**
+- Theme system uses two-layer approach: CSS variables layer (theme.ts generates CSS) + component layer (Astro components consume variables)
+- BaseLayout is the critical integration point - all pages must use it to get themed header/footer
+- Tailwind classes compile to CSS variables behind the scenes, but inline styles more reliable during rapid iteration
+- Secondary color (#67cccc) better for text-on-dark, primary (#00a3b5) better for text-on-light and hover states
+
+**Key insights:**
+- getGoogleFontsURL vs getGoogleFontsUrl case sensitivity caused TypeError - function exports are case-sensitive
+- Footer opacity: 0.8 made black (#000000) appear gray - removed opacity for true black
+- Tailwind spacing classes not applying due to dev server caching - inline styles bypassed issue
+- Multiple dev servers on different ports caused confusion during testing
+
+**Gotchas discovered:**
+- BaseLayout theme injection critical - without it, pages revert to default Tailwind colors
+- Import case mismatch (getGoogleFontsUrl vs getGoogleFontsURL) throws runtime error
+- Browser hard refresh doesn't always clear Vite dev server cache
+- Theme colors need validation in Sanity schema to prevent invalid hex values breaking builds
+
+### Work In Progress
+**Task:** None - theming phase complete and committed
+
+**Current Status:** Phase 2a (CMS Theming) complete. Ready to review community contribution proposal.
+
+**Next specific action:** Review requests-proposal.md and decide whether to implement community contribution feature before or after templatization
+
+**Context needed:** Proposal includes naming recommendation ("Contribute"), technical architecture (Sanity CMS + serverless function), form designs, spam protection, and 8-12 hour implementation timeline
+
+### TodoWrite State
+**Captured from TodoWrite:**
+- ✅ Test and verify theme system implementation
+- ✅ Run /save-context to update documentation
+- ✅ Commit all theming work with comprehensive message
+- ✅ Verify theme is applied to all pages (about, 404, guest pages)
+
+### Next Session
+**Priority:** Review community contribution feature proposal (context/tasks/requests-proposal.md) and decide on implementation timeline
+
+**Decision Points:**
+1. Approve "Contribute" as navigation label or suggest alternative?
+2. Choose email service (SendGrid vs Resend)?
+3. Should feedback submissions be anonymous (name/email optional)?
+4. Immediate email notifications or daily digest?
+5. Any additional fields to collect?
+
+**Implementation Options:**
+- Option A: Implement contribution feature now (8-12 hours) before templatization
+- Option B: Add to Phase 2b (after templatization) as template-included feature
+- Option C: Skip for Strange Water (concluded podcast), add only to future active podcasts
+
+**Blockers:** None

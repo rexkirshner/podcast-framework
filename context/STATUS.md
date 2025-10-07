@@ -3,21 +3,33 @@
 > **Single source of truth** for current project state. Updated frequently during work.
 > For orientation and context, see `CONTEXT.md`. For history, see `SESSIONS.md`.
 
-**Last Updated:** 2025-10-07 (Session 12 - CMS Theming)
+**Last Updated:** 2025-10-07 (Session 13 - Theme Refinement)
 
 ---
 
 ## Current Phase
 
-**Phase:** Phase 2a - Complete Feature Set (Guests Page + CMS Styling)
-**Status:** 🚧 In Progress - Theming Complete, Guests Page Remaining
-**Next Milestone:** Template v2.0.0 (Feature-Complete)
+**Phase:** Phase 2a - CMS Styling & Optional Features
+**Status:** ✅ Theming Complete | 🤔 Evaluating Community Contribution Feature
+**Next Milestone:** Decide on community feature implementation (before or after templatization)
 
 > **Strategic Decision (2025-10-06):** Build complete feature set FIRST (guests page + CMS styling), THEN templatize. This ensures Template v2.0.0 is feature-complete and enables config-only deployments.
+>
+> **New Feature Proposal (2025-10-07):** Community contribution system for active podcasts (episode ideas, guest requests, questions, feedback). See `context/tasks/requests-proposal.md` for comprehensive 13-page proposal.
 
 ---
 
 ## Recent Accomplishments
+
+### Session 13 (2025-10-07) - Theme Color Refinement & Feature Planning
+- ✅ Refined theme colors from dark to light aesthetic (white bg, black header/footer, teal accents)
+- ✅ Fixed header/footer text visibility (added headerText/footerText fields)
+- ✅ Improved footer layout (proportional grid, better spacing)
+- ✅ Integrated theme system into BaseLayout (all pages themed)
+- ✅ Episodes page improvements (better archive messaging)
+- ✅ Created comprehensive community contribution feature proposal (13 pages)
+- ✅ Committed all theming work with comprehensive git message
+- ✅ Verified theme applied to all pages (about, 404, guests)
 
 ### Session 12 (2025-10-07) - CMS Theming Implementation
 - ✅ Complete CMS-driven theming system (colors, typography, layout)
@@ -144,44 +156,44 @@ npm run upload:covers        # Upload episode cover images
 
 ## Work In Progress
 
-**Current Task:** CMS theming complete - Ready to apply to all pages and build guests page
+**Current Task:** Evaluating community contribution feature proposal
 
-**What's Done:**
-- ✅ Theme schema (`sanity/schemas/theme.ts`)
-- ✅ Homepage config schema (`sanity/schemas/homepageConfig.ts`)
-- ✅ Theme utilities (`src/lib/theme.ts`)
-- ✅ Homepage integrated with theme system
-- ✅ Default theme initialized in Sanity
+**What's Done (Theme System):**
+- ✅ Complete CMS-driven theming system
+- ✅ Light theme with Strange Water branding (white bg, black header/footer, teal accents)
+- ✅ Theme applied to all pages via BaseLayout
+- ✅ Header/footer fully customizable via CMS
+- ✅ All work committed to git (Session 12 commit d787750)
 
 **What's Next:**
-- Apply theme to episode pages and about page
-- Build guests page with theme integration
-- Validate zero hardcoded branding remains
+- Decision: Review community contribution proposal (context/tasks/requests-proposal.md)
+- Option A: Implement now (8-12 hours) before templatization
+- Option B: Add to template as included feature
+- Option C: Skip for Strange Water, add only to future active podcasts
 
 ## Next Steps
 
-### Immediate Priority (Phase 2a - Current)
-1. **Commit Theming Work** (now)
-   - Git commit all theme-related files
-   - Comprehensive commit message documenting approach
+### Immediate Priority (Phase 2a - Decision Point)
+1. **Review Community Contribution Proposal** (now)
+   - Read `context/tasks/requests-proposal.md` (13-page comprehensive proposal)
+   - Decide: Implement now vs. add to template vs. skip for Strange Water
+   - Answer open questions:
+     * Navigation label ("Contribute" or alternative)?
+     * Email service (SendGrid vs Resend)?
+     * Anonymous feedback (name/email optional)?
+     * Notification frequency (immediate vs daily digest)?
+     * Additional fields to collect?
 
-2. **Apply Theme to All Pages** (1-2 hours)
-   - Episodes list and episode detail pages
-   - About page
-   - Guest pages (when created)
-   - 404 page
+2. **If Implementing Community Feature** (8-12 hours)
+   - Phase 1: Core feature (Sanity schema, /contribute page, serverless function)
+   - Phase 2: Notifications (email integration)
+   - Phase 3: Polish (spam protection, privacy policy, mobile testing)
 
-3. **Build Guests Page** (1-2 days)
-   - `/guests` route with grid/list view
-   - `/guest/[slug]` dynamic routes (already exist!)
-   - Guest filtering/search
-   - Navigation integration
-   - Apply theme system
-
-3. **Validate on Strange Water** (2-4 hours)
-   - Upload assets to Sanity
-   - QA all pages
-   - Verify zero hardcoded content
+3. **Or, Move to Templatization** (Phase 2b)
+   - Extract environment variables
+   - Create template verification script
+   - Document deployment guide
+   - Tag v2.0.0
 
 ### Phase 2b - Framework Templatization (Week 7)
 - Environment variable extraction

@@ -8,6 +8,7 @@ const podcastInfo = await getPodcastInfo();
 const theme = (await getTheme()) || defaultTheme;
 const siteName = podcastInfo?.name || "Podcast";
 const siteTagline = podcastInfo?.tagline || "";
+const showContribute = podcastInfo?.isActive === true;
 ---
 
 <header style="background: var(--color-header-bg);" class="border-b" style:border-color={`rgba(${theme.colors.primary}, 0.2)`}>
@@ -45,6 +46,11 @@ const siteTagline = podcastInfo?.tagline || "";
         <a href="/guests" style="color: var(--color-secondary);" class="font-semibold hover:opacity-75 transition">
           Guests
         </a>
+        {showContribute && (
+          <a href="/contribute" style="color: var(--color-secondary);" class="font-semibold hover:opacity-75 transition">
+            Contribute
+          </a>
+        )}
         <a href="/about" style="color: var(--color-secondary);" class="font-semibold hover:opacity-75 transition">
           About
         </a>
@@ -116,6 +122,15 @@ const siteTagline = podcastInfo?.tagline || "";
         >
           Guests
         </a>
+        {showContribute && (
+          <a
+            href="/contribute"
+            style="color: var(--color-secondary);"
+            class={`font-semibold hover:opacity-75 transition px-2 py-2 ${theme.layout.borderRadius}`}
+          >
+            Contribute
+          </a>
+        )}
         <a
           href="/about"
           style="color: var(--color-secondary);"

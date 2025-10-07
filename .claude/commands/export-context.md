@@ -70,16 +70,21 @@ Gather all markdown files in order:
 ```bash
 # Core documentation files (in logical order)
 FILES=(
-  "context/CLAUDE.md"
-  "context/PRD.md"
-  "context/ARCHITECTURE.md"
-  "context/CODE_STYLE.md"
+  "context/CONTEXT.md"          # or CLAUDE.md for pre-v2.0
+  "context/STATUS.md"            # v2.0+ single source of truth
+  "context/QUICK_REF.md"         # v2.0+ auto-generated dashboard
   "context/DECISIONS.md"
-  "context/KNOWN_ISSUES.md"
   "context/SESSIONS.md"
-  "context/tasks/next-steps.md"
-  "context/tasks/todo.md"
+  "context/PRD.md"               # optional
+  "context/ARCHITECTURE.md"      # optional
+  "context/CODE_STYLE.md"        # optional
+  "context/KNOWN_ISSUES.md"      # optional
 )
+
+# Support both v1.x and v2.0 structures
+if [ -f "context/CLAUDE.md" ] && [ ! -f "context/CONTEXT.md" ]; then
+  FILES[0]="context/CLAUDE.md"
+fi
 
 # Additional files if they exist
 for file in context/*.md; do
@@ -101,15 +106,14 @@ Create header with project information:
 **System Version:** [Claude Context System version]
 
 **Included Sections:**
-- Developer Guide (CLAUDE.md)
-- Product Requirements (PRD.md)
-- Architecture (ARCHITECTURE.md)
-- Code Style (CODE_STYLE.md)
-- Technical Decisions (DECISIONS.md)
-- Known Issues (KNOWN_ISSUES.md)
+- Project Orientation (CONTEXT.md)
+- Current Status (STATUS.md)
+- Quick Reference (QUICK_REF.md)
+- Decision Log (DECISIONS.md)
 - Session History (SESSIONS.md)
-- Next Steps (tasks/next-steps.md)
-- Current Todos (tasks/todo.md)
+- Product Requirements (PRD.md, if exists)
+- Architecture (ARCHITECTURE.md, if exists)
+- Code Style (CODE_STYLE.md, if exists)
 [+ X additional files]
 
 **Statistics:**
@@ -128,34 +132,35 @@ Create clickable TOC with all sections:
 ```markdown
 ## Table of Contents
 
-1. [Developer Guide](#developer-guide)
+1. [Project Orientation](#project-orientation)
    - [Project Overview](#project-overview)
    - [Working with You](#working-with-you)
    - [Core Development Methodology](#core-development-methodology)
 
-2. [Product Requirements](#product-requirements)
+2. [Current Status](#current-status)
+   - [Current Phase](#current-phase)
+   - [Recent Work](#recent-work)
+   - [Next Steps](#next-steps)
+
+3. [Quick Reference](#quick-reference)
+   - [Project Dashboard](#project-dashboard)
+   - [Key Metrics](#key-metrics)
+
+4. [Decision Log](#decision-log)
+   - [Recent Decisions](#recent-decisions)
+   - [Decision Rationale](#decision-rationale)
+
+5. [Session History](#session-history)
+   - [Recent Sessions](#recent-sessions)
+   - [Session Index](#session-index)
+
+6. [Product Requirements](#product-requirements) (if exists)
    - [Executive Summary](#executive-summary)
    - [Technical Stack](#technical-stack)
 
-3. [Architecture](#architecture)
+7. [Architecture](#architecture) (if exists)
    - [High-Level Overview](#high-level-overview)
    - [System Components](#system-components)
-
-4. [Code Style](#code-style)
-   - [Core Principles](#core-principles)
-   - [Language Conventions](#language-conventions)
-
-5. [Technical Decisions](#technical-decisions)
-
-6. [Known Issues](#known-issues)
-   - [Blocking Issues](#blocking-issues)
-   - [Non-Critical Issues](#non-critical-issues)
-
-7. [Session History](#session-history)
-
-8. [Next Steps](#next-steps)
-
-9. [Current Todos](#current-todos)
 
 ---
 ```
@@ -316,7 +321,7 @@ Includes everything, full table of contents
 ```
 /export-context --minimal
 ```
-Only CLAUDE.md, PRD.md, ARCHITECTURE.md (core reference)
+Only CONTEXT.md, STATUS.md, DECISIONS.md (core reference)
 
 ### Recent Only (future enhancement)
 ```
@@ -328,11 +333,11 @@ Excludes old session history, keeps last 10 sessions
 
 ### What's Included
 - All .md files in context/
-- All .md files in context/tasks/
 - Proper formatting and structure
 - Source file markers
 - Table of contents
 - Export metadata
+- Both v1.x and v2.0 file structures supported
 
 ### What's Excluded
 - .context-config.json (contains personal preferences)

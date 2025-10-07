@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getAllGuests, getPodcastInfo } from "../../lib/sanity";
+
+// Fetch all guests
+const guests = await getAllGuests();
+const podcastInfo = await getPodcastInfo();
+const siteName = podcastInfo?.name || "Podcast";
+
+// Sort guests alphabetically by name
+const sortedGuests = guests.sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<BaseLayout
+  title={`Guests - ${siteName}`}
+  description={`Browse all ${guests.length} guests who have appeared on ${siteName}. Explore their backgrounds, expertise, and episodes.`}
+>
+  <main class="max-w-7xl mx-auto px-4 py-12 flex-grow">
+    <!-- Page Header -->
+    <div class="mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Guests</h1>
+    </div>
+
+    <!-- Guest Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      {sortedGuests.map((guest) => (
+        <a
+          href={`/guest/${guest.slug.current}`}
+          class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
+        >
+          <!-- Guest Photo -->
+          <div class="aspect-square bg-gray-100 overflow-hidden">
+            {guest.photo?.url ? (
+              <img
+                src={guest.photo.url}
+                alt={guest.name}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            ) : (
+              <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
+                <span class="text-5xl font-bold text-blue-600">
+                  {guest.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <!-- Guest Info -->
+          <div class="p-4">
+            <h2 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+              {guest.name}
+            </h2>
+            {guest.bio && (
+              <p class="text-sm text-gray-600 mt-2 line-clamp-2">
+                {guest.bio}
+              </p>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- Empty State (if no guests) -->
+    {guests.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-xl text-gray-500">No guests found.</p>
+      </div>
+    )}
+  </main>
+</BaseLayout>

@@ -5,7 +5,7 @@ description: Initialize Claude Context System for this project
 
 # /init-context Command
 
-Initialize a **minimal overhead** context system for this project. Creates just 2 core files (CONTEXT.md + STATUS.md), then grows naturally as needed.
+Initialize a **minimal overhead** context system for this project. Creates 5 core files (CONTEXT.md, STATUS.md, DECISIONS.md, SESSIONS.md, QUICK_REF.md), with optional files suggested when complexity demands.
 
 **Philosophy:** Minimal overhead during work. Good-enough recovery when needed. Single source of truth.
 
@@ -14,7 +14,7 @@ Initialize a **minimal overhead** context system for this project. Creates just 
 
 ## What This Command Does
 
-Creates **3 core files** that serve dual purpose (developer productivity + AI agent review/takeover):
+Creates **5 core files** that serve dual purpose (developer productivity + AI agent review/takeover):
 1. **CONTEXT.md** - Orientation (rarely changes: who/what/how/why)
 2. **STATUS.md** - Current state (frequently updated: tasks/blockers/next)
 3. **DECISIONS.md** - Decision log (WHY choices made - critical for AI agents)
@@ -23,7 +23,7 @@ Creates **3 core files** that serve dual purpose (developer productivity + AI ag
 
 Optional files (PRD.md, ARCHITECTURE.md) suggested when complexity demands.
 
-## Why 3 Core Files?
+## Why 5 Core Files?
 
 **The Dual Purpose:**
 1. **Session continuity** - Resume work seamlessly
@@ -132,7 +132,7 @@ mkdir -p artifacts/coverage
 
 ### Step 4: Generate Core Documentation Files
 
-Create the **3 core files + supporting docs** from templates:
+Create the **5 core files** from templates:
 
 **context/CONTEXT.md** - Orientation (rarely changes)
 - Project overview (from README or git description)
@@ -196,9 +196,9 @@ curl -sL https://raw.githubusercontent.com/rexkirshner/claude-context-system/mai
 After initialization, explain to the user:
 
 ```
-✅ Context System Initialized (v1.9.0)
+✅ Context System Initialized (v2.0.0)
 
-Created 3 core files + supporting docs:
+Created 5 core files:
 - context/CONTEXT.md - Orientation (who/what/how/why)
 - context/STATUS.md - Current state (tasks/blockers/next)
 - context/DECISIONS.md - Decision log (WHY choices made)
@@ -206,7 +206,7 @@ Created 3 core files + supporting docs:
 - context/QUICK_REF.md - Dashboard (auto-generated)
 - context/.context-config.json - Configuration
 
-⚡ Two-Tier Workflow (NEW in v1.9.0):
+⚡ Two-Tier Workflow:
 
 **Tier 1: Quick Updates (Most Sessions)**
 Run /save at session end - 2-3 minutes
@@ -224,7 +224,7 @@ Run /save-full before breaks/handoffs - 10-15 minutes
 **Time Investment for 20 Sessions:**
 - 17× /save: ~40-50 min
 - 3× /save-full: ~30-45 min
-- Total: ~70-95 min (vs. 100-200 min in v1.8.0)
+- Total: ~70-95 min (50% reduction from v1.8.0)
 
 🎯 Philosophy:
 
@@ -324,7 +324,7 @@ When `/save-context` runs, it should check if additional documentation is needed
 - Feature roadmap getting complex
 - Ask: "Product scope is expanding. Should I create PRD.md to document vision and roadmap for AI agent context?"
 
-**v1.8.0 Note:** We always create DECISIONS.md (core file #3) because it's critical for AI agents to understand WHY choices were made. Only ARCHITECTURE.md and PRD.md are suggested on-demand when complexity demands it.
+**v2.0 Note:** We always create DECISIONS.md because it's critical for AI agents to understand WHY choices were made. Only ARCHITECTURE.md and PRD.md are suggested on-demand when complexity demands it.
 
 ## Important Notes
 
@@ -351,9 +351,8 @@ If errors occur:
 ## Success Criteria
 
 Command succeeds when:
-- 3 core files (CONTEXT.md + STATUS.md + DECISIONS.md) created with available data
-- SESSIONS.md initialized with structured, comprehensive format
-- QUICK_REF.md generated from STATUS.md
+- 5 core files (CONTEXT.md, STATUS.md, DECISIONS.md, SESSIONS.md, QUICK_REF.md) created with available data
+- All files use v2.0 structure and format
 - Configuration valid
 - Installation files cleaned up
 - User understands dual-purpose philosophy (developer + AI agent)

@@ -23,7 +23,7 @@ export function formatDate(dateString: string): string {
  * @param text - Text with HTML entities
  * @returns Text with decoded entities
  */
-function decodeHTMLEntities(text: string): string {
+export function decodeHTMLEntities(text: string): string {
   const entities: Record<string, string> = {
     '&amp;': '&',
     '&lt;': '<',
@@ -33,11 +33,15 @@ function decodeHTMLEntities(text: string): string {
     '&#39;': "'",
     '&apos;': "'",
     '&nbsp;': ' ',
+    '&copy;': '©',
+    '&reg;': '®',
+    '&trade;': '™',
   };
 
   return text
     .replace(/&[#\w]+;/g, (entity) => entities[entity] || entity)
-    .replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+    .replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))
+    .replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
 }
 
 /**
@@ -48,4 +52,31 @@ function decodeHTMLEntities(text: string): string {
 export function stripHTML(html: string): string {
   const withoutTags = html.replace(/<[^>]*>/g, "");
   return decodeHTMLEntities(withoutTags).trim();
+}
+
+/**
+ * Sanitize HTML to prevent XSS attacks while preserving safe formatting
+ * Uses DOMPurify to clean potentially dangerous HTML
+ * @param html - HTML string to sanitize
+ * @returns Sanitized HTML safe for rendering
+ */
+export function sanitizeHTML(html: string): string {
+  // Import DOMPurify dynamically for SSR compatibility
+  if (typeof window !== 'undefined') {
+    // Client-side: use DOMPurify
+    const DOMPurify = require('isomorphic-dompurify');
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre'],
+      ALLOWED_ATTR: ['href', 'target', 'rel'],
+      ALLOW_DATA_ATTR: false,
+    });
+  }
+
+  // Server-side (SSG): basic sanitization fallback
+  // Remove script tags and event handlers
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/on\w+="[^"]*"/g, '')
+    .replace(/on\w+='[^']*'/g, '')
+    .replace(/javascript:/gi, '');
 }

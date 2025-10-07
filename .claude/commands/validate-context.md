@@ -62,13 +62,16 @@ The script performs these checks:
 🔍 Validating Claude Context System...
 
 📄 Checking required documentation files...
-  ✅ context/CLAUDE.md
-  ✅ context/PRD.md
+  ✅ context/CONTEXT.md
+  ✅ context/STATUS.md
+  ✅ context/DECISIONS.md
+  ✅ context/SESSIONS.md
+  ✅ context/QUICK_REF.md
   ...
 
 🔎 Checking for unresolved placeholders...
   ⚠️  Unresolved placeholders found:
-    context/CLAUDE.md:45: [TODO: Add deployment instructions]
+    context/CONTEXT.md:45: [TODO: Add deployment instructions]
 
 ⚙️  Validating configuration files...
   ✅ .context-config.json is valid JSON
@@ -92,9 +95,9 @@ Based on validation results, provide actionable recommendations:
 ❌ **Critical Issues Found**
 
 **High Priority Fixes:**
-1. Create missing DECISIONS.md - Run /save-context to generate
+1. Create missing STATUS.md - Run /save to generate
 2. Fix invalid JSON in .context-config.json
-3. Add missing required sections to CLAUDE.md
+3. Add missing required sections to CONTEXT.md
 
 **Next Steps:**
 - Fix errors before proceeding
@@ -108,7 +111,7 @@ Based on validation results, provide actionable recommendations:
 **Recommended Improvements:**
 1. Fill in owner name in .context-config.json
 2. Replace 5 TODO placeholders in documentation
-3. Add more detail to sparse ARCHITECTURE.md
+3. Add more detail to sparse ARCHITECTURE.md (if exists)
 
 **Impact:**
 - Documentation is usable but incomplete

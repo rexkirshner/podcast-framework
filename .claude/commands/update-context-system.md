@@ -127,24 +127,59 @@ The installer will:
 - Installer will show version change (if any)
 - Installer will list all updated files
 
-### Step 3: Run Migration Script
+### Step 3: Check Version and Migration Path
 
-**ACTION:** After the installer completes, run the migration script to clean up legacy files and update configuration:
+**ACTION:** Check current version to determine if migration is needed:
 
 ```bash
 echo ""
-echo "🔄 Running migration to latest version..."
-./scripts/migrate-to-1-9-0.sh
+CURRENT_VERSION=$(grep -m 1 '"version":' context/.context-config.json | cut -d'"' -f4 2>/dev/null || echo "unknown")
+
+echo "📦 Current version: $CURRENT_VERSION"
+echo ""
+
+if [[ "$CURRENT_VERSION" == "1.9.0" ]]; then
+  echo "🔄 Migration to v2.0.0 available!"
+  echo ""
+  echo "⚠️  v2.0.0 includes major file structure changes:"
+  echo "   - CLAUDE.md → CONTEXT.md"
+  echo "   - Creates STATUS.md (single source of truth)"
+  echo "   - Creates DECISIONS.md, SESSIONS.md (structured)"
+  echo "   - Auto-generates QUICK_REF.md"
+  echo ""
+  echo "Migration options:"
+  echo "  1. MANUAL: Follow MIGRATION_GUIDE.md (recommended for now)"
+  echo "  2. AUTOMATED: Coming in v2.1 (dry-run, backup, rollback)"
+  echo ""
+  echo "For manual migration, see:"
+  echo "  https://github.com/rexkirshner/claude-context-system/blob/main/MIGRATION_GUIDE.md"
+  echo ""
+elif [[ "$CURRENT_VERSION" < "1.9.0" ]]; then
+  echo "🔄 Running migration to v1.9.0..."
+  ./scripts/migrate-to-1-9-0.sh
+  echo ""
+  echo "✅ Migrated to v1.9.0"
+  echo ""
+  echo "💡 To migrate to v2.0.0, run /update-context-system again"
+else
+  echo "✅ Already on latest version structure"
+fi
 ```
 
-The migration script will:
-- Detect current version
-- Clean up legacy system files (obsolete commands, old templates)
-- Update configuration version
-- Suggest (but not auto-apply) user content updates
-- **Never deletes user content** - only system files
+**About v2.0.0 Migration:**
 
-**This is safe and automatic** - it only removes obsolete system files, never your documentation.
+Automated migration with dry-run, backup, and rollback is planned for v2.1. For now, v2.0.0 migration is manual:
+
+1. Read [MIGRATION_GUIDE.md](https://github.com/rexkirshner/claude-context-system/blob/main/MIGRATION_GUIDE.md)
+2. Backup your `context/` folder
+3. Follow the step-by-step migration process
+4. Verify with `/validate-context`
+
+**Why manual for now?**
+- v2.0.0 focuses on getting the new structure right
+- Automated migration requires extensive testing (10+ real projects)
+- Manual migration ensures you understand changes
+- v2.1 will add full automation with safety features
 
 ### Step 4: Review Template Updates (Optional)
 
@@ -193,10 +228,10 @@ Provide a clear summary to the user:
 ## What Was Updated
 
 **System Files:**
-- Slash commands (.claude/commands/)
-- Helper scripts (scripts/)
-- Templates (templates/)
-- Configuration schemas (config/)
+- Slash commands (.claude/commands/) - v2.0.0 command prompts
+- Helper scripts (scripts/) - v1.9.0 automation (v2.0 migration in v2.1)
+- Templates (templates/) - v2.0.0 file structure
+- Configuration schemas (config/) - v2.0.0 schema
 
 **Your Project Files:**
 - Version number in context/.context-config.json

@@ -1,6 +1,7 @@
 ---
 import { stripHTML } from "../lib/utils";
 import { getPodcastInfo } from "../lib/sanity";
+import { getTheme, defaultTheme } from "../lib/theme";
 import type { Episode } from "../lib/sanity";
 
 interface Props {
@@ -9,41 +10,58 @@ interface Props {
 
 const { episodes } = Astro.props;
 const podcastInfo = await getPodcastInfo();
+const theme = (await getTheme()) || defaultTheme;
 ---
 
 {episodes.length > 0 && (
-  <section class="bg-gray-50 py-12">
+  <section style="background: var(--color-surface);" class="py-12">
     <div class="max-w-5xl mx-auto px-4">
       <div class="flex items-center justify-between mb-8">
-        <h2 class="text-3xl font-bold text-gray-900">Featured Episodes</h2>
+        <h2 class="text-3xl font-bold" style="color: var(--color-text);">Featured Episodes</h2>
         <div class="flex gap-2">
           <button
             id="carousel-prev"
-            class="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            style="background: var(--color-background);"
+            class={`p-2 ${theme.layout.borderRadius} shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed`}
             aria-label="Previous episode"
           >
-            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6" style="color: var(--color-text);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
           </button>
           <button
             id="carousel-next"
-            class="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            style="background: var(--color-background);"
+            class={`p-2 ${theme.layout.borderRadius} shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed`}
             aria-label="Next episode"
           >
-            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6" style="color: var(--color-text);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
           </button>
         </div>
       </div>
 
-      <div class="relative overflow-hidden">
-        <div id="carousel-container" class="flex transition-transform duration-500 ease-in-out">
-          {episodes.map((episode) => (
+      <div
+        class="relative overflow-hidden"
+        role="region"
+        aria-label="Featured Episodes Carousel"
+      >
+        <div
+          id="carousel-container"
+          class="flex transition-transform duration-500 ease-in-out"
+          role="list"
+          aria-live="polite"
+        >
+          {episodes.map((episode, index) => (
             <a
               href={`/episodes/${episode.slug.current}`}
-              class="flex-shrink-0 w-full bg-white rounded-lg shadow-md hover:shadow-xl transition group"
+              style="background: var(--color-surface); border: 1px solid rgba(0, 163, 181, 0.3);"
+              class={`flex-shrink-0 w-full ${theme.layout.borderRadius} shadow-lg hover:shadow-2xl hover:border-opacity-70 transition group`}
+              role="listitem"
+              aria-posinset={index + 1}
+              aria-setsize={episodes.length}
+              aria-label={`Episode ${episode.episodeNumber}: ${episode.title}`}
             >
               <div class="flex flex-col md:flex-row gap-6 p-6">
                 <!-- Episode Image -->
@@ -52,41 +70,41 @@ const podcastInfo = await getPodcastInfo();
                     <img
                       src={episode.coverImage.url}
                       alt={episode.title}
-                      class="w-full md:w-64 h-64 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                      class={`w-full md:w-64 h-64 object-cover ${theme.layout.borderRadius} group-hover:scale-105 transition-transform duration-300`}
                       loading="lazy"
                     />
                   ) : podcastInfo?.logo?.url ? (
                     <img
                       src={podcastInfo.logo.url}
                       alt={podcastInfo.name}
-                      class="w-full md:w-64 h-64 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                      class={`w-full md:w-64 h-64 object-cover ${theme.layout.borderRadius} group-hover:scale-105 transition-transform duration-300`}
                       loading="lazy"
                     />
                   ) : (
-                    <div class="w-full md:w-64 h-64 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <span class="text-5xl font-bold text-blue-600">{episode.episodeNumber}</span>
+                    <div style="background: var(--color-surface);" class={`w-full md:w-64 h-64 ${theme.layout.borderRadius} flex items-center justify-center`}>
+                      <span class="text-5xl font-bold" style="color: var(--color-primary);">{episode.episodeNumber}</span>
                     </div>
                   )}
                 </div>
 
                 <!-- Episode Content -->
                 <div class="flex-grow flex flex-col">
-                  <p class="text-sm text-blue-600 uppercase tracking-wide mb-2">
+                  <p class="text-sm uppercase tracking-wide mb-2" style="color: var(--color-primary);">
                     Episode {episode.episodeNumber}
                   </p>
-                  <h3 class="text-2xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-4">
+                  <h3 class="text-2xl font-semibold group-hover:opacity-80 transition-opacity mb-4" style="color: var(--color-text);">
                     {episode.title}
                   </h3>
 
                   <!-- Host and Guests -->
                   <div class="mb-4">
                     {podcastInfo?.host && (
-                      <p class="text-sm text-gray-600 mb-2">
+                      <p class="text-sm mb-2" style="color: var(--color-text-muted);">
                         <span class="font-semibold">Host:</span> {podcastInfo.host}
                       </p>
                     )}
                     {episode.guests && episode.guests.length > 0 && (
-                      <p class="text-sm text-gray-600">
+                      <p class="text-sm" style="color: var(--color-text-muted);">
                         <span class="font-semibold">Guests:</span> {episode.guests.map(g => g.name).join(", ")}
                       </p>
                     )}
@@ -94,7 +112,7 @@ const podcastInfo = await getPodcastInfo();
 
                   <!-- Description -->
                   {episode.description && (
-                    <p class="text-gray-700 leading-relaxed line-clamp-4">
+                    <p class="leading-relaxed line-clamp-4" style="color: var(--color-text-muted);">
                       {stripHTML(episode.description)}
                     </p>
                   )}
@@ -109,7 +127,8 @@ const podcastInfo = await getPodcastInfo();
       <div class="flex justify-center gap-2 mt-6">
         {episodes.map((_, index) => (
           <button
-            class="carousel-dot w-2 h-2 rounded-full bg-gray-300 transition-all hover:bg-gray-400"
+            style="background: var(--color-text-muted); opacity: 0.5;"
+            class={`carousel-dot w-2 h-2 ${theme.layout.borderRadius} transition-all hover:opacity-100`}
             data-index={index}
             aria-label={`Go to episode ${index + 1}`}
           />
@@ -120,69 +139,8 @@ const podcastInfo = await getPodcastInfo();
 )}
 
 <script>
-  const container = document.getElementById('carousel-container');
-  const prevBtn = document.getElementById('carousel-prev');
-  const nextBtn = document.getElementById('carousel-next');
-  const dots = document.querySelectorAll('.carousel-dot');
+  import { initCarousel } from '../scripts/carousel';
 
-  let currentIndex = 0;
-  const itemsPerView = 1; // Always show 1 item at a time
-  const totalItems = dots.length;
-
-  function updateCarousel() {
-    if (!container) return;
-
-    const maxIndex = Math.max(0, totalItems - itemsPerView);
-    currentIndex = Math.min(currentIndex, maxIndex);
-
-    const cardWidth = container.children[0]?.getBoundingClientRect().width || 0;
-    const offset = -(currentIndex * cardWidth);
-
-    container.style.transform = `translateX(${offset}px)`;
-
-    // Update button states
-    if (prevBtn) prevBtn.disabled = currentIndex === 0;
-    if (nextBtn) nextBtn.disabled = currentIndex >= maxIndex;
-
-    // Update dots
-    dots.forEach((dot, index) => {
-      if (index === currentIndex) {
-        dot.classList.add('bg-blue-600', 'w-8');
-        dot.classList.remove('bg-gray-300');
-      } else {
-        dot.classList.remove('bg-blue-600', 'w-8');
-        dot.classList.add('bg-gray-300');
-      }
-    });
-  }
-
-  prevBtn?.addEventListener('click', () => {
-    if (currentIndex > 0) {
-      currentIndex--;
-      updateCarousel();
-    }
-  });
-
-  nextBtn?.addEventListener('click', () => {
-    const maxIndex = Math.max(0, totalItems - itemsPerView);
-    if (currentIndex < maxIndex) {
-      currentIndex++;
-      updateCarousel();
-    }
-  });
-
-  dots.forEach((dot) => {
-    dot.addEventListener('click', (e) => {
-      const target = e.currentTarget as HTMLElement;
-      const index = parseInt(target.dataset.index || '0');
-      currentIndex = index;
-      updateCarousel();
-    });
-  });
-
-  // Handle window resize to recalculate card width
-  window.addEventListener('resize', updateCarousel);
-
-  // Initialize
-  updateCarousel();
+  // Initialize carousel with auto-progression
+  initCarousel();
 </script>

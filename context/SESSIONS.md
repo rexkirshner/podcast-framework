@@ -1398,3 +1398,138 @@ Future (Phase 2 - Automation):
 - Code review: 1.5 hours
 - Context saving: 30 minutes
 
+---
+
+## Session 12 | 2025-10-07 | Phase 2a - CMS Theming Implementation
+
+**Duration:** ~2h | **Focus:** Theme customization via Sanity CMS | **Status:** ✅ Complete
+
+### Changed
+- ✅ Created complete CMS-driven theming system
+- ✅ Theme schema with colors, typography, and layout configuration
+- ✅ Homepage configuration schema for flexible content management
+- ✅ Theme utility functions for CSS generation and Google Fonts
+- ✅ Initialized default theme for Strange Water
+- ✅ Context system updated to v2.0.0
+
+### Problem Solved
+**Issue:** Site branding was hardcoded in Tailwind classes, requiring code changes for each podcast deployment. Phase 2a goal was to enable CMS-driven styling for true config-only deployments.
+
+**Constraints:**
+- Must maintain Tailwind CSS performance (no runtime overhead)
+- Must be simple enough for non-technical users
+- Must support Google Fonts dynamically
+- Should work with existing component structure
+
+**Approach:** CSS custom properties + Sanity theme schema
+1. Created `theme` schema with color palette, typography, and layout settings
+2. Built `getTheme()` utility to fetch active theme from Sanity
+3. Generated CSS custom properties dynamically (`--color-primary`, `--font-heading`, etc.)
+4. Applied theme variables throughout homepage using inline styles
+5. Added Google Fonts dynamic loading based on theme configuration
+
+**Why this approach:**
+- CSS variables work with SSG (generated at build time, zero runtime cost)
+- Non-technical: Users edit colors in Sanity Studio UI (hex color pickers)
+- Flexible: Supports any color scheme, font combination
+- Tailwind-compatible: Layout utilities (max-width, border-radius) still use Tailwind classes
+- Migration-friendly: Can evolve to dynamic Tailwind config later if needed
+
+### Decisions
+- **CSS Custom Properties over Dynamic Tailwind Config:** Simpler implementation, SSG-compatible, good enough for Phase 2a. Can revisit in Phase 3 if advanced Tailwind features needed.
+- **Homepage Configuration Schema:** Separate from theme to allow layout/content changes independent of styling. Enables A/B testing homepage layouts without touching theme.
+
+### Files
+**NEW:** `sanity/schemas/theme.ts:1-190` - Complete theme schema with color validation, typography options, layout presets
+**NEW:** `sanity/schemas/homepageConfig.ts:1-305` - Homepage section configuration (hero, featured, recent, newsletter, etc.)
+**NEW:** `src/lib/theme.ts:1-118` - Theme utilities (fetch from Sanity, generate CSS, Google Fonts URLs)
+**NEW:** `scripts/init-default-theme.js:1-180` - Initialize/update default theme and homepage config
+
+**MOD:** `sanity/schemaTypes/index.ts:5-6` - Registered theme and homepageConfig schemas
+**MOD:** `package.json:24` - Added `init:theme` npm script
+**MOD:** `src/pages/index.astro:5-6,14-16,29-38,42-107` - Integrated theme system with CSS variables and Google Fonts
+**MOD:** Context system files - Updated to v2.0.0 structure
+
+### Mental Models
+**Current understanding:** The theming system uses a two-layer approach:
+1. **Theme layer** - Pure visual styling (colors, fonts, spacing) managed in Sanity
+2. **Component layer** - Structure and layout in Astro components that consume theme variables
+
+This separation allows:
+- Non-developers to customize branding without touching code
+- Developers to refactor components without affecting themes
+- Multiple themes per podcast (e.g., seasonal themes, A/B tests)
+
+**Key insights:**
+- CSS custom properties are perfect for SSG + CMS pattern (generated once per build)
+- Sanity's color input plugin provides great UX for non-technical users
+- Theme defaults in code prevent broken builds if Sanity unavailable
+- Google Fonts can be loaded dynamically based on CMS configuration
+
+**Gotchas discovered:**
+- Must use `is:inline` directive for dynamic CSS in Astro
+- Google Fonts URL format requires specific query param structure
+- Theme schema validation prevents single project from having multiple active themes
+- Homepage config is separate document type to allow independent versioning
+
+### Work In Progress
+**Status:** Theme system complete and tested. Ready to move to next Phase 2a task.
+
+**What's deployed:**
+- Theme schema functional in Sanity Studio
+- Default theme initialized (Strange Water blue/purple)
+- Homepage using theme variables
+- Build successful (146 pages in 30s)
+
+**Not yet complete (remaining Phase 2a):**
+- Guests page (not started)
+- Theme variables not yet applied to all pages (only homepage)
+- About page content still partially hardcoded
+
+### TodoWrite State
+**Captured from TodoWrite:**
+- ✅ Test and verify theme system implementation
+- ✅ Run /save-context to update documentation
+- ⏳ Complete remaining Phase 2a work
+- ⏳ Commit all theming work
+
+### Next Session
+**Priority:** Apply theme to remaining pages (episodes, about, guests) and complete Phase 2a
+
+**Immediate Actions:**
+1. Commit theming work with comprehensive commit message
+2. Apply theme variables to episode pages and about page
+3. Build guests page with theme integration
+4. Test theme changes in Sanity Studio (change colors, verify rebuild)
+
+**Phase 2a Remaining:**
+- Apply theme to all pages (not just homepage)
+- Build `/guests` and `/guest/[slug]` pages
+- Test theme live-update workflow (Sanity → Netlify webhook)
+- Validate zero hardcoded branding remains
+
+**Blockers:** None
+
+### Notes
+**Context System v2.0.0 Migration:**
+- Computer crash occurred mid-session
+- Successfully recovered using STATUS.md and git diff
+- v2.0.0 structure changes: CLAUDE.md → CONTEXT.md, STATUS.md as single source of truth
+- All context documentation updated to v2.0.0
+
+**Build Performance:**
+- 146 pages built in 30.17s (stable)
+- Theme fetching adds ~10-20ms per page (acceptable)
+- Could optimize with build-time caching if needed
+
+**Next Phase 2a Features:**
+1. **Guests Page** - High priority, user-requested
+2. **Theme Refinement** - Apply to all pages, not just homepage
+3. **Homepage Config Integration** - Enable/disable sections via CMS
+
+**Session Duration:** ~2 hours
+- Crash recovery and assessment: 20 minutes
+- Theme implementation review: 30 minutes
+- Testing and verification: 20 minutes
+- Context documentation: 50 minutes
+

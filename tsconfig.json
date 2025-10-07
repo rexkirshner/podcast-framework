@@ -1,4 +1,14 @@
 {
+  // Extends Astro's strict TypeScript configuration
+  // This includes all strict compiler options:
+  // - strict: true (enables all strict type checking options)
+  // - noImplicitAny: true (error on expressions with implied 'any' type)
+  // - strictNullChecks: true (null and undefined are not assignable to other types)
+  // - strictFunctionTypes: true (stricter checking of function types)
+  // - strictBindCallApply: true (stricter checking of bind/call/apply)
+  // - strictPropertyInitialization: true (ensure class properties are initialized)
+  // - noImplicitThis: true (error on 'this' with implied 'any' type)
+  // - alwaysStrict: true (parse in strict mode and emit "use strict")
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist"]

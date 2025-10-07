@@ -115,7 +115,7 @@ ls -la
 
 Look for:
 - **Context docs (root):** CLAUDE.md, PRD.md, DECISIONS.md, KNOWN_ISSUES.md, ARCHITECTURE.md, CODE_STYLE.md, SESSIONS.md, README.md, DEPLOYMENT.md
-- **Task files:** tasks/, todo.md, next-steps.md
+- **Task files (v1.x legacy):** tasks/, todo.md, next-steps.md (v2.0+ uses STATUS.md instead)
 - **Code reviews:** *code-review*.md, *review*.md
 - **Lighthouse reports:** lighthouse-*.json
 - **Other artifacts:** bundle-analysis/, coverage/, performance reports
@@ -140,13 +140,16 @@ Create inventory:
 Create the complete Claude Context System structure:
 
 ```bash
-mkdir -p context/tasks
+mkdir -p context
 mkdir -p artifacts/code-reviews
 mkdir -p artifacts/lighthouse
 mkdir -p artifacts/performance
 mkdir -p artifacts/security
 mkdir -p artifacts/bundle-analysis
 mkdir -p artifacts/coverage
+
+# Note: context/tasks/ only created if user explicitly wants to preserve legacy task files
+# v2.0+ uses STATUS.md instead of tasks/next-steps.md and tasks/todo.md
 ```
 
 ### Step 3: Move Existing Files
@@ -166,8 +169,22 @@ mv DEPLOYMENT.md context/ 2>/dev/null || true
 mv *DEPLOYMENT.md context/ 2>/dev/null || true  # Catches CLOUDFLARE_DEPLOYMENT.md, etc.
 mv TROUBLESHOOTING.md context/ 2>/dev/null || true
 
-# Task files (comprehensive - move ALL .md files from tasks/)
-mv tasks/*.md context/tasks/ 2>/dev/null || true
+# Task files (v1.x legacy - only if they exist and user wants to preserve)
+# v2.0+ uses STATUS.md instead of tasks/next-steps.md and tasks/todo.md
+# Ask user before moving to avoid recreating deprecated structure
+if [ -d "tasks" ] && [ -n "$(ls -A tasks/*.md 2>/dev/null)" ]; then
+  echo "⚠️  Found tasks/ directory with .md files"
+  echo "v2.0+ uses STATUS.md instead of tasks/next-steps.md and tasks/todo.md"
+  read -p "Preserve legacy task files in context/tasks/ for reference? [y/N] " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    mkdir -p context/tasks
+    mv tasks/*.md context/tasks/ 2>/dev/null || true
+    echo "✅ Legacy task files preserved in context/tasks/"
+  else
+    echo "⏭️  Skipping task files (content should be migrated to STATUS.md)"
+  fi
+fi
 ```
 
 **Move artifacts to artifacts/:**
@@ -224,13 +241,13 @@ If NOT found, use Edit tool to add after the "Working with You" section (or afte
 ```markdown
 ## Core Development Methodology
 
-1. **Plan First:** Read codebase, think through problem, write plan to `context/tasks/todo.md`
-2. **Track Progress:** Create todo items that can be checked off during work
+1. **Plan First:** Read codebase, think through problem, use TodoWrite tool for task tracking
+2. **Track Progress:** Create todo items with TodoWrite that can be checked off during work
 3. **Verify Plan:** Check in with user before starting implementation
 4. **Work Incrementally:** Complete todos one by one, marking complete as you go
 5. **Communicate Clearly:** Provide high-level explanation of changes at each step
 6. **Simplicity Above All:** Every change should impact minimal code
-7. **Document Results:** Add review section to todo.md with summary
+7. **Document Results:** Update STATUS.md with current state, run /save to capture session
 8. **No Lazy Coding:** Always look for root causes, never apply band-aids
 9. **Minimal Impact:** Changes affect only necessary code, nothing else
 10. **Full Tracing:** Debug by tracing ENTIRE code flow - no assumptions
@@ -270,19 +287,19 @@ For EACH occurrence found, use Edit tool to update the path:
 **Example Edit #1:**
 ```
 old_string: "Write a plan to `tasks/todo.md`"
-new_string: "Write a plan to `context/tasks/todo.md`"
+new_string: "Use TodoWrite tool for task tracking"
 ```
 
 **Example Edit #2:**
 ```
 old_string: "1. Write a plan to `tasks/todo.md`"
-new_string: "1. Write a plan to `context/tasks/todo.md`"
+new_string: "1. **Plan First:** Read codebase, think through problem, use TodoWrite tool for task tracking"
 ```
 
 **Example Edit #3:**
 ```
-old_string: "Continue from next-steps.md"
-new_string: "Continue from context/tasks/next-steps.md"
+old_string: "Add review section to todo.md"
+new_string: "Update STATUS.md with current state, run /save to capture session"
 ```
 
 **Process:**
@@ -407,13 +424,11 @@ Use SESSIONS.template.md and create first entry:
 ---
 ```
 
-#### Create context/tasks/next-steps.md (if missing)
+#### Create context/STATUS.md (if missing)
 
-Analyze git status and recent work to create actionable next steps.
+Use STATUS.template.md to create single source of truth for current state.
 
-#### Create context/tasks/todo.md (if missing)
-
-Use todo.template.md to create empty template ready for next session.
+**Note:** v2.0+ uses STATUS.md instead of tasks/next-steps.md and tasks/todo.md. If migrating from v1.x and user wants to keep legacy task files, preserve them in context/tasks/ for reference only.
 
 ### Step 6: Create Configuration
 
@@ -542,9 +557,10 @@ Create comprehensive report of what was done:
 - DECISIONS.md (reformatted)
 - KNOWN_ISSUES.md (categorized)
 
-### Tasks → context/tasks/
-- tasks/next-steps.md → context/tasks/next-steps.md
-- tasks/todo.md → context/tasks/todo.md
+### Legacy Task Files (if preserving)
+- tasks/next-steps.md → context/tasks/next-steps.md (v1.x legacy)
+- tasks/todo.md → context/tasks/todo.md (v1.x legacy)
+- **Note:** v2.0+ uses STATUS.md instead; these preserved for reference only
 
 ### Artifacts → artifacts/
 - lighthouse-homepage.json → artifacts/lighthouse/
@@ -572,20 +588,21 @@ Create comprehensive report of what was done:
 - context/DECISIONS.md: Added proper formatting (if needed)
 - context/KNOWN_ISSUES.md: Added categorization (if needed)
 
-## Structure After Migration
+## Structure After Migration (v2.0)
 
 context/
-├── .context-config.json
-├── CLAUDE.md ✏️ augmented
-├── PRD.md ✏️ augmented
-├── ARCHITECTURE.md ⭐ new
+├── .context-config.json ⭐ new
+├── CONTEXT.md ✏️ augmented (or CLAUDE.md renamed)
+├── STATUS.md ⭐ new (single source of truth)
+├── QUICK_REF.md ⭐ new (auto-generated)
 ├── DECISIONS.md ✏️ augmented
-├── CODE_STYLE.md ⭐ new
-├── KNOWN_ISSUES.md ✏️ augmented
-├── SESSIONS.md ⭐ new
-└── tasks/
-    ├── next-steps.md ➡️ moved
-    └── todo.md ➡️ moved
+├── SESSIONS.md ⭐ new (structured format)
+├── PRD.md ✏️ augmented (if exists)
+├── ARCHITECTURE.md ⭐ new/✏️ augmented (if exists)
+└── CODE_STYLE.md ⭐ new/✏️ augmented (if exists)
+
+**Note:** v2.0+ eliminates tasks/ directory. STATUS.md replaces next-steps.md and todo.md.
+If user wants to preserve legacy task files, they'll be in context/tasks/ for reference only.
 
 artifacts/
 ├── code-reviews/

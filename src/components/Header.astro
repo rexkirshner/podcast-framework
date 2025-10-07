@@ -1,14 +1,16 @@
 ---
 // Header component with Sanity integration
 import { getPodcastInfo } from "../lib/sanity";
+import { getTheme, defaultTheme } from "../lib/theme";
 
 // Fetch podcast info for logo, name, and tagline
 const podcastInfo = await getPodcastInfo();
+const theme = (await getTheme()) || defaultTheme;
 const siteName = podcastInfo?.name || "Podcast";
 const siteTagline = podcastInfo?.tagline || "";
 ---
 
-<header class="bg-white border-b border-gray-200">
+<header style="background: var(--color-header-bg);" class="border-b" style:border-color={`rgba(${theme.colors.primary}, 0.2)`}>
   <div class="max-w-6xl mx-auto px-4 py-6">
     <div class="flex items-center justify-between">
       <!-- Logo/Brand -->
@@ -21,26 +23,29 @@ const siteTagline = podcastInfo?.tagline || "";
               class="w-10 h-10 rounded-lg object-cover"
             />
           ) : (
-            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div style="background: var(--color-primary);" class={`w-10 h-10 ${theme.layout.borderRadius} flex items-center justify-center`}>
               <span class="text-white font-bold text-xl">{siteName.substring(0, 2).toUpperCase()}</span>
             </div>
           )}
           <div>
-            <h1 class="text-xl font-bold text-gray-900">{siteName}</h1>
-            {siteTagline && <p class="text-xs text-gray-500">{siteTagline}</p>}
+            <h1 class="text-xl font-bold" style="color: var(--color-header-text);">{siteName}</h1>
+            {siteTagline && <p class="text-xs" style="color: var(--color-secondary);">{siteTagline}</p>}
           </div>
         </a>
       </div>
 
       <!-- Navigation -->
       <nav class="hidden md:flex gap-6">
-        <a href="/" class="text-gray-700 hover:text-blue-600 transition">
+        <a href="/" style="color: var(--color-secondary);" class="font-semibold hover:opacity-75 transition">
           Home
         </a>
-        <a href="/episodes" class="text-gray-700 hover:text-blue-600 transition">
+        <a href="/episodes" style="color: var(--color-secondary);" class="font-semibold hover:opacity-75 transition">
           Episodes
         </a>
-        <a href="/about" class="text-gray-700 hover:text-blue-600 transition">
+        <a href="/guests" style="color: var(--color-secondary);" class="font-semibold hover:opacity-75 transition">
+          Guests
+        </a>
+        <a href="/about" style="color: var(--color-secondary);" class="font-semibold hover:opacity-75 transition">
           About
         </a>
       </nav>
@@ -48,7 +53,8 @@ const siteTagline = podcastInfo?.tagline || "";
       <!-- Mobile Menu Button -->
       <button
         id="mobile-menu-button"
-        class="md:hidden p-2 text-gray-700 hover:text-blue-600 transition"
+        style="color: var(--color-header-text);"
+        class="md:hidden p-2 hover:opacity-75 transition"
         aria-label="Toggle mobile menu"
       >
         <svg
@@ -85,24 +91,35 @@ const siteTagline = podcastInfo?.tagline || "";
     <!-- Mobile Menu Panel -->
     <nav
       id="mobile-menu"
-      class="md:hidden hidden border-t border-gray-200 py-4"
+      class="md:hidden hidden border-t py-4"
+      style:border-color={`rgba(${theme.colors.primary}, 0.2)`}
     >
       <div class="flex flex-col gap-4">
         <a
           href="/"
-          class="text-gray-700 hover:text-blue-600 transition px-2 py-2 rounded hover:bg-gray-50"
+          style="color: var(--color-secondary);"
+          class={`font-semibold hover:opacity-75 transition px-2 py-2 ${theme.layout.borderRadius}`}
         >
           Home
         </a>
         <a
           href="/episodes"
-          class="text-gray-700 hover:text-blue-600 transition px-2 py-2 rounded hover:bg-gray-50"
+          style="color: var(--color-secondary);"
+          class={`font-semibold hover:opacity-75 transition px-2 py-2 ${theme.layout.borderRadius}`}
         >
           Episodes
         </a>
         <a
+          href="/guests"
+          style="color: var(--color-secondary);"
+          class={`font-semibold hover:opacity-75 transition px-2 py-2 ${theme.layout.borderRadius}`}
+        >
+          Guests
+        </a>
+        <a
           href="/about"
-          class="text-gray-700 hover:text-blue-600 transition px-2 py-2 rounded hover:bg-gray-50"
+          style="color: var(--color-secondary);"
+          class={`font-semibold hover:opacity-75 transition px-2 py-2 ${theme.layout.borderRadius}`}
         >
           About
         </a>

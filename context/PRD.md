@@ -1,9 +1,9 @@
 # Product Requirements Document (PRD)
 ## Podcast Website Framework
 
-**Document Version:** 1.0 (Final)
-**Last Updated:** 2025-10-05
-**Status:** Approved for Development
+**Document Version:** 1.1
+**Last Updated:** 2025-10-06
+**Status:** Approved for Development (Phase 2 Updated)
 
 ---
 
@@ -695,27 +695,82 @@ https://strangewater.xyz/about                     → https://strangewater.xyz/
 - robots.txt (allow all, specify sitemap URL)
 - Fast Core Web Vitals scores (LCP <2.5s, FID <100ms, CLS <0.1)
 
-### 8.2 Phase 2 Features (Weeks 5-8 - New Podcast Features)
+### 8.2 Phase 2: Complete Feature Set + Framework Templatization (Weeks 5-8)
 
-#### **Audience Interaction:**
+> **Strategic Change (2025-10-06):** Build complete feature set FIRST, then templatize. This ensures Template v2.0.0 is feature-complete and tests "easy mode" deployment (config-only) rather than prematurely testing upgrade mechanisms.
+
+#### **Phase 2a: Core Features (Weeks 5-6)**
+
+**Guests Page:**
+- `/guests` route with grid/list view of all guests
+- Individual guest pages at `/guest/[slug]`
+- Guest filtering/search functionality
+- Linked from episode pages
+- Linked from navigation header
+
+**Featured Episodes Carousel:**
+- Horizontal scrolling carousel on homepage
+- Displays episodes marked as "featured" in Sanity
+- Auto-scroll with manual navigation controls
+- Responsive design (mobile swipe, desktop arrows)
+- Episode cards with cover art, title, and guest info
+
+**CMS-Driven Visual Styling:**
+- Logo, brand colors, fonts managed in Sanity podcast schema
+- About page content moved to Sanity (Portable Text)
+- Host bio/info managed in Sanity
+- Truly configuration-driven (no code changes for new podcasts)
+
+**Enhanced About Page:**
+- Dynamic content from Sanity (not hardcoded)
+- Host information from CMS
+- Show description from CMS
+- Subscribe CTAs from podcast metadata
+
+#### **Phase 2b: Framework Templatization (Week 7)**
+
+**Template Preparation:**
+- Environment variable extraction (`.env.example`)
+- Hardcoded reference removal
+- Template verification script (`npm run verify:template`)
+- Deployment guide with security & time-tracking
+- TEMPLATE_VERSION.json + CHANGELOG.md
+
+**Success Criteria:**
+- Zero hardcoded podcast-specific values
+- <4 hour deployment time for new podcasts
+- Config/content changes only (no code edits)
+
+#### **Phase 2c: Podcast #2 Deployment (Week 8)**
+
+**Real-World Validation:**
+- Clone template repository
+- Follow deployment guide
+- Deploy second podcast to production
+- Document pain points and improvements
+- Validate <4h KPI
+
+#### **Deferred to Phase 3: Advanced Features**
+
+**Audience Interaction:**
 - "Request an Episode" form (Netlify Forms → Airtable)
 - "Ask a Question" submission
-- Comments (Giscus via GitHub Discussions, privacy-friendly)
+- Comments (Giscus via GitHub Discussions)
 
-#### **Newsletter:**
-- Email signup form (header/footer, slide-in on exit intent)
-- ConvertKit integration (tagged by podcast)
+**Newsletter:**
+- Email signup form (header/footer)
+- ConvertKit integration
 - Automated episode notifications
 
-#### **Enhanced Discovery:**
-- Topic/category tagging (filterable episode list)
-- Related episodes algorithm (tag-based + manual curation)
-- Transcript search (full-text, indexed by Algolia or Pagefind)
+**Enhanced Discovery:**
+- Topic/category tagging
+- Related episodes algorithm
+- Transcript search
 
-#### **Content Enrichment:**
-- Episode transcripts (Whisper API, auto-generated on publish)
+**Content Enrichment:**
+- Episode transcripts (Whisper API)
 - Chapter markers in player
-- Key takeaways/highlights (manually curated)
+- Key takeaways/highlights
 
 #### **Episode-Specific Player & Platform Links:**
 - **Problem:** Currently using show-level Spotify embeds (shows latest episode, not current episode)

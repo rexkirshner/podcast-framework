@@ -15,6 +15,19 @@ const siteName = podcastInfo?.name || "Podcast";
   description={`Browse all episodes of ${siteName}, exploring Ethereum and Web3 through conversations with builders and researchers.`}
 >
   <main class="max-w-6xl mx-auto px-4 py-12 flex-grow">
+      <!-- Archive or Coming Soon Message -->
+      {podcastInfo?.isActive ? (
+        <div class="mb-8 text-center text-gray-500">
+          <p class="text-lg">More episodes coming soon...</p>
+          <p class="text-sm mt-2">Subscribe to get notified when new episodes are released</p>
+        </div>
+      ) : (
+        <div class="mb-8 text-center text-gray-500 bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <p class="text-lg font-semibold">This podcast has concluded.</p>
+          <p class="text-sm mt-2">Explore the complete archive of episodes below</p>
+        </div>
+      )}
+
       <!-- Page Header -->
       <div class="mb-12">
         <h1 class="text-4xl font-bold text-gray-900 mb-4">All Episodes</h1>
@@ -75,18 +88,5 @@ const siteName = podcastInfo?.name || "Podcast";
           </a>
         ))}
       </div>
-
-      <!-- Coming Soon or Archive Message -->
-      {podcastInfo?.isActive ? (
-        <div class="mt-12 text-center text-gray-500">
-          <p class="text-lg">More episodes coming soon...</p>
-          <p class="text-sm mt-2">Subscribe to get notified when new episodes are released</p>
-        </div>
-      ) : (
-        <div class="mt-12 text-center text-gray-500">
-          <p class="text-lg">This podcast has concluded.</p>
-          <p class="text-sm mt-2">Explore the complete archive of episodes above</p>
-        </div>
-      )}
   </main>
 </BaseLayout>

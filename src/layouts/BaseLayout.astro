@@ -3,6 +3,7 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { getPodcastInfo } from "../lib/sanity";
+import { getTheme, defaultTheme, generateThemeCSS, getGoogleFontsURL } from "../lib/theme";
 import "../styles/global.css";
 
 interface Props {
@@ -18,6 +19,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const podcastInfo = await getPodcastInfo();
 const faviconUrl = podcastInfo?.favicon?.url || "/favicon.svg";
 
+// Fetch theme for CSS variables
+const theme = (await getTheme()) || defaultTheme;
+const themeCSS = generateThemeCSS(theme);
+const googleFontsUrl = getGoogleFontsURL(theme.typography.googleFonts || []);
+
 // Google Analytics 4 - Only load in production
 const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 ---
@@ -29,6 +35,14 @@ const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <link rel="icon" type="image/svg+xml" href={faviconUrl} />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
+
+    <!-- Google Fonts -->
+    {googleFontsUrl && <link rel="preconnect" href="https://fonts.googleapis.com" />}
+    {googleFontsUrl && <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />}
+    {googleFontsUrl && <link href={googleFontsUrl} rel="stylesheet" />}
+
+    <!-- Theme CSS Variables -->
+    <style is:inline set:html={themeCSS}></style>
 
     <!-- Primary Meta Tags -->
     <title>{title}</title>

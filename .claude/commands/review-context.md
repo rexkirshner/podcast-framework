@@ -104,15 +104,15 @@ Read and parse all context files:
 
 ```
 Files to load:
-- context/CLAUDE.md
-- context/PRD.md
-- context/ARCHITECTURE.md
+- context/CONTEXT.md (v2.0+) or context/CLAUDE.md (pre-v2.0)
+- context/STATUS.md (v2.0+ - single source of truth)
 - context/DECISIONS.md
-- context/CODE_STYLE.md
-- context/KNOWN_ISSUES.md
 - context/SESSIONS.md
-- context/tasks/next-steps.md
-- context/tasks/todo.md
+- context/QUICK_REF.md (auto-generated)
+- context/PRD.md (optional)
+- context/ARCHITECTURE.md (optional)
+- context/CODE_STYLE.md (optional)
+- context/KNOWN_ISSUES.md (optional)
 - context/.context-config.json
 ```
 
@@ -145,7 +145,7 @@ ls -la
 
 Check each file against reality:
 
-#### CLAUDE.md Verification
+#### CONTEXT.md Verification
 
 **Commands section:**
 - [ ] Run `npm run` to list available scripts
@@ -257,42 +257,45 @@ Check each file against reality:
 - Incomplete WIP capture
 - Gap in session history
 
-#### tasks/next-steps.md Verification
+#### STATUS.md Verification (v2.0+)
 
-**Action items:**
+**Current state:**
+- [ ] Active tasks are accurate
 - [ ] Completed items marked done
-- [ ] Current items are actionable
-- [ ] Priorities make sense
-- [ ] Blockers are accurate
+- [ ] Work In Progress section reflects reality
+- [ ] Blockers are current
+- [ ] Next session priorities make sense
 
 **Check against actual state:**
-- [ ] "Ready to do" items are unblocked
-- [ ] Blocked items are truly blocked
-- [ ] New work not captured
+- [ ] Matches git status and recent commits
+- [ ] WIP location references exist
+- [ ] Next actions are actionable
 
 **Issues found:**
-- Stale action items
-- Missing next steps
-- Incorrect priorities
+- Stale tasks
+- Missing recent work
+- Incorrect WIP state
 
-#### tasks/todo.md Verification
+#### QUICK_REF.md Verification (v2.0+)
 
-**Current session:**
-- [ ] Relevant to actual current work
-- [ ] Completed items marked
-- [ ] Matches SESSIONS.md WIP if resuming
+**Dashboard accuracy:**
+- [ ] Auto-generated from STATUS.md
+- [ ] Progress % calculated correctly
+- [ ] URLs and commands current
+- [ ] Last updated timestamp recent
 
 **Issues found:**
-- Stale todos
-- Completed but not marked
-- Not relevant to current session
+- Out of sync with STATUS.md
+- Incorrect progress calculation
+- Stale information
 
 ### Step 5: Check Cross-Document Consistency
 
 Verify documentation tells coherent story:
 
 **Status consistency:**
-- [ ] CLAUDE.md status == PRD.md status
+- [ ] STATUS.md == QUICK_REF.md (must match - QUICK_REF is auto-generated)
+- [ ] STATUS.md == latest SESSIONS.md entry
 - [ ] Progress matches across docs
 - [ ] Dates/versions align
 
@@ -302,7 +305,7 @@ Verify documentation tells coherent story:
 - [ ] Tech stack consistent across docs
 
 **Issue tracking consistency:**
-- [ ] KNOWN_ISSUES.md blockers mentioned in next-steps.md
+- [ ] KNOWN_ISSUES.md blockers mentioned in STATUS.md
 - [ ] Resolved issues removed from both
 - [ ] New issues documented everywhere
 
@@ -382,14 +385,15 @@ Provide comprehensive report:
    Run /update-context-system when convenient
 
 ✅ **Accurate Documentation:**
-- CLAUDE.md - All commands verified
-- PRD.md - Progress matches git history
+- CONTEXT.md - All commands verified
+- STATUS.md - Current state matches reality
 - SESSIONS.md - Complete WIP capture
+- QUICK_REF.md - Auto-generated, up to date
 
 ⚠️ **Issues Found:**
 - KNOWN_ISSUES.md - 2 resolved issues not removed
 - DECISIONS.md - Missing recent JWT library choice
-- next-steps.md - 1 completed item not marked done
+- STATUS.md - 1 completed task not marked done
 
 ❌ **Critical Gaps:**
 - SESSIONS.md last entry 5 days old
@@ -406,7 +410,7 @@ Provide comprehensive report:
 [If score < 60] ❌ Run /save-context first to update
 
 **Next Steps from docs:**
-1. [Top priority from next-steps.md]
+1. [Top priority from STATUS.md]
 2. [Second priority]
 3. [Third priority]
 
@@ -430,9 +434,10 @@ If confidence score >= 60, actively load context:
 - Immediate next actions
 
 **Prepare for work:**
-- Understand user preferences from CLAUDE.md
-- Review CODE_STYLE.md standards
-- Note any critical issues from KNOWN_ISSUES.md
+- Understand user preferences from CONTEXT.md
+- Check STATUS.md for current priorities
+- Review CODE_STYLE.md standards (if exists)
+- Note any critical issues from KNOWN_ISSUES.md (if exists)
 - Set mental context for continuation
 
 **If score < 60:**

@@ -108,7 +108,10 @@ const ogImage = episode.coverImage?.asset?.url || podcastInfo?.logo?.url || "htt
               <h2 class="text-lg font-semibold mb-3">{episode.guests.length === 1 ? 'Guest' : 'Guests'}</h2>
               <div class="flex flex-wrap gap-4">
                 {episode.guests.map((guest) => (
-                  <div class="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm">
+                  <a
+                    href={`/guest/${guest.slug.current}`}
+                    class="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow group"
+                  >
                     {guest.photo?.url && (
                       <img
                         src={guest.photo.url}
@@ -117,23 +120,18 @@ const ogImage = episode.coverImage?.asset?.url || podcastInfo?.logo?.url || "htt
                       />
                     )}
                     <div>
-                      <p class="font-semibold text-gray-900">{guest.name}</p>
+                      <p class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{guest.name}</p>
                       {(guest.twitter || guest.website || guest.linkedin) && (
                         <div class="flex gap-2 mt-1">
                           {guest.twitter && (
-                            <a
-                              href={`https://twitter.com/${guest.twitter}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              class="text-xs text-blue-600 hover:text-blue-800"
-                            >
+                            <span class="text-xs text-gray-500">
                               @{guest.twitter}
-                            </a>
+                            </span>
                           )}
                         </div>
                       )}
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>

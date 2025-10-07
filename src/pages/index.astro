@@ -1,12 +1,18 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getAllEpisodes, getPodcastInfo } from "../lib/sanity";
+import { getAllEpisodes, getFeaturedEpisodes, getPodcastInfo } from "../lib/sanity";
 import { formatDate, stripHTML } from "../lib/utils";
+import { getTheme, defaultTheme, generateThemeCSS, getGoogleFontsURL } from "../lib/theme";
+import FeaturedEpisodesCarousel from "../components/FeaturedEpisodesCarousel.astro";
 
-// Fetch latest episode and podcast info
+// Fetch latest episode, featured episodes, and podcast info
 const episodes = await getAllEpisodes();
 const latestEpisode = episodes[0]; // Episodes are already sorted by episodeNumber desc
+const featuredEpisodes = await getFeaturedEpisodes();
 const podcastInfo = await getPodcastInfo();
+
+// Fetch theme configuration or use default
+const theme = (await getTheme()) || defaultTheme;
 
 // Use podcast info from CMS
 const siteName = podcastInfo?.name || "Podcast";
@@ -19,19 +25,32 @@ const spotifyUrl = podcastInfo?.spotifyUrl || "#";
 	title={`${siteName}${siteTagline ? ` - ${siteTagline}` : ""}`}
 	description={siteDescription}
 >
+	<!-- Google Fonts -->
+	{theme.typography.googleFonts && theme.typography.googleFonts.length > 0 && (
+		<link
+			rel="stylesheet"
+			href={getGoogleFontsURL(theme.typography.googleFonts)}
+			slot="head"
+		/>
+	)}
+
+	<!-- Theme CSS -->
+	<style is:inline set:html={generateThemeCSS(theme)} />
+
 	<main class="flex-grow">
 			<!-- Hero Section -->
-			<section class="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20">
-				<div class="max-w-4xl mx-auto px-4 text-center">
+			<section style={`background: linear-gradient(to bottom, var(--color-background), rgba(0, 122, 135, 0.15)); color: var(--color-text);`} class="py-20">
+				<div class={`mx-auto px-4 text-center ${theme.layout.maxWidth}`}>
 					<h1 class="text-5xl font-bold mb-4">{siteName}</h1>
-					<p class="text-xl text-blue-100 mb-8">
+					<p class="text-xl mb-8" style="color: var(--color-text-muted);">
 						{siteDescription}
 					</p>
 					<div class="flex gap-4 justify-center">
 						{spotifyUrl && spotifyUrl !== "#" && (
 							<a
 								href={spotifyUrl}
-								class="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
+								style="background: var(--color-primary); color: white;"
+								class={`px-6 py-3 ${theme.layout.borderRadius} font-semibold hover:opacity-90 transition`}
 								target="_blank"
 								rel="noopener noreferrer"
 							>
@@ -41,7 +60,8 @@ const spotifyUrl = podcastInfo?.spotifyUrl || "#";
 						{latestEpisode && (
 							<a
 								href={`/episodes/${latestEpisode.slug.current}`}
-								class="px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-600 transition border border-blue-400"
+								style="background: transparent; color: var(--color-text); border: 2px solid var(--color-primary);"
+								class={`px-6 py-3 ${theme.layout.borderRadius} font-semibold hover:bg-opacity-10 transition`}
 							>
 								Latest Episode
 							</a>
@@ -50,43 +70,47 @@ const spotifyUrl = podcastInfo?.spotifyUrl || "#";
 				</div>
 			</section>
 
+			<!-- Featured Episodes Carousel -->
+			<FeaturedEpisodesCarousel episodes={featuredEpisodes} />
+
 			<!-- Latest Episode Section -->
 			{latestEpisode && (
-				<section class="max-w-4xl mx-auto px-4 py-16">
-					<h2 class="text-3xl font-bold mb-8">Latest Episode</h2>
+				<section class={`mx-auto px-4 py-16 ${theme.layout.maxWidth}`}>
+					<h2 class="text-3xl font-bold mb-8" style="color: var(--color-text);">Latest Episode</h2>
 					<a
 						href={`/episodes/${latestEpisode.slug.current}`}
-						class="block bg-white rounded-lg shadow-md hover:shadow-lg transition p-6"
+						style="background: var(--color-surface); border: 1px solid rgba(0, 163, 181, 0.2);"
+						class={`block ${theme.layout.borderRadius} shadow-md hover:shadow-xl hover:border-opacity-50 transition p-6`}
 					>
 						<div class="flex items-start gap-4">
 							{latestEpisode.coverImage?.url ? (
 								<img
 									src={latestEpisode.coverImage.url}
 									alt={latestEpisode.title}
-									class="flex-shrink-0 w-24 h-24 rounded-lg object-cover"
+									class={`flex-shrink-0 w-24 h-24 ${theme.layout.borderRadius} object-cover`}
 								/>
 							) : podcastInfo?.logo?.url ? (
 								<img
 									src={podcastInfo.logo.url}
 									alt={siteName}
-									class="flex-shrink-0 w-24 h-24 rounded-lg object-cover"
+									class={`flex-shrink-0 w-24 h-24 ${theme.layout.borderRadius} object-cover`}
 								/>
 							) : (
-								<div class="flex-shrink-0 w-24 h-24 bg-blue-100 rounded-lg flex items-center justify-center">
-									<span class="text-3xl font-bold text-blue-600">{latestEpisode.episodeNumber}</span>
+								<div style="background: var(--color-primary); opacity: 0.1;" class={`flex-shrink-0 w-24 h-24 ${theme.layout.borderRadius} flex items-center justify-center`}>
+									<span style="color: var(--color-primary);" class="text-3xl font-bold">{latestEpisode.episodeNumber}</span>
 								</div>
 							)}
 							<div class="flex-grow">
-								<p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
+								<p style="color: var(--color-text-muted);" class="text-sm uppercase tracking-wide mb-1">
 									Episode {latestEpisode.episodeNumber}
 								</p>
-								<h3 class="text-xl font-semibold text-gray-900 mb-2">
+								<h3 style="color: var(--color-text);" class="text-xl font-semibold mb-2">
 									{latestEpisode.title}
 								</h3>
-								<p class="text-gray-600 mb-3">
+								<p style="color: var(--color-text-muted);" class="mb-3">
 									{stripHTML(latestEpisode.description).substring(0, 150)}...
 								</p>
-								<div class="flex gap-4 text-sm text-gray-500">
+								<div style="color: var(--color-text-muted);" class="flex gap-4 text-sm">
 									<span>{formatDate(latestEpisode.publishDate)}</span>
 									{latestEpisode.duration && (
 										<>
@@ -102,15 +126,15 @@ const spotifyUrl = podcastInfo?.spotifyUrl || "#";
 			)}
 
 		<!-- About Section -->
-		<section class="bg-white py-16">
-			<div class="max-w-4xl mx-auto px-4">
-				<h2 class="text-3xl font-bold mb-6">About the Show</h2>
+		<section style="background: var(--color-surface);" class="py-16">
+			<div class={`mx-auto px-4 ${theme.layout.maxWidth}`}>
+				<h2 class="text-3xl font-bold mb-6" style="color: var(--color-text);">About the Show</h2>
 				{siteDescription && (
-					<p class="text-lg text-gray-700 leading-relaxed mb-4">
+					<p style="color: var(--color-text);" class="text-lg leading-relaxed mb-4">
 						{siteDescription}
 					</p>
 				)}
-				<p class="text-lg text-gray-700 leading-relaxed">
+				<p style="color: var(--color-text);" class="text-lg leading-relaxed">
 					Each episode dives into the topics and conversations that matter most
 					to our community, bringing you insights and perspectives from across
 					the ecosystem.

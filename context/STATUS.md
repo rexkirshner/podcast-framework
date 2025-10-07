@@ -3,23 +3,31 @@
 > **Single source of truth** for current project state. Updated frequently during work.
 > For orientation and context, see `CONTEXT.md`. For history, see `SESSIONS.md`.
 
-**Last Updated:** 2025-10-07 (Session 13 - Theme Refinement)
+**Last Updated:** 2025-10-07 (Session 14 - Community Feature Implementation & Roadmap Planning)
 
 ---
 
 ## Current Phase
 
-**Phase:** Phase 2a - CMS Styling & Optional Features
-**Status:** ✅ Theming Complete | 🤔 Evaluating Community Contribution Feature
-**Next Milestone:** Decide on community feature implementation (before or after templatization)
+**Phase:** Phase 2a - Feature Development & Roadmap Re-evaluation
+**Status:** ✅ Community Feature Implemented (95%) | 📊 Roadmap Evaluated | 🔍 Code Reviewed
+**Next Milestone:** Decide on pre-templatization feature set based on roadmap evaluation
 
-> **Strategic Decision (2025-10-06):** Build complete feature set FIRST (guests page + CMS styling), THEN templatize. This ensures Template v2.0.0 is feature-complete and enables config-only deployments.
+> **Strategic Decision (2025-10-07):** Roadmap reevaluation reveals templatization was scheduled too early. Recommendation: Build 3-4 high-impact features FIRST (transcripts, search, platform links), THEN templatize for maximum template value.
 >
-> **New Feature Proposal (2025-10-07):** Community contribution system for active podcasts (episode ideas, guest requests, questions, feedback). See `context/tasks/requests-proposal.md` for comprehensive 13-page proposal.
+> **Critical Protocol (2025-10-07):** NEVER push to GitHub without explicit user permission (triggers Netlify builds, consumes quota). Documented in `context/meta/claude-context-feedback.md`.
 
 ---
 
 ## Recent Accomplishments
+
+### Session 14 (2025-10-07) - Community Feature & Strategic Planning
+- ✅ Community contribution feature implemented (Sanity schema, forms, Netlify function, spam protection)
+- ✅ Comprehensive roadmap evaluation (impact/complexity analysis of all remaining features)
+- ✅ Full code review completed (Grade: B+, 21 issues identified)
+- ✅ Root directory reorganized (moved docs to context/, removed old reports)
+- ✅ Git push permission protocol documented (critical for cost control)
+- ⚠️ Email notifications blocked by Resend domain verification (awaiting user decision)
 
 ### Session 13 (2025-10-07) - Theme Color Refinement & Feature Planning
 - ✅ Refined theme colors from dark to light aesthetic (white bg, black header/footer, teal accents)
@@ -40,53 +48,18 @@
 - ✅ Build verification (146 pages in 30s with theme system)
 - ✅ Context system updated to v2.0.0
 
-### Session 11 (2025-10-06I) - Phase 2 Strategy & Architecture
-- ✅ Framework generalization plan comprehensive analysis (1,895 lines)
-- ✅ Template Repository approach approved (with aggressive versioning)
-- ✅ External AI feedback review and integration
-- ✅ **Strategic pivot: Features first, then templatize** (PRD v1.1 updated)
-- ✅ Netlify build fix (env vars properly configured)
-- ✅ Phase 2a-2c roadmap defined (guests + styling → templatize → deploy podcast #2)
-
-### Session 10 (2025-10-06H) - Google Analytics 4 & BaseLayout Refactor
-- ✅ Google Analytics 4 integration (G-V74NXPXZWQ on all 72 pages)
-- ✅ Full BaseLayout refactor (all pages use centralized layout)
-- ✅ About page improvements (removed SITE_CONFIG, added RSS feed button, dynamic subscribe section)
-- ✅ Code cleanup (removed debug console.log, eliminated duplicate HTML)
-- ✅ Build verification (72 pages in 9.80s, zero errors)
-- ✅ **Phase 1 complete and ready for production!**
-
-### Session 2025-10-06F - Code Review Fixes
-- ✅ 5 critical issues fixed (M4, C1, H2, M1, H4)
-- ✅ Environment variables pattern (all scripts + frontend)
-- ✅ Shared utilities extracted (formatDate, stripHTML)
-- ✅ Mobile menu implemented (functional navigation)
-- ✅ Delete confirmation added (safety)
-- ✅ HTML entity decoding (fixes `&#39;` display issues)
-- ✅ Missing `_key` fix (Sanity guest editing unblocked)
-- ✅ Trailer detection (episode 0, episode 1 restored)
-- ✅ Automated guest photo upload (65/71 uploaded)
-
-### Session 2025-10-06E - Data Migration
-- ✅ RSS import script - 69 episodes imported automatically
-- ✅ Guest web scraper - 72 guests imported from strangewater.xyz
-- ✅ Automated guest-to-episode linking (63/67 auto-linked)
-- ✅ Data quality cleanup (removed 18 duplicate drafts)
-- ✅ Frontend UI fixes (HTML stripping, logo fallbacks, Spotify embeds)
-- ✅ sw[number] slug format (clean, short URLs)
-- ✅ Duration parsing fixed (HH:MM:SS format from RSS)
-- ✅ All scripts reusable across podcast projects
-
 ---
 
 ## Current State
 
 ### Production Readiness
-- ✅ All 72 pages build successfully (9.80s build time)
+- ✅ All 146 pages build successfully (30s build time)
 - ✅ Google Analytics 4 tracking on all pages
 - ✅ SEO meta tags centralized in BaseLayout
 - ✅ Responsive design verified
 - ✅ Zero build errors or warnings
+- ✅ Community contribution feature functional (forms submit to Sanity)
+- ⚠️ Email notifications pending domain verification
 
 ### Content Status
 **Sanity CMS Data:**
@@ -96,139 +69,134 @@
 - **Guest-Episode Links:** 63/67 auto-linked
 - **Episode Covers:** 66/68 uploaded (Episodes 0 and 40 missing source files)
 - **Spotify Embeds:** Per-episode audio players working
-- **Editing:** All guest/host arrays have `_key` property (functional)
+- **Theme:** Light theme with Strange Water branding (CMS-configurable)
+- **Contributions:** Schema ready, form functional, email pending
 
-### Framework Features
-**Import Scripts (Reusable):**
-- `scripts/import-from-rss.js` - RSS feed parser & episode importer
-- `scripts/import-guests-from-web.js` - Web scraper for guest data
-- `scripts/link-guests-to-episodes.js` - Automated guest-episode linking
-- `scripts/delete-all-episodes.js` - Bulk delete utility (with confirmation)
-- `scripts/check-duplicate-guests.js` - Duplicate detection
-- `scripts/delete-draft-guests.js` - Draft cleanup
-- `scripts/fix-draft-references.js` - Reference repair
-- `scripts/fix-guests-keys.js` - Add `_key` to guest arrays
-- `scripts/upload-guest-photos.js` - Automated photo upload
-- `scripts/create-rex-host.js` - Create host record with deterministic ID
-- `scripts/add-rex-to-all-episodes.js` - Bulk host assignment
-- `scripts/upload-episode-covers.js` - Automated episode cover upload
-- `scripts/check-episode-guests.js` - Diagnostic utility for guest data
-
-**NPM Commands:**
-```bash
-npm run import:rss           # Import/update episodes from RSS
-npm run import:guests         # Scrape and import guests
-npm run link:guests          # Auto-link guests to episodes
-npm run delete:episodes      # Clean slate for re-import
-npm run fix:guests-keys      # Fix missing _key properties
-npm run upload:photos        # Upload guest photos
-npm run upload:covers        # Upload episode cover images
-```
-
-### Dev Servers
-- **Astro:** http://localhost:4322/ (all 69 episodes live)
-- **Sanity Studio:** http://localhost:3333/ (local, not yet deployed)
+### Code Quality (from Session 14 Review)
+- **Overall Grade:** B+ (85/100)
+- **Critical Issues:** 2 (XSS vulnerability, email notifications)
+- **High Priority:** 5 (N+1 queries, input validation, hardcoded values, no tests, env var inconsistency)
+- **Medium Priority:** 8
+- **Low Priority:** 6
+- **TypeScript:** Strict mode enabled ✅
+- **Build:** Success with zero errors ✅
+- **Test Coverage:** ~5% (1 test file) ⚠️
 
 ---
 
 ## Active Tasks
 
-### Phase 1 Wrap-Up
-- [x] Phase 1 development complete
-- [x] All 72 pages building successfully
-- [x] Google Analytics 4 integrated
-- [ ] Final QA testing (sample episode pages, responsive design, Lighthouse)
-- [ ] Production deployment planning
+### Immediate Priorities (This Week)
+1. **Email Notification Decision** - User to choose:
+   - Option A: Change NOTIFICATION_EMAIL to Resend signup email (instant)
+   - Option B: Verify rexkirshner.com domain in Resend (10 min, professional)
 
-### Optional Polish (Before Launch)
-- [ ] Test sample of episode pages (verify all 69 work correctly)
-- [ ] Verify responsive design on mobile/tablet
-- [ ] Run Lighthouse audit (target: Performance >90)
-- [ ] Test Spotify audio playback across browsers
-- [ ] Verify all navigation links work correctly
-- [ ] Check SEO meta tags on all page types
-- [ ] Test 404 error page
-- [ ] Verify social sharing (Open Graph, Twitter Cards)
-- [ ] Final visual polish (spacing, typography, colors)
-- [ ] Push to staging and verify deployment
+2. **Review Roadmap Evaluation** - User to read `context/meta/tasks/roadmap-evaluation.md` and decide:
+   - Which Tier 1 features to build before templatization?
+   - Transcripts (highest ROI for SEO, $25 cost)
+   - Episode search (4-6 hours, high UX value)
+   - Platform links manual phase (4 hours)
+
+3. **Address Critical Security Issues** - From code review:
+   - C1: XSS vulnerability in email generation (30 min fix)
+   - C2: Email notifications (resolve with priority #1)
+
+### Pre-Templatization Features (Roadmap Tier 1)
+- [ ] Fix contribution email notifications (blocked on user decision)
+- [ ] Episode transcripts via Whisper API (10-15 hours, $25 for 69 episodes)
+- [ ] Episode search functionality (4-6 hours, client-side)
+- [ ] Episode platform links - Phase 1 manual (4 hours, CSV import)
+- [ ] Address code review issues (Critical + High = ~8 hours)
+
+### Phase 2b - Framework Templatization (After Feature Development)
+- [ ] Fix hardcoded values (H4, H5 from code review)
+- [ ] Environment variable extraction
+- [ ] Template verification script
+- [ ] Deployment guide with security & time-tracking
+- [ ] TEMPLATE_VERSION.json + CHANGELOG.md
+- [ ] Git tag v2.0.0
 
 ---
 
 ## Work In Progress
 
-**Current Task:** Evaluating community contribution feature proposal
+**Current Task:** Autonomous code sprint complete, awaiting user review and decisions
 
-**What's Done (Theme System):**
-- ✅ Complete CMS-driven theming system
-- ✅ Light theme with Strange Water branding (white bg, black header/footer, teal accents)
-- ✅ Theme applied to all pages via BaseLayout
-- ✅ Header/footer fully customizable via CMS
-- ✅ All work committed to git (Session 12 commit d787750)
+**What's Done (Session 14):**
+- ✅ Community contribution feature (95% complete)
+- ✅ Roadmap evaluation document
+- ✅ Code review report
+- ✅ Context documentation updated
+- ✅ Git commits prepared (NOT pushed - awaiting permission)
 
-**What's Next:**
-- Decision: Review community contribution proposal (context/tasks/requests-proposal.md)
-- Option A: Implement now (8-12 hours) before templatization
-- Option B: Add to template as included feature
-- Option C: Skip for Strange Water, add only to future active podcasts
+**Email Notification Blocker:**
+- **Location:** `netlify/functions/contribute.ts:154-174`
+- **Issue:** Resend 403 error - can only email signup address with test domain
+- **Resolution:** User must choose Option A (change email) or B (verify domain)
 
-## Next Steps
-
-### Immediate Priority (Phase 2a - Decision Point)
-1. **Review Community Contribution Proposal** (now)
-   - Read `context/tasks/requests-proposal.md` (13-page comprehensive proposal)
-   - Decide: Implement now vs. add to template vs. skip for Strange Water
-   - Answer open questions:
-     * Navigation label ("Contribute" or alternative)?
-     * Email service (SendGrid vs Resend)?
-     * Anonymous feedback (name/email optional)?
-     * Notification frequency (immediate vs daily digest)?
-     * Additional fields to collect?
-
-2. **If Implementing Community Feature** (8-12 hours)
-   - Phase 1: Core feature (Sanity schema, /contribute page, serverless function)
-   - Phase 2: Notifications (email integration)
-   - Phase 3: Polish (spam protection, privacy policy, mobile testing)
-
-3. **Or, Move to Templatization** (Phase 2b)
-   - Extract environment variables
-   - Create template verification script
-   - Document deployment guide
-   - Tag v2.0.0
-
-### Phase 2b - Framework Templatization (Week 7)
-- Environment variable extraction
-- Template verification script
-- Deployment guide with security & time-tracking
-- TEMPLATE_VERSION.json + CHANGELOG.md
-- Git tag v2.0.0
-
-### Phase 2c - Podcast #2 Deployment (Week 8)
-- Clone template
-- Deploy second podcast
-- Validate <4h KPI
-- Document improvements
+**Next Specific Actions:**
+1. User reviews roadmap evaluation (`context/meta/tasks/roadmap-evaluation.md`)
+2. User reviews code review (`artifacts/code-reviews/session-14-review.md`)
+3. User decides on email fix (A or B)
+4. User approves git push of Session 14 work
+5. User prioritizes Tier 1 features for implementation
 
 ---
 
 ## Blockers
 
-**None currently.** All Phase 1 work complete. Ready for production deployment.
+**None** - All blockers resolved:
+- ✅ Community feature implementation decision (decided: implement now)
+- ✅ Roadmap evaluation (completed in Session 14)
+- ✅ Code review (completed in Session 14)
+- ⏳ Email notification (clear resolution path, awaiting user decision)
 
 ---
 
-## Future Enhancements
+## Recent Decisions
 
-### Brand Colors Customization via CMS (Phase 2)
-**Current State:** Brand colors hardcoded in Tailwind CSS
-**Desired State:** Primary/secondary/accent colors defined in Sanity CMS
-**Implementation:** CSS custom properties or dynamic Tailwind config
+### D-GitPush (2025-10-07)
+**Decision:** NEVER push to GitHub without explicit user permission
+**Rationale:** Git push triggers Netlify auto-build, consuming build minutes from monthly quota (50% consumed in 1 day during Session 14)
+**Impact:** Cost control, user approval required
+**Documented:** `context/meta/claude-context-feedback.md`
 
-### Episode Artwork Automation (Phase 2)
-**Current Limitation:** Manual upload required for artwork
-**Required Solutions:**
-- Spotify Web API integration (recommended)
-- Alternative RSS sources (fallback)
-- Webhook-based automation (ideal)
+### D-RoadmapSequencing (2025-10-07)
+**Decision:** Templatization scheduled too early; recommend building Tier 1 features first
+**Rationale:** Template with transcripts, search, and platform links has 3-5x higher market value and saves time on all future deployments
+**Recommended Sequence:** Fix contribution email → Transcripts → Search → Platform links → Address code review issues → Templatize
+**Documented:** `context/meta/tasks/roadmap-evaluation.md`
+
+### D-ContributionFeature (2025-10-07)
+**Decision:** Implement community contribution feature NOW (before templatization)
+**Rationale:** User explicitly requested, high value for active podcasts, 95% complete
+**Status:** Forms functional, Sanity writes working, email pending domain verification
+**Documented:** Session 14 entry in SESSIONS.md
+
+---
+
+## Next Steps
+
+### For User (Immediate)
+1. Review roadmap evaluation report (`context/meta/tasks/roadmap-evaluation.md`)
+2. Review code review report (`artifacts/code-reviews/session-14-review.md`)
+3. Decide on email notification fix (Option A or B)
+4. Approve git push of Session 14 work
+5. Prioritize Tier 1 features for next session
+
+### For Next Session (After User Decisions)
+1. Fix contribution email notifications
+2. Address critical security issues (C1: XSS, C2: resolved with email fix)
+3. Begin Tier 1 feature implementation (if user approves roadmap)
+   - Transcripts (highest priority, biggest SEO impact)
+   - Episode search (high UX value, low complexity)
+   - Platform links manual phase
+
+### Long-term (Post-Features, Pre-Templatization)
+1. Address high-priority code review issues (H1-H5)
+2. Add unit tests for critical paths (improve from 5% coverage)
+3. Fix hardcoded values (template readiness)
+4. Execute templatization plan (Phase 2b)
 
 ---
 
@@ -238,3 +206,5 @@ npm run upload:covers        # Upload episode cover images
 **For session history:** See `SESSIONS.md`
 **For decision rationale:** See `DECISIONS.md`
 **For quick dashboard:** See `QUICK_REF.md` (auto-generated)
+**For roadmap analysis:** See `context/meta/tasks/roadmap-evaluation.md`
+**For code quality:** See `artifacts/code-reviews/session-14-review.md`

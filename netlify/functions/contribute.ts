@@ -1,11 +1,15 @@
 import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
 import { createClient } from "@sanity/client";
 import { Resend } from "resend";
+import { sanitizeHTML } from "../../src/lib/utils";
+import { RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS, MAX_FIELD_LENGTHS } from "../../src/config/constants";
 
 // Initialize Sanity client
+// Note: Use SANITY_* (not PUBLIC_*) for server-side/Netlify Functions
+// PUBLIC_* prefix is only for Astro client-side code
 const sanityClient = createClient({
-  projectId: process.env.PUBLIC_SANITY_PROJECT_ID || "",
-  dataset: process.env.PUBLIC_SANITY_DATASET || "production",
+  projectId: process.env.SANITY_PROJECT_ID || "",
+  dataset: process.env.SANITY_DATASET || "production",
   token: process.env.SANITY_API_TOKEN, // Write token (not public)
   apiVersion: "2024-01-01",
   useCdn: false,
@@ -14,10 +18,27 @@ const sanityClient = createClient({
 // Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Rate limiting: In-memory store (resets on cold start - good enough for MVP)
+/**
+ * Rate limiting: In-memory store
+ *
+ * KNOWN LIMITATION (Acceptable for MVP):
+ * - Resets on cold start (each new function instance = fresh rate limit)
+ * - Not shared across function instances
+ * - Ineffective during high traffic (multiple concurrent instances)
+ *
+ * FUTURE ENHANCEMENT:
+ * - For production scale, consider:
+ *   - Upstash Redis (serverless-friendly, free tier)
+ *   - Netlify Blobs (simple key-value store)
+ *   - DynamoDB (AWS) or Firestore (Google)
+ *
+ * CURRENT RATIONALE:
+ * - MVP with low traffic expectations
+ * - Honeypot provides primary spam protection
+ * - Zero external dependencies/costs
+ * - Good enough for launch
+ */
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT = 5; // 5 submissions per hour per IP
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour in milliseconds
 
 // Check rate limit
 function checkRateLimit(ip: string): boolean {
@@ -26,11 +47,11 @@ function checkRateLimit(ip: string): boolean {
 
   if (!record || now > record.resetAt) {
     // No record or expired - create new
-    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
     return true;
   }
 
-  if (record.count >= RATE_LIMIT) {
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
     return false; // Rate limit exceeded
   }
 
@@ -39,12 +60,47 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+// Validate field length
+function validateFieldLength(value: string | undefined, fieldName: string, maxLength: number): string | null {
+  if (!value) return null;
+
+  if (value.length > maxLength) {
+    return `${fieldName} must be under ${maxLength} characters (currently ${value.length})`;
+  }
+
+  return null;
+}
+
+// Validate email format (basic)
+function validateEmail(email: string | undefined): boolean {
+  if (!email) return true; // Email is optional
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+// CORS headers for all responses
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 // Main handler
 export const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+  // Handle OPTIONS preflight request
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 204,
+      headers: corsHeaders,
+      body: "",
+    };
+  }
+
   // Only allow POST requests
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
+      headers: corsHeaders,
       body: JSON.stringify({ message: "Method not allowed" }),
     };
   }
@@ -58,6 +114,7 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
       // Bot detected - return success to avoid revealing honeypot
       return {
         statusCode: 200,
+        headers: corsHeaders,
         body: JSON.stringify({ message: "Success" }),
       };
     }
@@ -67,6 +124,7 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
     if (!checkRateLimit(clientIP)) {
       return {
         statusCode: 429,
+        headers: corsHeaders,
         body: JSON.stringify({ message: "Too many submissions. Please try again later." }),
       };
     }
@@ -75,7 +133,8 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
     if (!data.contributionType) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ message: "Contribution type is required" }),
+        headers: corsHeaders,
+        body: JSON.stringify({ message: "Please select a contribution type to continue." }),
       };
     }
 
@@ -84,30 +143,68 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
       if (!data.episodeTopic) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ message: "Episode topic is required" }),
+          headers: corsHeaders,
+          body: JSON.stringify({ message: "Please provide an episode topic for your idea." }),
         };
       }
     } else if (data.contributionType === "guest-recommendation") {
       if (!data.guestName) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ message: "Guest name is required" }),
+          headers: corsHeaders,
+          body: JSON.stringify({ message: "Please provide the guest's name." }),
         };
       }
     } else if (data.contributionType === "question") {
       if (!data.question) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ message: "Question is required" }),
+          headers: corsHeaders,
+          body: JSON.stringify({ message: "Please enter your question." }),
         };
       }
     } else if (data.contributionType === "feedback") {
       if (!data.feedbackType || !data.feedbackContent) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ message: "Feedback type and content are required" }),
+          headers: corsHeaders,
+          body: JSON.stringify({ message: "Please select a feedback type and share your thoughts." }),
         };
       }
+    }
+
+    // Validate email format
+    if (!validateEmail(data.submitterEmail)) {
+      return {
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify({ message: "Please provide a valid email address." }),
+      };
+    }
+
+    // Validate field lengths
+    const lengthValidations = [
+      validateFieldLength(data.episodeTopic, "Episode topic", MAX_FIELD_LENGTHS.episodeTopic),
+      validateFieldLength(data.episodeDescription, "Episode description", MAX_FIELD_LENGTHS.episodeDescription),
+      validateFieldLength(data.episodeRationale, "Episode rationale", MAX_FIELD_LENGTHS.episodeRationale),
+      validateFieldLength(data.guestName, "Guest name", MAX_FIELD_LENGTHS.guestName),
+      validateFieldLength(data.guestBackground, "Guest background", MAX_FIELD_LENGTHS.guestBackground),
+      validateFieldLength(data.guestRationale, "Guest rationale", MAX_FIELD_LENGTHS.guestRationale),
+      validateFieldLength(data.guestContact, "Guest contact", MAX_FIELD_LENGTHS.guestContact),
+      validateFieldLength(data.question, "Question", MAX_FIELD_LENGTHS.question),
+      validateFieldLength(data.questionContext, "Question context", MAX_FIELD_LENGTHS.questionContext),
+      validateFieldLength(data.feedbackContent, "Feedback content", MAX_FIELD_LENGTHS.feedbackContent),
+      validateFieldLength(data.submitterName, "Name", MAX_FIELD_LENGTHS.submitterName),
+      validateFieldLength(data.submitterEmail, "Email", MAX_FIELD_LENGTHS.submitterEmail),
+    ];
+
+    const validationError = lengthValidations.find(error => error !== null);
+    if (validationError) {
+      return {
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify({ message: validationError }),
+      };
     }
 
     // Create document in Sanity
@@ -152,6 +249,8 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
 
     // Send email notification via Resend
     try {
+      // TODO: Replace console.log with structured logging when adding Sentry
+      // Example: logger.info('email.attempt', { contributionType: data.contributionType, ip: clientIP });
       console.log("Attempting to send email...");
       console.log("RESEND_API_KEY present:", !!process.env.RESEND_API_KEY);
       console.log("From:", process.env.RESEND_FROM_EMAIL);
@@ -160,14 +259,17 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
       const emailContent = generateEmailContent(data);
 
       const result = await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL || "notifications@strangewater.xyz",
-        to: process.env.NOTIFICATION_EMAIL || "rkirshner@gmail.com",
+        from: process.env.RESEND_FROM_EMAIL || "contribution@noreply.strangewater.xyz",
+        to: process.env.NOTIFICATION_EMAIL || "swrequests@rexkirshner.com",
         subject: `[${getTypeLabel(data.contributionType)}] New Contribution`,
         html: emailContent,
       });
 
+      // TODO: Replace with structured success logging
+      // Example: logger.info('email.sent', { contributionId: savedContribution._id, messageId: result.id });
       console.log("Email sent successfully:", result);
     } catch (emailError) {
+      // TODO: Replace with Sentry.captureException(emailError, { extra: { contributionId, contributionType } })
       console.error("Email sending failed:", emailError);
       console.error("Error details:", JSON.stringify(emailError, null, 2));
       // Don't fail the request if email fails - contribution is still saved
@@ -175,15 +277,22 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
 
     return {
       statusCode: 200,
+      headers: corsHeaders,
       body: JSON.stringify({
         message: "Contribution submitted successfully",
         id: savedContribution._id,
       }),
     };
   } catch (error) {
+    // TODO: Replace with Sentry.captureException(error, {
+    //   level: 'error',
+    //   tags: { function: 'contribute' },
+    //   extra: { contributionType: data?.contributionType, ip: clientIP }
+    // })
     console.error("Contribution submission error:", error);
     return {
       statusCode: 500,
+      headers: corsHeaders,
       body: JSON.stringify({ message: "Internal server error" }),
     };
   }
@@ -191,8 +300,9 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
 
 // Helper: Generate email content
 function generateEmailContent(data: any): string {
-  const fromName = data.submitterName || "Anonymous";
-  const fromEmail = data.submitterEmail || "No email provided";
+  // Sanitize all user inputs to prevent XSS
+  const fromName = sanitizeHTML(data.submitterName || "Anonymous");
+  const fromEmail = sanitizeHTML(data.submitterEmail || "No email provided");
   const typeLabel = getTypeLabel(data.contributionType);
 
   let content = `
@@ -206,36 +316,37 @@ function generateEmailContent(data: any): string {
   if (data.contributionType === "episode-idea") {
     content += `
       <h3 style="color: #374151;">Episode Idea</h3>
-      <p><strong>Topic:</strong> ${data.episodeTopic}</p>
-      <p><strong>Description:</strong><br/>${data.episodeDescription}</p>
-      ${data.episodeRationale ? `<p><strong>Why This Would Resonate:</strong><br/>${data.episodeRationale}</p>` : ""}
+      <p><strong>Topic:</strong> ${sanitizeHTML(data.episodeTopic)}</p>
+      <p><strong>Description:</strong><br/>${sanitizeHTML(data.episodeDescription || "")}</p>
+      ${data.episodeRationale ? `<p><strong>Why This Would Resonate:</strong><br/>${sanitizeHTML(data.episodeRationale)}</p>` : ""}
     `;
   } else if (data.contributionType === "guest-recommendation") {
     content += `
       <h3 style="color: #374151;">Guest Recommendation</h3>
-      <p><strong>Name:</strong> ${data.guestName}</p>
-      <p><strong>Background:</strong><br/>${data.guestBackground}</p>
-      <p><strong>Why This Guest:</strong><br/>${data.guestRationale}</p>
-      ${data.guestContact ? `<p><strong>Contact Info:</strong> ${data.guestContact}</p>` : ""}
+      <p><strong>Name:</strong> ${sanitizeHTML(data.guestName)}</p>
+      <p><strong>Background:</strong><br/>${sanitizeHTML(data.guestBackground || "")}</p>
+      <p><strong>Why This Guest:</strong><br/>${sanitizeHTML(data.guestRationale || "")}</p>
+      ${data.guestContact ? `<p><strong>Contact Info:</strong> ${sanitizeHTML(data.guestContact)}</p>` : ""}
     `;
   } else if (data.contributionType === "question") {
     content += `
       <h3 style="color: #374151;">Question</h3>
-      <p><strong>Question:</strong><br/>${data.question}</p>
-      ${data.questionContext ? `<p><strong>Context:</strong><br/>${data.questionContext}</p>` : ""}
+      <p><strong>Question:</strong><br/>${sanitizeHTML(data.question)}</p>
+      ${data.questionContext ? `<p><strong>Context:</strong><br/>${sanitizeHTML(data.questionContext)}</p>` : ""}
     `;
   } else if (data.contributionType === "feedback") {
     content += `
       <h3 style="color: #374151;">Feedback</h3>
       <p><strong>Type:</strong> ${getFeedbackTypeLabel(data.feedbackType)}</p>
-      <p><strong>Content:</strong><br/>${data.feedbackContent}</p>
+      <p><strong>Content:</strong><br/>${sanitizeHTML(data.feedbackContent)}</p>
     `;
   }
 
+  const studioUrl = process.env.STUDIO_URL || process.env.URL || "https://strangewater.xyz";
   content += `
       <hr style="border: 1px solid #e5e7eb; margin: 20px 0;" />
       <p style="color: #6b7280; font-size: 14px;">
-        <a href="https://strangewater.xyz/studio/structure/contribution" style="color: #00a3b5; text-decoration: none;">
+        <a href="${studioUrl}/studio/structure/contribution" style="color: #00a3b5; text-decoration: none;">
           View in Sanity Studio →
         </a>
       </p>

@@ -199,4 +199,67 @@ sanity deploy                     # Deploy hosted Sanity Studio
 > **📚 For session history:** See `SESSIONS.md`
 > **💡 For decision rationale:** See `DECISIONS.md`
 
-**Last Updated:** 2025-10-06 (Migrated to v2.0.0 structure)
+---
+
+## Accessibility Guidelines
+
+### Alt Text Best Practices
+
+**Image Types & Alt Text Guidelines:**
+
+**Episode Cover Art:**
+```astro
+<!-- ❌ Generic -->
+<img src="cover.jpg" alt="Episode 42" />
+
+<!-- ✅ Descriptive -->
+<img src="cover.jpg" alt="Episode 42: Vitalik Buterin discussing Ethereum's future" />
+```
+
+**Guest Photos:**
+```astro
+<!-- ❌ Name only -->
+<img src="vitalik.jpg" alt="Vitalik Buterin" />
+
+<!-- ✅ Context + name -->
+<img src="vitalik.jpg" alt="Vitalik Buterin, Ethereum co-founder, headshot" />
+```
+
+**Logos & Branding:**
+```astro
+<!-- ❌ Generic -->
+<img src="logo.svg" alt="Logo" />
+
+<!-- ✅ Specific -->
+<img src="logo.svg" alt="Strange Water Podcast logo" />
+```
+
+**Decorative Images:**
+```astro
+<!-- Use empty alt for purely decorative images -->
+<img src="decorative-wave.svg" alt="" role="presentation" />
+```
+
+**Icon Buttons:**
+```astro
+<!-- Include text alternative -->
+<button aria-label="Play episode">
+  <PlayIcon aria-hidden="true" />
+</button>
+```
+
+**WCAG 2.1 AA Requirements:**
+- All `<img>` tags must have `alt` attribute
+- Alt text should describe image purpose, not just contents
+- Keep alt text concise (< 125 characters ideal)
+- Don't say "image of" or "picture of" (redundant)
+- For complex images (charts), provide longer description via `aria-describedby`
+
+**Testing:**
+- Run Lighthouse accessibility audit (target: >90)
+- Test with screen reader (VoiceOver on macOS, NVDA on Windows)
+- Verify keyboard navigation works for all interactive elements
+
+---
+
+**Last Updated:** 2025-10-07

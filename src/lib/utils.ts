@@ -4,6 +4,8 @@
  * Shared helper functions used across pages
  */
 
+import { DEFAULT_LOCALE } from "../config/constants";
+
 /**
  * Format a date string to human-readable format
  * @param dateString - ISO date string or any valid date format
@@ -11,7 +13,7 @@
  */
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString(DEFAULT_LOCALE, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -24,6 +26,7 @@ export function formatDate(dateString: string): string {
  * @returns Text with decoded entities
  */
 export function decodeHTMLEntities(text: string): string {
+  // Map of common named HTML entities (e.g., &amp; → &)
   const entities: Record<string, string> = {
     '&amp;': '&',
     '&lt;': '<',
@@ -39,8 +42,11 @@ export function decodeHTMLEntities(text: string): string {
   };
 
   return text
+    // Replace named entities using lookup table
     .replace(/&[#\w]+;/g, (entity) => entities[entity] || entity)
+    // Decode numeric HTML entities (decimal): &#39; → '
     .replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))
+    // Decode hexadecimal HTML entities: &#x27; → '
     .replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
 }
 
@@ -56,27 +62,21 @@ export function stripHTML(html: string): string {
 
 /**
  * Sanitize HTML to prevent XSS attacks while preserving safe formatting
- * Uses DOMPurify to clean potentially dangerous HTML
+ * Removes script tags, event handlers, and other potentially dangerous content
  * @param html - HTML string to sanitize
  * @returns Sanitized HTML safe for rendering
  */
 export function sanitizeHTML(html: string): string {
-  // Import DOMPurify dynamically for SSR compatibility
-  if (typeof window !== 'undefined') {
-    // Client-side: use DOMPurify
-    const DOMPurify = require('isomorphic-dompurify');
-    return DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre'],
-      ALLOWED_ATTR: ['href', 'target', 'rel'],
-      ALLOW_DATA_ATTR: false,
-    });
-  }
-
-  // Server-side (SSG): basic sanitization fallback
-  // Remove script tags and event handlers
+  // Server-side sanitization (used during SSG build)
+  // Remove script tags, event handlers, and javascript: protocols
   return html
+    // Remove script tags and their contents
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    // Remove inline event handlers (onclick, onload, etc.)
     .replace(/on\w+="[^"]*"/g, '')
     .replace(/on\w+='[^']*'/g, '')
-    .replace(/javascript:/gi, '');
+    // Remove javascript: protocols
+    .replace(/javascript:/gi, '')
+    // Remove data: URIs (can be used for XSS)
+    .replace(/data:text\/html/gi, '');
 }

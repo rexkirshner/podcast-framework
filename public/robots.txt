@@ -1,3 +1,4 @@
-# Staging site - prevent search engine indexing
+# Production robots.txt for Strange Water
 User-agent: *
-Disallow: /
+Allow: /
+Sitemap: https://strangewater.xyz/sitemap-index.xml

@@ -196,8 +196,10 @@ export async function getAllEpisodes(): Promise<Episode[]> {
   }`;
 
   try {
-    return await sanityClient.fetch(query);
+    const episodes = await sanityClient.fetch(query);
+    return episodes || [];
   } catch (error) {
+    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'episodes-fetch' } })
     console.error('Failed to fetch episodes from Sanity:', error);
     // Return empty array for graceful degradation
     return [];
@@ -244,8 +246,16 @@ export async function getEpisodeBySlug(slug: string): Promise<Episode | null> {
   }`;
 
   try {
-    return await sanityClient.fetch(query, { slug });
+    const episode = await sanityClient.fetch(query, { slug });
+
+    if (!episode) {
+      console.warn(`Episode with slug "${slug}" not found in Sanity CMS.`);
+      return null;
+    }
+
+    return episode;
   } catch (error) {
+    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'episode-fetch', slug } })
     console.error(`Failed to fetch episode with slug "${slug}" from Sanity:`, error);
     return null;
   }
@@ -290,8 +300,10 @@ export async function getFeaturedEpisodes(): Promise<Episode[]> {
   }`;
 
   try {
-    return await sanityClient.fetch(query);
+    const episodes = await sanityClient.fetch(query);
+    return episodes || [];
   } catch (error) {
+    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'featured-episodes-fetch' } })
     console.error('Failed to fetch featured episodes from Sanity:', error);
     return [];
   }
@@ -317,8 +329,16 @@ export async function getPodcastInfo(): Promise<Podcast | null> {
   }`;
 
   try {
-    return await sanityClient.fetch(query);
+    const podcast = await sanityClient.fetch(query);
+
+    if (!podcast) {
+      console.warn('No podcast document found in Sanity CMS.');
+      return null;
+    }
+
+    return podcast;
   } catch (error) {
+    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'podcast-info-fetch' } })
     console.error('Failed to fetch podcast info from Sanity:', error);
     return null;
   }
@@ -338,8 +358,10 @@ export async function getAllGuests(): Promise<Guest[]> {
   }`;
 
   try {
-    return await sanityClient.fetch(query);
+    const guests = await sanityClient.fetch(query);
+    return guests || [];
   } catch (error) {
+    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'guests-fetch' } })
     console.error('Failed to fetch guests from Sanity:', error);
     return [];
   }

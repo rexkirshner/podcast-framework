@@ -1,11 +1,16 @@
 ---
 // Header component with Sanity integration
-import { getPodcastInfo } from "../lib/sanity";
-import { getTheme, defaultTheme } from "../lib/theme";
+// Receives podcastInfo and theme as props from BaseLayout (prevents duplicate fetching)
+import { defaultTheme } from "../lib/theme";
+import type { Podcast } from "../lib/sanity";
+import type { Theme } from "../lib/theme";
 
-// Fetch podcast info for logo, name, and tagline
-const podcastInfo = await getPodcastInfo();
-const theme = (await getTheme()) || defaultTheme;
+interface Props {
+  podcastInfo: Podcast | null;
+  theme?: Theme;
+}
+
+const { podcastInfo, theme = defaultTheme } = Astro.props;
 const siteName = podcastInfo?.name || "Podcast";
 const siteTagline = podcastInfo?.tagline || "";
 const showContribute = podcastInfo?.isActive === true;

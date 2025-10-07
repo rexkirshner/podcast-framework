@@ -1,28 +1,42 @@
 ---
 // Base layout with common meta tags
+// Fetches podcast info and theme ONCE per page, passes to child components via props
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { getPodcastInfo } from "../lib/sanity";
 import { getTheme, defaultTheme, generateThemeCSS, getGoogleFontsURL } from "../lib/theme";
+import type { Podcast } from "../lib/sanity";
+import type { Theme } from "../lib/theme";
 import "../styles/global.css";
 
 interface Props {
   title: string;
   description: string;
   ogImage?: string;
+  // Optional: Allow pages to pass pre-fetched data to avoid re-fetching
+  podcastInfo?: Podcast | null;
+  theme?: Theme;
 }
 
-const { title, description, ogImage = "/og-image.jpg" } = Astro.props;
+const { title, description, ogImage = "/og-image.jpg", podcastInfo: propPodcastInfo, theme: propTheme } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-// Fetch podcast info for favicon
-const podcastInfo = await getPodcastInfo();
-const faviconUrl = podcastInfo?.favicon?.url || "/favicon.svg";
+// Fetch podcast info and theme ONCE (or use props if provided)
+// This prevents N+1 queries - each component will receive data via props
+const podcastInfo = propPodcastInfo !== undefined ? propPodcastInfo : await getPodcastInfo();
+const theme = propTheme || (await getTheme()) || defaultTheme;
 
-// Fetch theme for CSS variables
-const theme = (await getTheme()) || defaultTheme;
+const faviconUrl = podcastInfo?.favicon?.url || "/favicon.svg";
 const themeCSS = generateThemeCSS(theme);
 const googleFontsUrl = getGoogleFontsURL(theme.typography.googleFonts || []);
+
+// Log warnings during development if CMS data is missing
+if (!podcastInfo && import.meta.env.MODE === 'development') {
+  console.warn('[BaseLayout] Podcast info not found - using fallback favicon');
+}
+if (!propTheme && !await getTheme() && import.meta.env.MODE === 'development') {
+  console.warn('[BaseLayout] Theme not found - using default theme');
+}
 
 // Google Analytics 4 - Only load in production
 const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
@@ -74,8 +88,8 @@ const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     </script>}
   </head>
   <body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
-    <Header />
+    <Header podcastInfo={podcastInfo} theme={theme} />
     <slot />
-    <Footer />
+    <Footer podcastInfo={podcastInfo} theme={theme} />
   </body>
 </html>

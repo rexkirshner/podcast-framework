@@ -1064,6 +1064,180 @@ podcast website/
 
 ---
 
+## Session 15 | 2025-10-07 | Phase 2a - Code Review Fixes (14 Issues)
+
+**Duration:** ~3h | **Focus:** Address code review findings from Session 14 | **Status:** ✅ Complete
+
+### Changed
+- ✅ Fixed XSS vulnerability in contribution email generation (C1)
+- ✅ Fixed email configuration to use verified domain (C2)
+- ✅ Added comprehensive input validation with length limits (H2)
+- ✅ Replaced hardcoded Studio URL with environment variable (H4)
+- ✅ Standardized environment variable pattern (PUBLIC_* vs plain) (H5)
+- ✅ Added CORS headers to serverless function (M5)
+- ✅ Fixed robots.txt to allow search engines (L5)
+- ✅ Added sitemap integration (@astrojs/sitemap) (L5)
+- ✅ Removed client-side DOMPurify (SSR incompatible) (M1)
+- ✅ Documented rate limiting MVP decision (M3)
+- ✅ Added ARIA labels to contribution form (M8)
+- ✅ Created sr-only CSS utility class (M8)
+- ✅ Added inline comments to complex regex (L3)
+- ✅ Documented alt text best practices in CONTEXT.md (L4)
+- ✅ Standardized all error messages to be user-friendly (L2)
+- ✅ Created constants.ts file, extracted all magic numbers (L1)
+- ✅ Added structured logging comments for Sentry preparation (M4)
+
+### Problem Solved
+**Issue:** Session 14 code review identified 21 issues (2 critical, 5 high, 8 medium, 6 low). Security vulnerabilities needed immediate attention before any deployment.
+
+**Constraints:**
+- Must fix critical and high-priority issues without breaking existing functionality
+- Cannot add external dependencies (like server-side DOMPurify) without build testing
+- Need to maintain user-friendly error messages while adding validation
+- Environment variable changes require .env.example documentation
+
+**Approach:**
+1. Tackled issues from smallest to largest (L → M → H → C)
+2. Fixed XSS vulnerability by importing existing sanitizeHTML function
+3. Added comprehensive input validation with constants-driven length limits
+4. Extracted all magic numbers to new constants.ts file
+5. Standardized environment variable pattern with clear documentation
+6. Added accessibility improvements (ARIA labels, sr-only class)
+7. Removed client-side DOMPurify, used server-side sanitization only
+8. Added structured logging preparation comments (Sentry TODOs)
+
+**Why this approach:**
+- Small to big prevents cascading failures (quick wins build momentum)
+- Reusing existing sanitizeHTML avoided adding dependencies
+- Constants extraction makes validation limits centrally configurable
+- Environment variable standardization critical for template reusability
+- ARIA labels improve accessibility without changing visual design
+- Removing DOMPurify fixed SSR compatibility (was unused anyway)
+- Structured logging comments prepare for Phase 2 monitoring integration
+
+### Decisions
+- **D-RateLimitMVP:** Document in-memory rate limiting as acceptable MVP (resets on cold start, not shared across instances). Phase 2 can add Upstash Redis if needed. Rationale: Honeypot provides primary spam protection, zero external dependencies for launch.
+- **D-EnvVarPattern:** PUBLIC_* prefix for Astro frontend (client-exposed), plain for server-side (Netlify functions, scripts). Rationale: Clear separation, prevents accidentally exposing secrets, template-friendly.
+- **D-ErrorMessages:** All user-facing errors must be actionable and friendly (no technical jargon). Rationale: Better UX, reduces support burden.
+
+### Files
+**NEW:** `src/config/constants.ts:1-46` - Centralized configuration (locale, rate limits, field lengths, theme defaults)
+**NEW:** `public/robots.txt:1-2` - Changed from Disallow to Allow, added sitemap reference
+
+**MOD:** `netlify/functions/contribute.ts:1-379` - Added sanitizeHTML import, input validation, CORS headers, length validation, structured logging comments, email config fixes
+**MOD:** `src/lib/utils.ts:1-83` - Removed DOMPurify client code, added inline regex comments, imported DEFAULT_LOCALE
+**MOD:** `src/pages/contribute.astro:1-420` - Added ARIA labels and describedby attributes
+**MOD:** `src/styles/global.css:1-50` - Added sr-only utility class
+**MOD:** `.env.example:1-44` - Documented PUBLIC_* vs plain pattern, updated email addresses
+**MOD:** `astro.config.mjs:1-15` - Added sitemap integration
+**MOD:** `context/CONTEXT.md:204-266` - Added accessibility guidelines and alt text best practices
+**MOD:** `package.json:1-50` - Added @astrojs/sitemap dependency, removed isomorphic-dompurify
+
+### Mental Models
+
+**Current understanding:**
+- Code review findings were mostly quick fixes (14 of 21 completed in 3 hours)
+- Security issues (C1, C2) were critical but straightforward to resolve
+- Input validation pattern: validate at serverless function boundary, sanitize before output
+- Environment variable pattern must be consistent for template reusability
+- Constants extraction prevents magic numbers from spreading across codebase
+- Accessibility improvements (ARIA, sr-only) enhance screen reader experience without visual changes
+
+**Key insights:**
+- XSS vulnerability existed because email generation lacked sanitization (user input directly interpolated into HTML)
+- Resend domain verification was already completed (contribution@noreply.strangewater.xyz verified)
+- In-memory rate limiting acceptable for MVP (honeypot primary defense, low traffic expectations)
+- ARIA labels can reference hidden hint text (sr-only class) for better screen reader UX
+- Robots.txt was blocking search engines (staging config carried over)
+
+**Gotchas discovered:**
+- DOMPurify has both client and server versions - installed isomorphic-dompurify but wasn't using it
+- Sanitization needed at email generation point, not just form input
+- Environment variables need both PUBLIC_* (frontend) and plain (server-side) versions
+- Constants.ts must use `as const` for TypeScript to preserve literal types
+- Sitemap integration requires @astrojs/sitemap package (not built-in)
+
+### Work In Progress
+**Task:** None - 14 code review issues complete, committed to git (NOT pushed)
+
+**Current Status:** Awaiting user approval to push to GitHub
+
+**Remaining Code Review Items (7 of 21):**
+- M2: Add error handling for theme/config failures (~1-2 hours)
+- M7: Fix duplicate theme/podcast queries in components (~1-2 hours)
+- H1: Optimize N+1 Sanity query pattern with build-time caching (~2-3 hours)
+- M6: Add JSDoc to key import scripts (~4-6 hours)
+- H3: Add unit tests for critical business logic (~4-6 hours)
+- L6: Verify .gitignore (completed - checked, all correct)
+
+**Next specific action:** User approves git push OR continues with remaining code review items
+
+### TodoWrite State
+**Captured from TodoWrite:**
+- ✅ H5: Standardize environment variable pattern
+- ✅ M4: Add structured logging comments
+- [ ] M2: Add error handling for theme/config failures
+- [ ] M7: Fix duplicate theme/podcast queries in components
+- [ ] H1: Optimize N+1 Sanity query pattern (build-time caching)
+- [ ] M6: Add JSDoc to key import scripts
+- [ ] H3: Add unit tests for critical business logic
+
+### Next Session
+**Priority:** User decision - continue with remaining code review items OR shift to Tier 1 features (transcripts, search, platform links)
+
+**Immediate Actions:**
+1. User approves git push of Session 15 work
+2. Decide whether to finish remaining 7 code review items (~10-15 hours) or move to new features
+
+**Remaining Code Review (if continuing):**
+- M2: Error handling for theme/config failures
+- M7: Deduplicate theme/podcast queries
+- H1: Build-time caching for Sanity queries
+- M6: JSDoc documentation for import scripts
+- H3: Unit tests for utils, validation, sanitization
+
+**Alternative Path (if shifting to features):**
+- Fix contribution email notifications
+- Implement transcripts via Whisper API
+- Build episode search functionality
+- Address code review items incrementally
+
+**Blockers:** None
+
+### Notes
+
+**Code Review Progress:**
+- **Session 14:** 21 issues identified (2 critical, 5 high, 8 medium, 6 low)
+- **Session 15:** 14 issues fixed (2 critical, 3 high, 6 medium, 3 low)
+- **Remaining:** 7 issues (0 critical, 2 high, 2 medium, 3 low)
+- **Improvement:** Grade estimated to increase from B+ (85%) to A- (90%)
+
+**Security Improvements:**
+- XSS vulnerability patched (sanitizeHTML on all user input before HTML generation)
+- Input validation added (length limits, email format, required field checks)
+- CORS headers prevent unauthorized cross-origin requests
+- Rate limiting protects against spam (in-memory MVP, can scale later)
+- Honeypot field catches bots (silent success response)
+
+**User Experience Improvements:**
+- Error messages are actionable and friendly (no technical jargon)
+- ARIA labels improve screen reader experience
+- Form hints provide guidance without cluttering UI
+- Constants-driven validation limits allow easy adjustment
+
+**Template Readiness Improvements:**
+- Environment variable pattern documented and standardized
+- Hardcoded Studio URL replaced with env var
+- Constants file centralizes all configuration
+- .env.example serves as complete deployment guide
+
+**Session Duration:** ~3 hours
+- Code review fixes: 2.5 hours (14 items)
+- Git commit preparation: 15 minutes
+- Context documentation: 30 minutes
+
+---
+
 ## Session Template
 
 ```markdown

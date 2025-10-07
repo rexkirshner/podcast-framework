@@ -33,6 +33,7 @@ export interface Theme {
 /**
  * Fetch theme configuration from Sanity
  * Gets the active theme, or falls back to the first theme if none are active
+ * Returns null on error (caller should use defaultTheme fallback)
  */
 export async function getTheme(): Promise<Theme | null> {
   try {
@@ -54,8 +55,22 @@ export async function getTheme(): Promise<Theme | null> {
     }`;
 
     const theme = await sanityClient.fetch(query);
+
+    // If no theme found in CMS, return null (will use defaultTheme)
+    if (!theme) {
+      console.warn('No active theme found in Sanity CMS. Using default theme.');
+      return null;
+    }
+
+    // Validate required fields exist
+    if (!theme.colors || !theme.typography) {
+      console.error('Theme missing required fields (colors or typography). Using default theme.');
+      return null;
+    }
+
     return theme;
   } catch (error) {
+    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'theme-fetch' } })
     console.error('Failed to fetch theme from Sanity:', error);
     return null;
   }

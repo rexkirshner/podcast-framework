@@ -152,16 +152,24 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
 
     // Send email notification via Resend
     try {
+      console.log("Attempting to send email...");
+      console.log("RESEND_API_KEY present:", !!process.env.RESEND_API_KEY);
+      console.log("From:", process.env.RESEND_FROM_EMAIL);
+      console.log("To:", process.env.NOTIFICATION_EMAIL);
+
       const emailContent = generateEmailContent(data);
 
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: process.env.RESEND_FROM_EMAIL || "notifications@strangewater.xyz",
         to: process.env.NOTIFICATION_EMAIL || "rkirshner@gmail.com",
         subject: `[${getTypeLabel(data.contributionType)}] New Contribution`,
         html: emailContent,
       });
+
+      console.log("Email sent successfully:", result);
     } catch (emailError) {
       console.error("Email sending failed:", emailError);
+      console.error("Error details:", JSON.stringify(emailError, null, 2));
       // Don't fail the request if email fails - contribution is still saved
     }
 

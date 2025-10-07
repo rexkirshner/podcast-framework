@@ -81,17 +81,17 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
 
     // Validate type-specific fields
     if (data.contributionType === "episode-idea") {
-      if (!data.episodeTopic || !data.episodeDescription) {
+      if (!data.episodeTopic) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ message: "Episode topic and description are required" }),
+          body: JSON.stringify({ message: "Episode topic is required" }),
         };
       }
     } else if (data.contributionType === "guest-recommendation") {
-      if (!data.guestName || !data.guestBackground || !data.guestRationale) {
+      if (!data.guestName) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ message: "Guest name, background, and rationale are required" }),
+          body: JSON.stringify({ message: "Guest name is required" }),
         };
       }
     } else if (data.contributionType === "question") {
@@ -251,9 +251,9 @@ function getTypeLabel(type: string): string {
 // Helper: Get feedback type label
 function getFeedbackTypeLabel(type: string): string {
   const labels: Record<string, string> = {
-    praise: "👍 Praise",
-    suggestion: "💡 Suggestion",
-    bug: "🐛 Issue/Bug Report",
+    feedback: "Feedback",
+    suggestion: "Suggestion",
+    bug: "Issue/Bug Report",
   };
   return labels[type] || type;
 }

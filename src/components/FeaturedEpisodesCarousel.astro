@@ -1,0 +1,188 @@
+---
+import { stripHTML } from "../lib/utils";
+import { getPodcastInfo } from "../lib/sanity";
+import type { Episode } from "../lib/sanity";
+
+interface Props {
+  episodes: Episode[];
+}
+
+const { episodes } = Astro.props;
+const podcastInfo = await getPodcastInfo();
+---
+
+{episodes.length > 0 && (
+  <section class="bg-gray-50 py-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-3xl font-bold text-gray-900">Featured Episodes</h2>
+        <div class="flex gap-2">
+          <button
+            id="carousel-prev"
+            class="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Previous episode"
+          >
+            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <button
+            id="carousel-next"
+            class="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Next episode"
+          >
+            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="relative overflow-hidden">
+        <div id="carousel-container" class="flex transition-transform duration-500 ease-in-out">
+          {episodes.map((episode) => (
+            <a
+              href={`/episodes/${episode.slug.current}`}
+              class="flex-shrink-0 w-full bg-white rounded-lg shadow-md hover:shadow-xl transition group"
+            >
+              <div class="flex flex-col md:flex-row gap-6 p-6">
+                <!-- Episode Image -->
+                <div class="flex-shrink-0">
+                  {episode.coverImage?.url ? (
+                    <img
+                      src={episode.coverImage.url}
+                      alt={episode.title}
+                      class="w-full md:w-64 h-64 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  ) : podcastInfo?.logo?.url ? (
+                    <img
+                      src={podcastInfo.logo.url}
+                      alt={podcastInfo.name}
+                      class="w-full md:w-64 h-64 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="w-full md:w-64 h-64 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <span class="text-5xl font-bold text-blue-600">{episode.episodeNumber}</span>
+                    </div>
+                  )}
+                </div>
+
+                <!-- Episode Content -->
+                <div class="flex-grow flex flex-col">
+                  <p class="text-sm text-blue-600 uppercase tracking-wide mb-2">
+                    Episode {episode.episodeNumber}
+                  </p>
+                  <h3 class="text-2xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-4">
+                    {episode.title}
+                  </h3>
+
+                  <!-- Host and Guests -->
+                  <div class="mb-4">
+                    {podcastInfo?.host && (
+                      <p class="text-sm text-gray-600 mb-2">
+                        <span class="font-semibold">Host:</span> {podcastInfo.host}
+                      </p>
+                    )}
+                    {episode.guests && episode.guests.length > 0 && (
+                      <p class="text-sm text-gray-600">
+                        <span class="font-semibold">Guests:</span> {episode.guests.map(g => g.name).join(", ")}
+                      </p>
+                    )}
+                  </div>
+
+                  <!-- Description -->
+                  {episode.description && (
+                    <p class="text-gray-700 leading-relaxed line-clamp-4">
+                      {stripHTML(episode.description)}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Dots indicator -->
+      <div class="flex justify-center gap-2 mt-6">
+        {episodes.map((_, index) => (
+          <button
+            class="carousel-dot w-2 h-2 rounded-full bg-gray-300 transition-all hover:bg-gray-400"
+            data-index={index}
+            aria-label={`Go to episode ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<script>
+  const container = document.getElementById('carousel-container');
+  const prevBtn = document.getElementById('carousel-prev');
+  const nextBtn = document.getElementById('carousel-next');
+  const dots = document.querySelectorAll('.carousel-dot');
+
+  let currentIndex = 0;
+  const itemsPerView = 1; // Always show 1 item at a time
+  const totalItems = dots.length;
+
+  function updateCarousel() {
+    if (!container) return;
+
+    const maxIndex = Math.max(0, totalItems - itemsPerView);
+    currentIndex = Math.min(currentIndex, maxIndex);
+
+    const cardWidth = container.children[0]?.getBoundingClientRect().width || 0;
+    const offset = -(currentIndex * cardWidth);
+
+    container.style.transform = `translateX(${offset}px)`;
+
+    // Update button states
+    if (prevBtn) prevBtn.disabled = currentIndex === 0;
+    if (nextBtn) nextBtn.disabled = currentIndex >= maxIndex;
+
+    // Update dots
+    dots.forEach((dot, index) => {
+      if (index === currentIndex) {
+        dot.classList.add('bg-blue-600', 'w-8');
+        dot.classList.remove('bg-gray-300');
+      } else {
+        dot.classList.remove('bg-blue-600', 'w-8');
+        dot.classList.add('bg-gray-300');
+      }
+    });
+  }
+
+  prevBtn?.addEventListener('click', () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateCarousel();
+    }
+  });
+
+  nextBtn?.addEventListener('click', () => {
+    const maxIndex = Math.max(0, totalItems - itemsPerView);
+    if (currentIndex < maxIndex) {
+      currentIndex++;
+      updateCarousel();
+    }
+  });
+
+  dots.forEach((dot) => {
+    dot.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLElement;
+      const index = parseInt(target.dataset.index || '0');
+      currentIndex = index;
+      updateCarousel();
+    });
+  });
+
+  // Handle window resize to recalculate card width
+  window.addEventListener('resize', updateCarousel);
+
+  // Initialize
+  updateCarousel();
+</script>

@@ -16,7 +16,8 @@
     "fix:guests-keys": "node scripts/fix-guests-keys.js",
     "upload:photos": "node scripts/upload-guest-photos.js",
     "upload:covers": "node scripts/upload-episode-covers.js",
-    "import:platform-links": "node scripts/import-platform-links.js"
+    "import:platform-links": "node scripts/import-platform-links.js",
+    "set:featured": "node scripts/set-featured-episodes.js"
   },
   "dependencies": {
     "@sanity/client": "^7.12.0",

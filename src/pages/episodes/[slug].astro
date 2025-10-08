@@ -1,6 +1,7 @@
 ---
 // Dynamic episode page - fetches from Sanity based on slug
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import TranscriptViewer from "../../components/TranscriptViewer.astro";
 import { SITE_CONFIG } from "../../config/site";
 import { getAllEpisodes, getEpisodeBySlug, getPodcastInfo } from "../../lib/sanity";
 import type { Episode } from "../../lib/sanity";
@@ -226,6 +227,13 @@ const ogImage = episode.coverImage?.asset?.url || podcastInfo?.logo?.url || "htt
           </div>
         </div>
       )}
+
+      <!-- Transcript Viewer -->
+      <TranscriptViewer
+        transcript={episode.transcript}
+        segments={episode.transcriptSegments}
+        episodeNumber={episode.episodeNumber}
+      />
 
       <!-- Subscribe or Listen CTA -->
       <div class="bg-blue-50 rounded-lg p-6 text-center">

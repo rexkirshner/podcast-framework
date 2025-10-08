@@ -120,6 +120,15 @@ export interface Episode {
     };
   };
   featured: boolean;
+  transcript?: string;
+  transcriptSegments?: Array<{
+    start: number;
+    end: number;
+    text: string;
+  }>;
+  transcriptDuration?: number;
+  transcriptGeneratedAt?: string;
+  audioUrl?: string;
 }
 
 export interface Podcast {

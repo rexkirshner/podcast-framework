@@ -102,6 +102,45 @@ export default defineType({
       type: 'boolean',
       initialValue: false,
     }),
+    defineField({
+      name: 'transcript',
+      title: 'Episode Transcript',
+      type: 'text',
+      rows: 20,
+      description: 'Full episode transcript (auto-generated or manually entered)',
+    }),
+    defineField({
+      name: 'transcriptSegments',
+      title: 'Transcript Segments',
+      type: 'array',
+      of: [{type: 'object', fields: [
+        {name: 'start', type: 'number', title: 'Start Time (seconds)'},
+        {name: 'end', type: 'number', title: 'End Time (seconds)'},
+        {name: 'text', type: 'text', title: 'Text'},
+      ]}],
+      description: 'Timestamped transcript segments from Whisper API',
+      hidden: true, // Hide in Studio UI (too verbose for editing)
+    }),
+    defineField({
+      name: 'transcriptDuration',
+      title: 'Transcript Duration',
+      type: 'number',
+      description: 'Audio duration in seconds (from Whisper API)',
+      hidden: true,
+    }),
+    defineField({
+      name: 'transcriptGeneratedAt',
+      title: 'Transcript Generated At',
+      type: 'datetime',
+      description: 'When the transcript was auto-generated',
+      hidden: true,
+    }),
+    defineField({
+      name: 'audioUrl',
+      title: 'Audio File URL',
+      type: 'url',
+      description: 'Direct MP3 URL for transcription (from RSS feed or podcast host)',
+    }),
   ],
   orderings: [
     {

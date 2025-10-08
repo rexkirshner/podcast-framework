@@ -1,6 +1,7 @@
 ---
 // Episodes list page - fetching from Sanity
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import EpisodeSearch from "../../components/EpisodeSearch.astro";
 import { getAllEpisodes, getPodcastInfo } from "../../lib/sanity";
 import { formatDate, stripHTML } from "../../lib/utils";
 
@@ -36,12 +37,19 @@ const siteName = podcastInfo?.name || "Podcast";
         </p>
       </div>
 
+      <!-- Search Component -->
+      <EpisodeSearch />
+
       <!-- Episodes Grid -->
       <div class="grid grid-cols-1 gap-6">
         {episodes.map((episode) => (
           <a
             href={`/episodes/${episode.slug.current}`}
             class="block bg-white rounded-lg shadow-md hover:shadow-lg transition p-6"
+            data-episode-card
+            data-episode-title={episode.title}
+            data-episode-description={stripHTML(episode.description)}
+            data-episode-guests={episode.guests?.map(g => g.name).join(', ') || ''}
           >
             <div class="flex items-start gap-6">
               <!-- Episode Cover Image or Podcast Logo -->

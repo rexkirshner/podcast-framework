@@ -497,6 +497,32 @@ const { podcast, branding } = getConfig();
 3. develop → main (production auto-deploys)
 4. Instant rollback available via Netlify UI (previous deploys cached)
 
+**Git Push Permission Protocol** 🚨 **CRITICAL COST CONTROL**
+
+**Rule:** Git push requires explicit user approval - NO EXCEPTIONS
+
+**Why:**
+- Every git push triggers Netlify build (~1-2 minutes)
+- Netlify free tier: 300 build minutes/month (50% consumed in first week)
+- Build quota exhaustion = downtime or unexpected costs
+- User must control deployment timing
+
+**Workflow:**
+1. Complete work locally
+2. Run build verification (`npm run build`)
+3. Run tests (`npm test`)
+4. Commit changes locally (`git commit`)
+5. **STOP** - Do not push yet
+6. Ask user: "Ready to push to GitHub? This will trigger a Netlify build. Do you approve?"
+7. Wait for explicit confirmation ("yes", "push", "do it")
+8. Only then: `git push`
+
+**Important:**
+- User instructions mentioning "push" are workflow descriptions, NOT permission
+- "Save everything and push to github" = describing workflow, must still ask
+- No shortcuts, no implied consent
+- Git commit ≠ git push (commit is free, push costs build minutes)
+
 ---
 
 ## 6. Template & Theming Strategy

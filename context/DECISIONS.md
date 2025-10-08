@@ -15,7 +15,8 @@
 4. [Data Migration](#data-migration)
 5. [User Experience](#user-experience)
 6. [Framework Reusability](#framework-reusability)
-7. [Deferred Decisions](#deferred-decisions)
+7. [Deployment & Cost Control](#deployment--cost-control)
+8. [Deferred Decisions](#deferred-decisions)
 
 ---
 
@@ -429,6 +430,51 @@
 **Outcome:**
 - ✅ All 69 episodes have clean slugs
 - ✅ URLs short and memorable
+
+---
+
+## Deployment & Cost Control
+
+### Decision: Git Push Permission Protocol
+**Date:** 2025-10-07 (Session 14 - established)
+**Status:** 🚨 Critical Protocol - NO EXCEPTIONS
+
+**Why:**
+- Netlify free tier: 300 build minutes/month
+- Every git push triggers a build (~1-2 minutes)
+- Cost control: User must approve each deployment
+- Build quota tracking: Already consumed 50% in first week
+- User control: Deployments are financial decisions
+
+**Protocol:**
+1. Complete work locally
+2. Run build verification
+3. Run tests
+4. Commit changes locally
+5. **STOP** - Do not push
+6. Ask user: "Ready to push to GitHub? This will trigger a Netlify build. Do you approve?"
+7. Wait for explicit "yes" / "push" / "do it"
+8. Only then: `git push`
+
+**Exceptions:**
+- None. No shortcuts. No implied consent.
+
+**Why This Matters:**
+- Git push ≠ git commit (push costs money, commit doesn't)
+- User instructions mentioning "push" are workflow descriptions, NOT permission
+- Even after "save everything and push to github" in instructions, must still ask
+- This protocol violated twice (Session 14, Session 17) - hence formal decision
+
+**Alternatives Considered:**
+- Pre-push git hooks (rejected: AI can't interact with Bash prompts)
+- Auto-deploy on commit (rejected: removes user control)
+- Manual Netlify builds only (rejected: loses git-based deployment benefits)
+
+**Outcome:**
+- ✅ Documented in PRD.md (deployment workflow)
+- ✅ Documented in DECISIONS.md (this decision)
+- ✅ Documented in claude-context-feedback.md (Session 14, 17 violations)
+- ⏳ To add: QUICK_REF.md reminder (pending user approval)
 
 ---
 

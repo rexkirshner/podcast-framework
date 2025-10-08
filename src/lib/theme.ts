@@ -1,4 +1,5 @@
 import { sanityClient } from './sanity';
+import { captureException } from './sentry';
 
 // ============================================================================
 // Build-Time Cache for Theme
@@ -106,7 +107,10 @@ export async function getTheme(): Promise<Theme | null> {
 
       return theme;
     } catch (error) {
-      // TODO: Replace with Sentry.captureException(error, { extra: { context: 'theme-fetch' } })
+      captureException(error, {
+        tags: { context: 'sanity', operation: 'fetch-theme' },
+        level: 'warning',
+      });
       console.error('Failed to fetch theme from Sanity:', error);
       return null;
     }

@@ -5,6 +5,7 @@
  */
 
 import { DEFAULT_LOCALE } from "../config/constants";
+import DOMPurify from 'isomorphic-dompurify';
 
 /**
  * Format a date string to human-readable format
@@ -62,21 +63,17 @@ export function stripHTML(html: string): string {
 
 /**
  * Sanitize HTML to prevent XSS attacks while preserving safe formatting
- * Removes script tags, event handlers, and other potentially dangerous content
+ * Uses DOMPurify for robust, production-grade HTML sanitization
  * @param html - HTML string to sanitize
  * @returns Sanitized HTML safe for rendering
  */
 export function sanitizeHTML(html: string): string {
-  // Server-side sanitization (used during SSG build)
-  // Remove script tags, event handlers, and javascript: protocols
-  return html
-    // Remove script tags and their contents
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    // Remove inline event handlers (onclick, onload, etc.)
-    .replace(/on\w+="[^"]*"/g, '')
-    .replace(/on\w+='[^']*'/g, '')
-    // Remove javascript: protocols
-    .replace(/javascript:/gi, '')
-    // Remove data: URIs (can be used for XSS)
-    .replace(/data:text\/html/gi, '');
+  // Use DOMPurify for comprehensive XSS protection
+  // Configured to allow basic formatting while blocking scripts and dangerous attributes
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+    ALLOWED_ATTR: ['href', 'title', 'target', 'rel'],
+    ALLOW_DATA_ATTR: false,
+    KEEP_CONTENT: true,
+  });
 }

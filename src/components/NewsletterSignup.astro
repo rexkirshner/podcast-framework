@@ -112,14 +112,18 @@ const {
   .newsletter-status {
     font-size: 0.875rem;
     min-height: 1.25rem;
+    text-align: center;
+    width: 100%;
   }
 
   .newsletter-status.success {
     color: #10b981;
+    font-weight: 500;
   }
 
   .newsletter-status.error {
     color: #ef4444;
+    font-weight: 500;
   }
 
   /* Screen reader only text */
@@ -150,6 +154,7 @@ const {
   function initNewsletterForm(variant: string) {
     const form = document.getElementById(`newsletter-form-${variant}`) as HTMLFormElement;
     const statusDiv = document.getElementById(`newsletter-status-${variant}`) as HTMLDivElement;
+    const inputWrapper = form.querySelector('.newsletter-input-wrapper') as HTMLDivElement;
     const emailInput = form.querySelector('input[type="email"]') as HTMLInputElement;
     const button = form.querySelector('button') as HTMLButtonElement;
 
@@ -183,6 +188,7 @@ const {
         if (response.ok) {
           statusDiv.textContent = data.message;
           statusDiv.className = 'newsletter-status success';
+          inputWrapper.style.display = 'none'; // Hide input and button on success
           form.reset();
         } else {
           statusDiv.textContent = data.message || 'Something went wrong. Please try again.';

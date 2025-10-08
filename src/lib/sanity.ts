@@ -1,4 +1,5 @@
 import { createClient } from "@sanity/client";
+import { captureException } from "./sentry";
 
 // Validation - ensure env vars are set BEFORE creating client
 if (!import.meta.env.PUBLIC_SANITY_PROJECT_ID) {
@@ -352,7 +353,10 @@ export async function getAllEpisodes(): Promise<Episode[]> {
       const episodes = await sanityClient.fetch(query);
       return episodes || [];
     } catch (error) {
-      // TODO: Replace with Sentry.captureException(error, { extra: { context: 'episodes-fetch' } })
+      captureException(error, {
+        tags: { context: 'sanity', operation: 'fetch-episodes' },
+        level: 'error',
+      });
       console.error('Failed to fetch episodes from Sanity:', error);
       // Return empty array for graceful degradation
       return [];
@@ -362,61 +366,67 @@ export async function getAllEpisodes(): Promise<Episode[]> {
 
 // Helper function to fetch a single episode by slug
 export async function getEpisodeBySlug(slug: string): Promise<Episode | null> {
-  const query = `*[_type == "episode" && slug.current == $slug][0] {
-    _id,
-    title,
-    slug,
-    episodeNumber,
-    publishDate,
-    duration,
-    description,
-    showNotes,
-    spotifyEpisodeId,
-    spotifyLink,
-    youtubeLink,
-    applePodcastLink,
-    "coverImage": coverImage.asset->{url},
-    featured,
-    transcript,
-    transcriptSegments,
-    transcriptDuration,
-    transcriptGeneratedAt,
-    "hosts": hosts[]->{
+  return cachedFetch(`episode-${slug}`, async () => {
+    const query = `*[_type == "episode" && slug.current == $slug][0] {
       _id,
-      name,
+      title,
       slug,
-      bio,
-      "photo": photo.asset->{url},
-      twitter,
-      website,
-      linkedin
-    },
-    "guests": guests[]->{
-      _id,
-      name,
-      slug,
-      bio,
-      "photo": photo.asset->{url},
-      twitter,
-      website,
-      linkedin
-    }
-  }`;
+      episodeNumber,
+      publishDate,
+      duration,
+      description,
+      showNotes,
+      spotifyEpisodeId,
+      spotifyLink,
+      youtubeLink,
+      applePodcastLink,
+      "coverImage": coverImage.asset->{url},
+      featured,
+      transcript,
+      transcriptSegments,
+      transcriptDuration,
+      transcriptGeneratedAt,
+      "hosts": hosts[]->{
+        _id,
+        name,
+        slug,
+        bio,
+        "photo": photo.asset->{url},
+        twitter,
+        website,
+        linkedin
+      },
+      "guests": guests[]->{
+        _id,
+        name,
+        slug,
+        bio,
+        "photo": photo.asset->{url},
+        twitter,
+        website,
+        linkedin
+      }
+    }`;
 
-  try {
-    const episode = await sanityClient.fetch(query, { slug });
+    try {
+      const episode = await sanityClient.fetch(query, { slug });
 
-    if (!episode) {
-      console.warn(`Episode with slug "${slug}" not found in Sanity CMS.`);
+      if (!episode) {
+        console.warn(`Episode with slug "${slug}" not found in Sanity CMS.`);
+        return null;
+      }
+
+      return episode;
+    } catch (error) {
+      captureException(error, {
+        tags: { context: 'sanity', operation: 'fetch-episode' },
+        extra: { slug },
+        level: 'error',
+      });
+      console.error(`Failed to fetch episode with slug "${slug}" from Sanity:`, error);
       return null;
     }
-
-    return episode;
-  } catch (error) {
-    // TODO: Replace with Sentry.captureException(error, { extra: { context: 'episode-fetch', slug } })
-    console.error(`Failed to fetch episode with slug "${slug}" from Sanity:`, error);
-    return null;
-  }
+  });
 }
 
 // Helper function to fetch featured episodes
@@ -462,7 +472,10 @@ export async function getFeaturedEpisodes(): Promise<Episode[]> {
       const episodes = await sanityClient.fetch(query);
       return episodes || [];
     } catch (error) {
-      // TODO: Replace with Sentry.captureException(error, { extra: { context: 'featured-episodes-fetch' } })
+      captureException(error, {
+        tags: { context: 'sanity', operation: 'fetch-featured-episodes' },
+        level: 'error',
+      });
       console.error('Failed to fetch featured episodes from Sanity:', error);
       return [];
     }
@@ -504,7 +517,10 @@ export async function getPodcastInfo(): Promise<Podcast | null> {
 
       return podcast;
     } catch (error) {
-      // TODO: Replace with Sentry.captureException(error, { extra: { context: 'podcast-info-fetch' } })
+      captureException(error, {
+        tags: { context: 'sanity', operation: 'fetch-podcast-info' },
+        level: 'error',
+      });
       console.error('Failed to fetch podcast info from Sanity:', error);
       return null;
     }
@@ -529,7 +545,10 @@ export async function getAllGuests(): Promise<Guest[]> {
       const guests = await sanityClient.fetch(query);
       return guests || [];
     } catch (error) {
-      // TODO: Replace with Sentry.captureException(error, { extra: { context: 'guests-fetch' } })
+      captureException(error, {
+        tags: { context: 'sanity', operation: 'fetch-guests' },
+        level: 'error',
+      });
       console.error('Failed to fetch guests from Sanity:', error);
       return [];
     }
@@ -539,58 +558,62 @@ export async function getAllGuests(): Promise<Guest[]> {
 // Helper function to get homepage configuration
 // Gets the active configuration, or falls back to the first one if none are active
 export async function getHomepageConfig(): Promise<HomepageConfig | null> {
-  const query = `*[_type == "homepageConfig" && isActive == true][0] {
-    _id,
-    title,
-    hero,
-    featuredEpisodes,
-    recentEpisodes,
-    featuredGuests,
-    subscribe,
-    about,
-    newsletter,
-    customSections
-  }`;
+  return cachedFetch('homepage-config', async () => {
+    const query = `*[_type == "homepageConfig" && isActive == true][0] {
+      _id,
+      title,
+      hero,
+      featuredEpisodes,
+      recentEpisodes,
+      featuredGuests,
+      subscribe,
+      about,
+      newsletter,
+      customSections
+    }`;
 
-  try {
-    return await sanityClient.fetch(query);
-  } catch (error) {
-    console.error('Failed to fetch homepage config from Sanity:', error);
-    return null;
-  }
+    try {
+      return await sanityClient.fetch(query);
+    } catch (error) {
+      console.error('Failed to fetch homepage config from Sanity:', error);
+      return null;
+    }
+  });
 }
 
 // Helper function to get about page configuration
 export async function getAboutPageConfig(): Promise<AboutPageConfig | null> {
-  const query = `*[_type == "aboutPageConfig" && isActive == true][0] {
-    _id,
-    title,
-    aboutSection,
-    hostsSection {
-      enabled,
+  return cachedFetch('about-page-config', async () => {
+    const query = `*[_type == "aboutPageConfig" && isActive == true][0] {
+      _id,
       title,
-      layout,
-      "hosts": hosts[]-> {
-        _id,
-        name,
-        slug,
-        bio,
-        "photo": photo.asset->{url},
-        twitter,
-        website,
-        linkedin
-      }
-    },
-    missionSection,
-    subscribeCTA,
-    communitySection,
-    customSections
-  }`;
+      aboutSection,
+      hostsSection {
+        enabled,
+        title,
+        layout,
+        "hosts": hosts[]-> {
+          _id,
+          name,
+          slug,
+          bio,
+          "photo": photo.asset->{url},
+          twitter,
+          website,
+          linkedin
+        }
+      },
+      missionSection,
+      subscribeCTA,
+      communitySection,
+      customSections
+    }`;
 
-  try {
-    return await sanityClient.fetch(query);
-  } catch (error) {
-    console.error('Failed to fetch about page config from Sanity:', error);
-    return null;
-  }
+    try {
+      return await sanityClient.fetch(query);
+    } catch (error) {
+      console.error('Failed to fetch about page config from Sanity:', error);
+      return null;
+    }
+  });
 }

@@ -147,7 +147,7 @@ if (!transcript) {
 
       if (!query) {
         // Reset to original text with speaker formatting
-        contentEl.innerHTML = formatTranscriptHTML(transcriptText);
+        renderTranscriptDOM(transcriptText, contentEl);
         searchInfo?.classList.add('hidden');
         return;
       }
@@ -159,29 +159,108 @@ if (!transcript) {
 
       if (matches && matches.length > 0) {
         // Highlight matches
-        const highlighted = transcriptText.replace(
-          regex,
-          (match) => `<mark class="bg-yellow-200 px-1 rounded">${match}</mark>`
-        );
-        contentEl.innerHTML = formatTranscriptHTML(highlighted);
+        renderTranscriptDOM(transcriptText, contentEl, regex);
 
         // Show match count
         searchInfo!.textContent = `Found ${matches.length} match${matches.length === 1 ? '' : 'es'}`;
         searchInfo?.classList.remove('hidden');
       } else {
         // No matches
-        contentEl.innerHTML = formatTranscriptHTML(transcriptText);
+        renderTranscriptDOM(transcriptText, contentEl);
         searchInfo!.textContent = 'No matches found';
         searchInfo?.classList.remove('hidden');
       }
     }
 
-    // Format transcript with speaker styling
-    function formatTranscriptHTML(text: string): string {
-      // Replace **Speaker X:** with styled HTML
-      return text
-        .replace(/\*\*Speaker ([A-Z]):\*\*/g, '<strong class="block mt-4 mb-1 text-blue-600">Speaker $1:</strong>')
-        .replace(/\n/g, '<br/>');
+    // Render transcript using DOM manipulation (prevents XSS)
+    function renderTranscriptDOM(text: string, container: Element, highlightRegex?: RegExp) {
+      // Clear container
+      container.textContent = '';
+
+      // Split by speaker patterns and newlines
+      const speakerRegex = /\*\*Speaker ([A-Z]):\*\*/g;
+      let lastIndex = 0;
+      let match;
+
+      // Track if we need paragraph breaks
+      const lines = text.split('\n');
+      let currentLineIndex = 0;
+      let currentCharInText = 0;
+
+      while ((match = speakerRegex.exec(text)) !== null) {
+        // Add text before speaker
+        if (match.index > lastIndex) {
+          const beforeText = text.substring(lastIndex, match.index);
+          appendTextWithHighlight(container, beforeText, highlightRegex);
+        }
+
+        // Add speaker label
+        const strong = document.createElement('strong');
+        strong.className = 'block mt-4 mb-1 text-blue-600';
+        strong.textContent = `Speaker ${match[1]}:`;
+        container.appendChild(strong);
+
+        lastIndex = match.index + match[0].length;
+      }
+
+      // Add remaining text
+      if (lastIndex < text.length) {
+        const remainingText = text.substring(lastIndex);
+        appendTextWithHighlight(container, remainingText, highlightRegex);
+      }
+    }
+
+    // Helper to append text with optional highlighting
+    function appendTextWithHighlight(container: Element, text: string, highlightRegex?: RegExp) {
+      if (!highlightRegex) {
+        // No highlighting - split by newlines and add as paragraphs
+        const lines = text.split('\n');
+        lines.forEach((line, i) => {
+          if (line.trim()) {
+            const textNode = document.createTextNode(line);
+            container.appendChild(textNode);
+          }
+          if (i < lines.length - 1) {
+            container.appendChild(document.createElement('br'));
+          }
+        });
+        return;
+      }
+
+      // With highlighting
+      const lines = text.split('\n');
+      lines.forEach((line, lineIndex) => {
+        let lastIndex = 0;
+        let match;
+        const lineRegex = new RegExp(highlightRegex.source, highlightRegex.flags);
+
+        while ((match = lineRegex.exec(line)) !== null) {
+          // Add text before match
+          if (match.index > lastIndex) {
+            const beforeText = line.substring(lastIndex, match.index);
+            container.appendChild(document.createTextNode(beforeText));
+          }
+
+          // Add highlighted match
+          const mark = document.createElement('mark');
+          mark.className = 'bg-yellow-200 px-1 rounded';
+          mark.textContent = match[0];
+          container.appendChild(mark);
+
+          lastIndex = match.index + match[0].length;
+        }
+
+        // Add remaining text in line
+        if (lastIndex < line.length) {
+          const remainingText = line.substring(lastIndex);
+          container.appendChild(document.createTextNode(remainingText));
+        }
+
+        // Add line break if not last line
+        if (lineIndex < lines.length - 1) {
+          container.appendChild(document.createElement('br'));
+        }
+      });
     }
 
     // Copy transcript to clipboard

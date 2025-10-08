@@ -399,6 +399,77 @@ const { podcast, branding } = getConfig();
 
 **Time Estimate:** ~4 hours (matches KPI)
 
+**Automated Setup Wizard (Phase 3):**
+
+The setup wizard eliminates manual configuration through interactive CLI and web-based tools:
+
+```bash
+npm run create-podcast
+```
+
+**Wizard Steps:**
+
+1. **Basic Information**
+   - Podcast name, tagline, description
+   - Host name(s) and bio(s)
+   - Podcast launch date and status (active/completed)
+
+2. **Branding & Design**
+   - Logo upload (auto-optimizes for web)
+   - Primary brand color (hex code)
+   - Accent color (hex code)
+   - Font preferences (optional)
+   - Generates: favicon, OG images, all size variants
+
+3. **Technical Setup**
+   - Creates new Sanity project via API
+   - Generates and configures environment variables
+   - Sets up Resend email domain and API keys
+   - Configures analytics (Google Analytics 4, optional privacy-focused)
+   - Error monitoring (Sentry) initialization
+
+4. **Content Platform Integration**
+   - Spotify podcast URL
+   - Apple Podcasts URL
+   - YouTube channel URL
+   - RSS feed URL
+   - Other platforms (Twitter/X, Patreon, etc.)
+
+5. **Newsletter Setup** (Optional)
+   - ConvertKit account connection
+   - Form ID configuration
+   - Auto-generates branded email template HTML
+   - Copy-paste instructions for ConvertKit customization
+   - Test email functionality
+
+6. **Feature Configuration**
+   - Enable/disable guest profiles
+   - Enable/disable newsletter
+   - Enable/disable community contributions
+   - Enable/disable transcripts
+   - Select audio player style
+
+7. **Deployment**
+   - Creates GitHub repository
+   - Connects to Netlify
+   - Configures build settings and environment variables
+   - Sets up custom domain (DNS instructions)
+   - Triggers first build
+
+8. **Verification & Launch Checklist**
+   - Runs automated checks (SEO, accessibility, performance)
+   - Verifies all external integrations
+   - Confirms email delivery
+   - Tests forms and functions
+   - Generates launch report
+
+**Output:**
+- Fully configured repository
+- Live staging site
+- Pre-configured CMS
+- Setup documentation PDF
+- **Time Estimate:** <1 hour (vs 4 hours manual)
+
 ---
 
 ## 5. Recommended Technical Architecture
@@ -847,6 +918,29 @@ https://strangewater.xyz/about                     → https://strangewater.xyz/
   - **Impact:** Manual CSV collection took 1 hour for 69 episodes. Automation will save hours per new podcast deployment
 
 ### 8.3 Phase 3 Features (Weeks 9-12 - Future)
+
+**🎯 Primary Deliverable: New Podcast Setup Wizard**
+
+The automated setup wizard is the centerpiece of Phase 3, transforming podcast deployment from a 4-hour manual process to a <1-hour guided experience:
+
+- **Interactive CLI tool** (`npm run create-podcast`)
+- **8-step guided setup** covering all aspects of podcast configuration:
+  1. Basic information (name, hosts, status)
+  2. Branding & design (logo, colors, assets)
+  3. Technical setup (Sanity, Resend, analytics, error monitoring)
+  4. Content platform integration (Spotify, Apple, YouTube, RSS)
+  5. Newsletter setup (ConvertKit connection, branded templates)
+  6. Feature configuration (guests, contributions, transcripts)
+  7. Deployment (GitHub, Netlify, domain, build)
+  8. Verification & launch checklist (automated testing)
+- **Auto-generates** all configuration files, environment variables, and assets
+- **Creates infrastructure** (Sanity project, GitHub repo, Netlify site)
+- **Validates setup** with automated checks (SEO, accessibility, performance)
+- **Produces documentation** (setup PDF, launch report)
+
+See **Section 4.5** for detailed wizard specifications.
+
+**Additional Phase 3 Features:**
 
 - Multi-language support (i18n via Astro's built-in `astro:i18n`)
 - Premium content tiers (members-only episodes, locked via Patreon API)

@@ -3,6 +3,10 @@ import { createClient } from "@sanity/client";
 import { Resend } from "resend";
 import { sanitizeHTML } from "../../src/lib/utils";
 import { RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS, MAX_FIELD_LENGTHS } from "../../src/config/constants";
+import { initSentry, captureException } from "../../src/lib/sentry";
+
+// Initialize Sentry for error monitoring
+initSentry();
 
 // Initialize Sanity client
 // Note: Use SANITY_* (not PUBLIC_*) for server-side/Netlify Functions
@@ -80,7 +84,7 @@ function validateEmail(email: string | undefined): boolean {
 
 // CORS headers for all responses
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN || "https://strangewater.xyz",
   "Access-Control-Allow-Headers": "Content-Type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
@@ -269,9 +273,16 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
       // Example: logger.info('email.sent', { contributionId: savedContribution._id, messageId: result.id });
       console.log("Email sent successfully:", result);
     } catch (emailError) {
-      // TODO: Replace with Sentry.captureException(emailError, { extra: { contributionId, contributionType } })
+      captureException(emailError, {
+        tags: { function: 'contribute', operation: 'send-email' },
+        extra: {
+          contributionId: savedContribution._id,
+          contributionType: data.contributionType,
+          hasResendKey: !!process.env.RESEND_API_KEY,
+        },
+        level: 'error',
+      });
       console.error("Email sending failed:", emailError);
-      console.error("Error details:", JSON.stringify(emailError, null, 2));
       // Don't fail the request if email fails - contribution is still saved
     }
 
@@ -284,11 +295,19 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
       }),
     };
   } catch (error) {
-    // TODO: Replace with Sentry.captureException(error, {
-    //   level: 'error',
-    //   tags: { function: 'contribute' },
-    //   extra: { contributionType: data?.contributionType, ip: clientIP }
-    // })
+    const clientIP = event.headers["x-forwarded-for"] || event.headers["client-ip"] || "unknown";
+    const data = JSON.parse(event.body || "{}");
+
+    captureException(error, {
+      level: 'error',
+      tags: { function: 'contribute' },
+      extra: {
+        contributionType: data?.contributionType,
+        ip: clientIP,
+        hasSubmitterEmail: !!data?.submitterEmail,
+      },
+    });
+
     console.error("Contribution submission error:", error);
     return {
       statusCode: 500,

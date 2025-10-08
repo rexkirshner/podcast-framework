@@ -1,4 +1,12 @@
-# Production robots.txt for Strange Water
+# Robots.txt for Strange Water Podcast
+# Allow all search engines to crawl the site
+
 User-agent: *
 Allow: /
+
+# Sitemap location
 Sitemap: https://strangewater.xyz/sitemap-index.xml
+
+# Block access to Sanity Studio (if needed)
+# User-agent: *
+# Disallow: /studio/

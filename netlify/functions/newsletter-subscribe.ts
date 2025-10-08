@@ -1,6 +1,10 @@
 import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
 import { createClient } from "@sanity/client";
 import { RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS } from "../../src/config/constants";
+import { initSentry, captureException } from "../../src/lib/sentry";
+
+// Initialize Sentry for error monitoring
+initSentry();
 
 // Initialize Sanity client to fetch podcast config
 const sanityClient = createClient({
@@ -15,6 +19,34 @@ const sanityClient = createClient({
  * Same limitations as contribute function (acceptable for MVP)
  */
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+/**
+ * Runtime caching for podcast config
+ * TTL: 5 minutes (prevents excessive Sanity API calls)
+ */
+interface CachedPodcastConfig {
+  data: any;
+  timestamp: number;
+}
+
+let cachedPodcastConfig: CachedPodcastConfig | null = null;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+async function getPodcastConfig() {
+  const now = Date.now();
+
+  if (cachedPodcastConfig && (now - cachedPodcastConfig.timestamp) < CACHE_TTL) {
+    return cachedPodcastConfig.data;
+  }
+
+  const podcast = await sanityClient.fetch(`*[_type == "podcast"][0]`);
+  cachedPodcastConfig = {
+    data: podcast,
+    timestamp: now
+  };
+
+  return podcast;
+}
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
@@ -40,7 +72,7 @@ function validateEmail(email: string): boolean {
 
 // CORS headers
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN || "https://strangewater.xyz",
   "Access-Control-Allow-Headers": "Content-Type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
@@ -97,8 +129,8 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
       };
     }
 
-    // Fetch podcast config from Sanity
-    const podcast = await sanityClient.fetch(`*[_type == "podcast"][0]`);
+    // Fetch podcast config from Sanity (cached)
+    const podcast = await getPodcastConfig();
 
     if (!podcast) {
       console.error("No podcast configuration found");
@@ -155,6 +187,21 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
 
     if (!convertKitResponse.ok) {
       const errorText = await convertKitResponse.text();
+
+      // Capture non-400 errors (400 is expected for invalid/duplicate emails)
+      if (convertKitResponse.status !== 400) {
+        captureException(new Error(`ConvertKit API error: ${convertKitResponse.status}`), {
+          tags: { function: 'newsletter-subscribe', service: 'convertkit' },
+          extra: {
+            status: convertKitResponse.status,
+            error: errorText,
+            email: email,
+            formId: podcast.convertKitFormId,
+          },
+          level: 'error',
+        });
+      }
+
       console.error("ConvertKit API error:", convertKitResponse.status, errorText);
 
       // Handle specific ConvertKit errors
@@ -184,6 +231,17 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
       }),
     };
   } catch (error) {
+    const clientIP = event.headers["x-forwarded-for"] || event.headers["client-ip"] || "unknown";
+
+    captureException(error, {
+      level: 'error',
+      tags: { function: 'newsletter-subscribe' },
+      extra: {
+        ip: clientIP,
+        hasBody: !!event.body,
+      },
+    });
+
     console.error("Newsletter subscription error:", error);
     return {
       statusCode: 500,

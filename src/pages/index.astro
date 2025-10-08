@@ -4,6 +4,7 @@ import { getAllEpisodes, getFeaturedEpisodes, getPodcastInfo, getHomepageConfig 
 import { formatDate, stripHTML } from "../lib/utils";
 import { getTheme, defaultTheme, generateThemeCSS, getGoogleFontsURL } from "../lib/theme";
 import FeaturedEpisodesCarousel from "../components/FeaturedEpisodesCarousel.astro";
+import NewsletterSignup from "../components/NewsletterSignup.astro";
 
 // Fetch latest episode, featured episodes, and podcast info
 const episodes = await getAllEpisodes();
@@ -171,6 +172,14 @@ const spotifyUrl = podcastInfo?.spotifyUrl || "#";
 								: `${siteName} has concluded, but episodes are still available wherever you get your podcasts`)}
 						</p>
 					</div>
+
+				<!-- Newsletter Signup (if enabled) -->
+				{podcastInfo?.isActive && podcastInfo?.newsletterEnabled && (
+					<div class="mb-8 flex justify-center">
+						<NewsletterSignup variant="inline" />
+					</div>
+				)}
+
 				<div class="flex flex-wrap gap-4 justify-center">
 					{podcastInfo?.spotifyUrl && (
 						<a

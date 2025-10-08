@@ -85,5 +85,26 @@ export default defineType({
       type: 'url',
       description: 'Link to podcast Discord server (optional)',
     }),
+    defineField({
+      name: 'newsletterEnabled',
+      title: 'Enable Newsletter Signup',
+      type: 'boolean',
+      description: 'Show newsletter signup forms on the website (only visible when podcast is active)',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'convertKitApiKey',
+      title: 'ConvertKit API Key',
+      type: 'string',
+      description: 'Your ConvertKit API key (find in Account Settings → API Keys)',
+      hidden: ({ document }) => !document?.newsletterEnabled,
+    }),
+    defineField({
+      name: 'convertKitFormId',
+      title: 'ConvertKit Form ID',
+      type: 'string',
+      description: 'The ID of your ConvertKit form for episode notifications',
+      hidden: ({ document }) => !document?.newsletterEnabled,
+    }),
   ],
 })

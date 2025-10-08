@@ -4,6 +4,7 @@
 import { defaultTheme } from "../lib/theme";
 import type { Podcast } from "../lib/sanity";
 import type { Theme } from "../lib/theme";
+import NewsletterSignup from "./NewsletterSignup.astro";
 
 interface Props {
   podcastInfo: Podcast | null;
@@ -15,6 +16,7 @@ const currentYear = new Date().getFullYear();
 const siteName = podcastInfo?.name || "Podcast";
 const siteDescription = podcastInfo?.description || "";
 const showContribute = podcastInfo?.isActive === true;
+const showNewsletter = podcastInfo?.isActive && podcastInfo?.newsletterEnabled;
 ---
 
 <footer style="background: var(--color-footer-bg); color: var(--color-footer-text);" class="mt-16">
@@ -132,8 +134,18 @@ const showContribute = podcastInfo?.isActive === true;
       </div>
     </div>
 
+    <!-- Newsletter Signup (if enabled) -->
+    {showNewsletter && (
+      <div class="border-t pt-8 mb-8" style:border-color={`rgba(${theme.colors.primary}, 0.2)`}>
+        <div class="max-w-md mx-auto">
+          <h4 class="font-semibold mb-4 text-center" style="color: var(--color-secondary);">Get Episode Updates</h4>
+          <NewsletterSignup variant="footer" placeholder="Your email" buttonText="Subscribe" />
+        </div>
+      </div>
+    )}
+
     <!-- Copyright -->
-    <div class="border-t pt-8 text-center text-sm" style:border-color={`rgba(${theme.colors.primary}, 0.2)`}>
+    <div class={`pt-8 text-center text-sm ${showNewsletter ? '' : 'border-t'}`} style:border-color={`rgba(${theme.colors.primary}, 0.2)`}>
       <p>&copy; {currentYear} <span style="color: var(--color-secondary);">{siteName}</span>. All rights reserved.</p>
     </div>
   </div>

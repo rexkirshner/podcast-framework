@@ -1,5 +1,17 @@
 # Newsletter Feature Implementation Plan
 
+> **✅ IMPLEMENTED (2025-10-08):** Minimal Custom version completed (4 hours)
+>
+> **What was built:**
+> - Netlify function `/api/newsletter/subscribe` with ConvertKit API integration
+> - Reusable `NewsletterSignup.astro` component (inline + footer variants)
+> - Podcast schema fields: `newsletterEnabled`, `convertKitApiKey`, `convertKitFormId`
+> - Conditional display: Only shows when `isActive && newsletterEnabled`
+> - Zero external dependencies - direct ConvertKit REST API calls
+> - Placements: Homepage (inline) + Footer (compact)
+>
+> **Upgrade path:** To Full Custom (add Sanity storage + webhooks) = 5-6 hours
+
 ## Overview
 Build a lightweight, flexible newsletter system to collect subscriber emails for episode notifications, with the ability to expand to full newsletter content in the future.
 

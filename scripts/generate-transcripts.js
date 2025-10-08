@@ -82,6 +82,7 @@ async function downloadAudio(url, episodeNumber) {
   }
 
   const tempPath = path.join(tempDir, `episode-${episodeNumber}.mp3`);
+  const compressedPath = path.join(tempDir, `episode-${episodeNumber}-compressed.mp3`);
 
   console.log(`  📥 Downloading audio...`);
 
@@ -93,8 +94,44 @@ async function downloadAudio(url, episodeNumber) {
   const buffer = await response.buffer();
   fs.writeFileSync(tempPath, buffer);
 
-  console.log(`  ✅ Downloaded to ${tempPath}`);
+  const fileSizeMB = buffer.length / (1024 * 1024);
+  console.log(`  ✅ Downloaded ${fileSizeMB.toFixed(1)}MB`);
+
+  // If file is >25MB, compress it
+  if (fileSizeMB > 25) {
+    console.log(`  🗜️  Compressing audio (too large for Whisper API)...`);
+    await compressAudio(tempPath, compressedPath);
+    return compressedPath;
+  }
+
   return tempPath;
+}
+
+/**
+ * Compress audio file using ffmpeg
+ * Target: <25MB for Whisper API compatibility
+ */
+async function compressAudio(inputPath, outputPath) {
+  const { exec } = await import('child_process');
+  const { promisify } = await import('util');
+  const execPromise = promisify(exec);
+
+  try {
+    // Compress to mono, 32kbps, 16kHz (aggressive compression for speech-only)
+    // This should get most 60-min episodes under 15MB
+    await execPromise(
+      `ffmpeg -i "${inputPath}" -ac 1 -ar 16000 -b:a 32k -y "${outputPath}"`
+    );
+
+    const stats = fs.statSync(outputPath);
+    const compressedSizeMB = stats.size / (1024 * 1024);
+    console.log(`  ✅ Compressed to ${compressedSizeMB.toFixed(1)}MB`);
+
+    // Clean up original file
+    fs.unlinkSync(inputPath);
+  } catch (error) {
+    throw new Error(`Compression failed: ${error.message}`);
+  }
 }
 
 /**

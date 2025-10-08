@@ -2125,3 +2125,142 @@ This separation allows:
 - Option C: Skip for Strange Water (concluded podcast), add only to future active podcasts
 
 **Blockers:** None
+
+---
+
+## Session 16 | 2025-10-07 | Phase 2a - Newsletter Feature Planning & PRD Update
+
+**Duration:** 1.5h | **Focus:** Newsletter implementation planning, security review integration, roadmap update | **Status:** ✅ Complete
+
+### Changed
+- ✅ Comprehensive newsletter implementation plan created (`context/tasks/newsletter-plan.md`)
+- ✅ External AI security review incorporated (6 categories of improvements)
+- ✅ Newsletter tasks added to PRD Phase 2a roadmap (before templatization)
+- ✅ Recovered lost `claude-context-feedback.md` from git history
+- ✅ Newsletter feature positioned as pre-templatization enhancement
+
+### Problem Solved
+**Issue:** User requested comprehensive planning for newsletter capability to support email collection and episode notifications for future active podcasts.
+
+**Constraints:**
+- Must be flexible enough to support future full newsletter content (not just episode notifications)
+- Need to balance feature completeness vs. deployment complexity
+- Security and compliance critical (GDPR, CAN-SPAM, PII protection)
+- Strange Water is archived (newsletter not applicable), so this is template-focused planning
+
+**Approach:**
+1. Created detailed 470-line implementation plan covering architecture, costs, ESP comparison, implementation steps
+2. Requested external AI review to catch blind spots in security/compliance
+3. Incorporated 6 categories of improvements (webhooks, rate limiting, Zod validation, private datasets, deliverability setup, comprehensive testing)
+4. Updated PRD to sequence newsletter decision/implementation before templatization
+5. Positioned as conditional feature (only for active podcasts via `isActive` flag)
+
+**Why this approach:**
+- Newsletter is high-value for active podcasts but not applicable to Strange Water
+- Planning now ensures template ships feature-complete for future deployments
+- External review caught critical security/compliance gaps (webhook sync, PII protection, SPF/DKIM setup)
+- Hybrid architecture (Sanity + ConvertKit) provides portability and control vs. pure ESP lock-in
+
+### Decisions
+- **Newsletter Architecture:** Hybrid Sanity + ConvertKit (vs. pure ESP or self-hosted)
+  - Rationale: Data ownership + ESP deliverability + easy migration + free tier adequate
+- **Implementation Timeline:** Phase 2a decision point, implementation if approved (12-18 hours)
+- **Security Posture:** Production-grade from day one (private datasets, webhooks, Zod validation, monitoring)
+
+### Files
+**NEW:** `context/tasks/newsletter-plan.md:1-605` - Comprehensive newsletter implementation plan with hybrid architecture, ESP comparison, detailed checklists, security/compliance requirements
+**MOD:** `context/PRD.md:730-760` - Added newsletter decision and implementation tasks to Phase 2a roadmap before templatization section
+**RECOVERED:** `context/claude-context-feedback.md:1-900` - Restored from git history after accidental deletion during file reorganization
+**DEL:** `context/tasks/newsletter-plan-codex-suggestions.md` - Incorporated all suggestions, deleted temporary review file
+
+### Mental Models
+
+**Current understanding:**
+- Newsletter implementation is significantly more complex than initially estimated (12-18 hours vs. 8-12 hours)
+- Security and compliance are non-negotiable for email collection (GDPR data erasure, double opt-in, webhook sync)
+- ConvertKit free tier (1,000 subscribers) is sufficient for most podcast launches
+- Hybrid architecture prevents vendor lock-in while leveraging ESP infrastructure
+
+**Key insights AI agents should know:**
+- Newsletter is conditional feature (only shown when `podcast.isActive === true`)
+- External AI review added significant value - caught 6 categories of improvements we hadn't considered
+- Two-way webhook sync is critical to prevent compliance issues (Sanity showing active while ESP removed them)
+- Private Sanity dataset for subscribers prevents PII leaks through public API
+- SPF/DKIM/DMARC setup is prerequisite for deliverability (ConvertKit requires before enabling automations)
+
+**Gotchas discovered:**
+- ConvertKit won't enable automations without proper DNS authentication (SPF/DKIM/DMARC)
+- Subscriber state must sync bidirectionally (webhook required, not just API push)
+- Rate limiting in serverless functions should be IP-based but consider cold start resets
+- Zod schema validation catches malformed input before it reaches business logic
+- Newsletter plan complexity grew 50% after incorporating security review (8-12h → 12-18h estimate)
+
+### Work In Progress
+**Task:** Newsletter implementation plan complete, awaiting user decision
+
+**Decision needed:**
+- Implement newsletter in Phase 2a (before templatization) OR defer to Phase 3?
+- Decision factors: Strange Water is archived (doesn't need newsletter), but template value is high
+
+**Next specific actions after decision:**
+1. If approved: Create Sanity subscriber schema with private dataset
+2. If approved: Set up ConvertKit account and configure webhooks
+3. If approved: Build API routes with Zod validation and rate limiting
+4. If deferred: Move newsletter plan to Phase 3 roadmap section in PRD
+
+**Context needed:** Newsletter plan at `context/tasks/newsletter-plan.md` includes complete implementation checklist, cost estimates ($0-9/month), and security requirements.
+
+### TodoWrite State
+**Captured from TodoWrite:**
+- ✅ Review external AI suggestions for newsletter plan
+- ✅ Incorporate good suggestions into newsletter-plan.md
+- ✅ Delete suggestions file after incorporation
+- ✅ Update PRD to include newsletter tasks before templatization
+- ✅ Recover lost claude-context-feedback.md file
+
+### Next Session
+**Priority:** Complete planned workflow - run /code-review, commit changes, push to GitHub (with permission)
+
+**Actions:**
+1. Run /code-review to audit current codebase state
+2. Add any high-quality feedback to claude-context-feedback.md
+3. Commit all changes (newsletter plan, PRD update, recovered feedback file)
+4. Request permission to push to GitHub (per critical protocol)
+
+**Decision Points:**
+- User to decide on newsletter implementation timing (Phase 2a vs. Phase 3)
+- User to decide on next features after newsletter decision (transcripts, search, or other Tier 1)
+
+**Blockers:** None
+
+### Notes
+
+**Newsletter Plan Improvements from External AI Review:**
+1. **Webhook Sync:** ConvertKit → Sanity bidirectional sync prevents compliance issues
+2. **Confirmation Flow:** Only set `confirmed: true` after webhook event (not immediately)
+3. **API Security:** Origin checks, CSRF protection, IP-based rate limiting
+4. **Zod Validation:** Centralized schema validation with email normalization
+5. **PII Protection:** Private Sanity dataset, least-privilege tokens, GDPR deletion script
+6. **Deliverability:** SPF/DKIM/DMARC setup requirements documented
+7. **Component Reusability:** Props-based NewsletterSignup.astro (not multiple variants)
+8. **Accessibility:** WCAG compliance, works without JavaScript, screen reader tested
+9. **Testing:** Integration tests for all error paths (success, duplicates, rate limits, validation)
+10. **Monitoring:** Netlify/Sentry alerts for API failures and spam spikes
+
+**Cost Analysis:**
+- Setup: $0 (ConvertKit free tier)
+- Ongoing: $0-9/month (free tier → 1,000 subscribers, then $9/month)
+- Implementation: 12-18 hours (increased from 8-12 after security review)
+- Maintenance: 2-3 hours/month (quarterly deliverability reviews, metrics monitoring)
+
+**Template Value:**
+- Newsletter shipping with template saves 12-18 hours per future podcast deployment
+- Security/compliance built-in prevents costly mistakes in production
+- Hybrid architecture provides migration path if ConvertKit outgrown
+
+**Session Duration:** ~1.5 hours
+- Newsletter plan review and external AI feedback incorporation: 45 minutes
+- PRD roadmap update: 15 minutes
+- File recovery and cleanup: 15 minutes
+- Context documentation preparation: 15 minutes
+

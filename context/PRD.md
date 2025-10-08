@@ -727,6 +727,38 @@ https://strangewater.xyz/about                     → https://strangewater.xyz/
 - Show description from CMS
 - Subscribe CTAs from podcast metadata
 
+**Newsletter Capability Decision & Planning:**
+- Review comprehensive newsletter implementation plan (context/tasks/newsletter-plan.md)
+- Evaluate architecture: Hybrid approach (Sanity + ConvertKit)
+- Assess security/compliance requirements (GDPR, CAN-SPAM, rate limiting, PII protection)
+- Decide on Phase 2 implementation vs. Phase 3 deferral
+- Decision factors: Active podcast requirement, deployment timeline, complexity (12-18 hours)
+
+**Newsletter Implementation** (if approved for Phase 2):
+- **Backend (4-6 hours):**
+  - Create Sanity `subscriber` schema
+  - Configure private Sanity dataset for PII protection
+  - Build `/api/subscribe.ts` with Zod validation, rate limiting, CSRF protection
+  - Build `/api/webhook/convertkit.ts` for bidirectional sync
+  - Build `/api/unsubscribe.ts` for GDPR compliance
+  - Create GDPR deletion script
+- **Frontend (4-5 hours):**
+  - Create reusable `NewsletterSignup.astro` component with accessibility (WCAG)
+  - Add newsletter signup to homepage (conditional on `podcast.isActive`)
+  - Create `/newsletter` page with FAQ and value proposition
+  - Add footer signup form
+- **ConvertKit Setup (2-3 hours):**
+  - Configure account, forms, automation
+  - Set up SPF/DKIM/DMARC for deliverability
+  - Configure webhook for two-way sync
+  - Create email templates (confirmation, episode notifications)
+- **Testing & Monitoring (2-3 hours):**
+  - Integration tests (success, errors, rate limits, validation)
+  - End-to-end testing with screen reader
+  - Configure Netlify/Sentry monitoring and alerts
+- **Estimated Cost:** $0-9/month (ConvertKit free tier: 1,000 subscribers)
+- **Success Criteria:** Email collection functional, double opt-in working, GDPR compliant, accessible
+
 #### **Phase 2b: Framework Templatization (Week 7)**
 
 **Template Preparation:**
@@ -756,11 +788,6 @@ https://strangewater.xyz/about                     → https://strangewater.xyz/
 - "Request an Episode" form (Netlify Forms → Airtable)
 - "Ask a Question" submission
 - Comments (Giscus via GitHub Discussions)
-
-**Newsletter:**
-- Email signup form (header/footer)
-- ConvertKit integration
-- Automated episode notifications
 
 **Enhanced Discovery:**
 - Topic/category tagging

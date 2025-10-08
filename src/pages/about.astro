@@ -1,11 +1,16 @@
 ---
-// About page - dynamically fetching from Sanity
+// About page - dynamically configured from Sanity
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getPodcastInfo } from "../lib/sanity";
+import BlockContent from "../components/BlockContent.astro";
+import { getPodcastInfo, getAboutPageConfig } from "../lib/sanity";
 
-// Fetch podcast info from Sanity
+// Fetch data from Sanity
 const podcastInfo = await getPodcastInfo();
+const aboutConfig = await getAboutPageConfig();
 const siteName = podcastInfo?.name || "Podcast";
+
+// Fallback to default content if no config exists
+const hasConfig = !!aboutConfig;
 ---
 
 <BaseLayout
@@ -18,105 +23,296 @@ const siteName = podcastInfo?.name || "Podcast";
       <h1 class="text-4xl font-bold text-gray-900 mb-4">About {siteName}</h1>
     </div>
 
-    <!-- About Content -->
-    <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
-      <h2 class="text-2xl font-semibold mb-4">The Show</h2>
-      <p class="text-lg text-gray-700 leading-relaxed mb-6">
-        {siteName} brings you deep conversations with the people building the future of Ethereum and Web3.
-        From protocol developers to researchers, entrepreneurs to artists, we explore the ideas, technology,
-        and philosophy shaping decentralized systems.
-      </p>
-      <p class="text-lg text-gray-700 leading-relaxed mb-6">
-        Each episode dives into the technical challenges, philosophical questions, and real-world applications
-        of blockchain technology, making complex topics accessible without losing depth.
-      </p>
-      <p class="text-lg text-gray-700 leading-relaxed">
-        Whether you're a developer, investor, researcher, or simply curious about the future of decentralized
-        technology, Strange Water offers insights from the people at the forefront of this revolution.
-      </p>
-    </div>
+    {hasConfig ? (
+      <>
+        <!-- CMS-Configured About Content -->
 
-    <!-- Host Section -->
-    <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
-      <h2 class="text-2xl font-semibold mb-4">The Host</h2>
-      <p class="text-lg text-gray-700 leading-relaxed mb-4">
-        {siteName} is hosted by Rex Kirshner, a longtime Ethereum enthusiast and builder in the Web3 space.
-      </p>
-      <p class="text-lg text-gray-700 leading-relaxed">
-        With a background in technology and a passion for decentralization, Rex brings thoughtful questions
-        and deep curiosity to every conversation.
-      </p>
-    </div>
+        <!-- About Section -->
+        {aboutConfig.aboutSection?.enabled && (
+          <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">{aboutConfig.aboutSection.title}</h2>
+            {aboutConfig.aboutSection.content && (
+              <BlockContent blocks={aboutConfig.aboutSection.content} />
+            )}
+          </div>
+        )}
 
-    <!-- Subscribe CTA -->
-    <div class="bg-blue-50 rounded-lg p-8 text-center">
-      {podcastInfo?.isActive ? (
-        <>
-          <h3 class="text-2xl font-semibold mb-3">Subscribe to {siteName}</h3>
-          <p class="text-gray-600 mb-6">
-            Get notified when new episodes are released
+        <!-- Hosts Section -->
+        {aboutConfig.hostsSection?.enabled && aboutConfig.hostsSection.hosts && aboutConfig.hostsSection.hosts.length > 0 && (
+          <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">
+              {aboutConfig.hostsSection.title ||
+                (aboutConfig.hostsSection.hosts.length === 1 ? 'The Host' : 'The Hosts')}
+            </h2>
+
+            {aboutConfig.hostsSection.layout === 'cards' ? (
+              <div class="space-y-6">
+                {aboutConfig.hostsSection.hosts.map((host) => (
+                  <div class="flex flex-col md:flex-row items-start gap-4">
+                    {host.photo?.url && (
+                      <img
+                        src={host.photo.url}
+                        alt={host.name}
+                        class="w-20 h-20 rounded-full object-cover flex-shrink-0"
+                      />
+                    )}
+                    <div class="flex-1">
+                      <h3 class="text-xl font-semibold mb-2">{host.name}</h3>
+                      {host.bio && (
+                        <p class="text-gray-700 mb-3">{host.bio}</p>
+                      )}
+                      <div class="flex gap-3">
+                        {host.twitter && (
+                          <a
+                            href={`https://twitter.com/${host.twitter}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                          >
+                            Twitter
+                          </a>
+                        )}
+                        {host.website && (
+                          <a
+                            href={host.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                          >
+                            Website
+                          </a>
+                        )}
+                        {host.linkedin && (
+                          <a
+                            href={host.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                          >
+                            LinkedIn
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div class="space-y-4">
+                {aboutConfig.hostsSection.hosts.map((host) => (
+                  <div>
+                    <h3 class="text-lg font-semibold mb-1">{host.name}</h3>
+                    {host.bio && (
+                      <p class="text-gray-700">{host.bio}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        <!-- Mission Section -->
+        {aboutConfig.missionSection?.enabled && (
+          <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">{aboutConfig.missionSection.title}</h2>
+            {aboutConfig.missionSection.content && (
+              <BlockContent blocks={aboutConfig.missionSection.content} />
+            )}
+          </div>
+        )}
+
+        <!-- Custom Sections -->
+        {aboutConfig.customSections && aboutConfig.customSections.length > 0 && (
+          <>
+            {aboutConfig.customSections
+              .sort((a, b) => (a.order || 100) - (b.order || 100))
+              .map((section) => (
+                <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+                  <h2 class="text-2xl font-semibold mb-4">{section.title}</h2>
+                  <BlockContent blocks={section.content} />
+                </div>
+              ))}
+          </>
+        )}
+
+        <!-- Subscribe CTA Section -->
+        {aboutConfig.subscribeCTA?.enabled !== false && (
+          <div class="bg-blue-50 rounded-lg p-8 text-center">
+            <h3 class="text-2xl font-semibold mb-3">
+              {aboutConfig.subscribeCTA?.customTitle ||
+                (podcastInfo?.isActive ? `Subscribe to ${siteName}` : `Listen to ${siteName}`)}
+            </h3>
+            <p class="text-gray-600 mb-6">
+              {aboutConfig.subscribeCTA?.customDescription ||
+                (podcastInfo?.isActive
+                  ? 'Get notified when new episodes are released'
+                  : `${siteName} has concluded, but episodes are still available wherever you get your podcasts`)}
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center">
+              {podcastInfo?.spotifyUrl && (
+                <a
+                  href={podcastInfo.spotifyUrl}
+                  class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Spotify
+                </a>
+              )}
+              {podcastInfo?.appleUrl && (
+                <a
+                  href={podcastInfo.appleUrl}
+                  class="px-6 py-3 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Apple Podcasts
+                </a>
+              )}
+              {podcastInfo?.youtubeUrl && (
+                <a
+                  href={podcastInfo.youtubeUrl}
+                  class="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  YouTube
+                </a>
+              )}
+              {podcastInfo?.rssUrl && (
+                <a
+                  href={podcastInfo.rssUrl}
+                  class="px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  RSS Feed
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
+        <!-- Community Section -->
+        {aboutConfig.communitySection?.enabled !== false && podcastInfo?.isActive && (
+          <div class="mt-8 text-center">
+            <p class="text-gray-600">
+              {aboutConfig.communitySection?.customText || 'Want to contribute to the show?'}
+              <a href="/contribute" class="text-blue-600 hover:text-blue-700 font-medium ml-1">
+                Share your ideas, suggest guests, or submit content
+              </a>
+            </p>
+          </div>
+        )}
+      </>
+    ) : (
+      <>
+        <!-- Default/Fallback Content (when no CMS config exists) -->
+
+        <!-- About Section -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+          <h2 class="text-2xl font-semibold mb-4">The Show</h2>
+          <p class="text-lg text-gray-700 leading-relaxed mb-6">
+            {siteName} brings you deep conversations with the people building the future of Ethereum and Web3.
+            From protocol developers to researchers, entrepreneurs to artists, we explore the ideas, technology,
+            and philosophy shaping decentralized systems.
           </p>
-        </>
-      ) : (
-        <>
-          <h3 class="text-2xl font-semibold mb-3">Listen to {siteName}</h3>
-          <p class="text-gray-600 mb-6">
-            Explore the complete archive on your favorite platform
+          <p class="text-lg text-gray-700 leading-relaxed mb-6">
+            Each episode dives into the technical challenges, philosophical questions, and real-world applications
+            of blockchain technology, making complex topics accessible without losing depth.
           </p>
-        </>
-      )}
-      <div class="flex flex-wrap gap-4 justify-center">
-        {podcastInfo?.spotifyUrl && (
-          <a
-            href={podcastInfo.spotifyUrl}
-            class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Spotify
-          </a>
-        )}
-        {podcastInfo?.appleUrl && (
-          <a
-            href={podcastInfo.appleUrl}
-            class="px-6 py-3 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Apple Podcasts
-          </a>
-        )}
-        {podcastInfo?.youtubeUrl && (
-          <a
-            href={podcastInfo.youtubeUrl}
-            class="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            YouTube
-          </a>
-        )}
-        {podcastInfo?.rssUrl && (
-          <a
-            href={podcastInfo.rssUrl}
-            class="px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            RSS Feed
-          </a>
-        )}
-      </div>
-    </div>
+          <p class="text-lg text-gray-700 leading-relaxed">
+            Whether you're a developer, investor, researcher, or simply curious about the future of decentralized
+            technology, Strange Water offers insights from the people at the forefront of this revolution.
+          </p>
+        </div>
 
-    <!-- Contact/Feedback Section -->
-    <div class="mt-8 text-center">
-      <p class="text-gray-600">
-        Have feedback or want to suggest a guest?
-        <a href="https://x.com/StrangeH2OPod" class="text-blue-600 hover:text-blue-700 font-medium" target="_blank" rel="noopener noreferrer">
-          Reach out on X/Twitter
-        </a>
-      </p>
-    </div>
+        <!-- Host Section -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+          <h2 class="text-2xl font-semibold mb-4">The Host</h2>
+          <p class="text-lg text-gray-700 leading-relaxed mb-4">
+            {siteName} is hosted by Rex Kirshner, a longtime Ethereum enthusiast and builder in the Web3 space.
+          </p>
+          <p class="text-lg text-gray-700 leading-relaxed">
+            With a background in technology and a passion for decentralization, Rex brings thoughtful questions
+            and deep curiosity to every conversation.
+          </p>
+        </div>
+
+        <!-- Subscribe CTA -->
+        <div class="bg-blue-50 rounded-lg p-8 text-center">
+          {podcastInfo?.isActive ? (
+            <>
+              <h3 class="text-2xl font-semibold mb-3">Subscribe to {siteName}</h3>
+              <p class="text-gray-600 mb-6">
+                Get notified when new episodes are released
+              </p>
+            </>
+          ) : (
+            <>
+              <h3 class="text-2xl font-semibold mb-3">Listen to {siteName}</h3>
+              <p class="text-gray-600 mb-6">
+                {siteName} has concluded, but episodes are still available wherever you get your podcasts
+              </p>
+            </>
+          )}
+          <div class="flex flex-wrap gap-4 justify-center">
+            {podcastInfo?.spotifyUrl && (
+              <a
+                href={podcastInfo.spotifyUrl}
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Spotify
+              </a>
+            )}
+            {podcastInfo?.appleUrl && (
+              <a
+                href={podcastInfo.appleUrl}
+                class="px-6 py-3 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Apple Podcasts
+              </a>
+            )}
+            {podcastInfo?.youtubeUrl && (
+              <a
+                href={podcastInfo.youtubeUrl}
+                class="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                YouTube
+              </a>
+            )}
+            {podcastInfo?.rssUrl && (
+              <a
+                href={podcastInfo.rssUrl}
+                class="px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                RSS Feed
+              </a>
+            )}
+          </div>
+        </div>
+
+        <!-- Community Section (only show if podcast is active) -->
+        {podcastInfo?.isActive && (
+          <div class="mt-8 text-center">
+            <p class="text-gray-600">
+              Want to contribute to the show?
+              <a href="/contribute" class="text-blue-600 hover:text-blue-700 font-medium">
+                Share your ideas, suggest guests, or submit content
+              </a>
+            </p>
+          </div>
+        )}
+      </>
+    )}
   </main>
 </BaseLayout>

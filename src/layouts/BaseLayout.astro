@@ -18,7 +18,7 @@ interface Props {
   theme?: Theme;
 }
 
-const { title, description, ogImage = "/og-image.jpg", podcastInfo: propPodcastInfo, theme: propTheme } = Astro.props;
+const { title, description, ogImage: propOgImage, podcastInfo: propPodcastInfo, theme: propTheme } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 // Fetch podcast info and theme ONCE (or use props if provided)
@@ -26,7 +26,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const podcastInfo = propPodcastInfo !== undefined ? propPodcastInfo : await getPodcastInfo();
 const theme = propTheme || (await getTheme()) || defaultTheme;
 
-const faviconUrl = podcastInfo?.favicon?.url || "/favicon.svg";
+// OG Image: Use provided image, fallback to podcast logo, then hardcoded default
+const ogImage = propOgImage || podcastInfo?.logo?.url || "https://cdn.sanity.io/images/ej6443ov/production/398d8e6cd3b0ed0fff212b8fb5feca016fc0eb07-1200x1200.png";
+const faviconUrl = podcastInfo?.favicon?.url || "/favicon.png";
 const themeCSS = generateThemeCSS(theme);
 const googleFontsUrl = getGoogleFontsURL(theme.typography.googleFonts || []);
 

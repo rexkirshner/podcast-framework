@@ -40,8 +40,29 @@ const siteName = podcastInfo?.name || "Podcast";
       <!-- Search Component -->
       <EpisodeSearch />
 
+      <!-- Sort Toggle -->
+      <div class="flex justify-end mb-6">
+        <div class="inline-flex rounded-lg border border-gray-300 bg-white">
+          <button
+            id="sort-newest"
+            style="background: var(--color-primary); color: white;"
+            class="px-4 py-2 text-sm font-medium rounded-l-lg transition-colors"
+            data-sort="newest"
+          >
+            Newest First
+          </button>
+          <button
+            id="sort-oldest"
+            class="px-4 py-2 text-sm font-medium rounded-r-lg transition-colors text-gray-700 hover:bg-gray-50"
+            data-sort="oldest"
+          >
+            Oldest First
+          </button>
+        </div>
+      </div>
+
       <!-- Episodes Grid -->
-      <div class="grid grid-cols-1 gap-6">
+      <div id="episodes-container" class="grid grid-cols-1 gap-6">
         {episodes.map((episode) => (
           <a
             href={`/episodes/${episode.slug.current}`}
@@ -97,4 +118,61 @@ const siteName = podcastInfo?.name || "Podcast";
         ))}
       </div>
   </main>
+
+  <script>
+    // Sort toggle functionality
+    const sortNewestBtn = document.getElementById('sort-newest');
+    const sortOldestBtn = document.getElementById('sort-oldest');
+    const episodesContainer = document.getElementById('episodes-container');
+
+    function toggleSortButtons(activeSort: string) {
+      if (activeSort === 'newest') {
+        if (sortNewestBtn) {
+          sortNewestBtn.style.background = 'var(--color-primary)';
+          sortNewestBtn.style.color = 'white';
+        }
+        if (sortOldestBtn) {
+          sortOldestBtn.style.background = '';
+          sortOldestBtn.style.color = '';
+          sortOldestBtn.classList.add('text-gray-700', 'hover:bg-gray-50');
+        }
+      } else {
+        if (sortOldestBtn) {
+          sortOldestBtn.style.background = 'var(--color-primary)';
+          sortOldestBtn.style.color = 'white';
+        }
+        if (sortNewestBtn) {
+          sortNewestBtn.style.background = '';
+          sortNewestBtn.style.color = '';
+          sortNewestBtn.classList.add('text-gray-700', 'hover:bg-gray-50');
+        }
+      }
+    }
+
+    function sortEpisodes(order: string) {
+      const episodes = Array.from(episodesContainer?.children || []);
+
+      episodes.sort((a, b) => {
+        // Extract episode number from the "Episode X" text
+        const aText = a.querySelector('.text-sm.uppercase')?.textContent || '';
+        const bText = b.querySelector('.text-sm.uppercase')?.textContent || '';
+
+        const aNum = parseInt(aText.replace(/[^0-9]/g, '') || '0');
+        const bNum = parseInt(bText.replace(/[^0-9]/g, '') || '0');
+
+        return order === 'newest' ? bNum - aNum : aNum - bNum;
+      });
+
+      // Clear container and re-append sorted episodes
+      if (episodesContainer) {
+        episodesContainer.innerHTML = '';
+        episodes.forEach(episode => episodesContainer.appendChild(episode));
+      }
+
+      toggleSortButtons(order);
+    }
+
+    sortNewestBtn?.addEventListener('click', () => sortEpisodes('newest'));
+    sortOldestBtn?.addEventListener('click', () => sortEpisodes('oldest'));
+  </script>
 </BaseLayout>

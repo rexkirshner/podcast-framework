@@ -3,7 +3,7 @@
 > **Single source of truth** for current project state. Updated frequently during work.
 > For orientation and context, see `CONTEXT.md`. For history, see `SESSIONS.md`.
 
-**Last Updated:** 2025-10-07 (Session 15 - Code Review Complete, 21/21 Issues Resolved)
+**Last Updated:** 2025-10-07 (Session 16 - Newsletter Planning Complete, PRD Updated)
 
 ---
 
@@ -20,6 +20,14 @@
 ---
 
 ## Recent Accomplishments
+
+### Session 16 (2025-10-07) - Newsletter Planning & PRD Update
+- ✅ **Comprehensive newsletter implementation plan created** (12-18 hours, $0-9/month)
+- ✅ **External AI security review incorporated** (6 categories of improvements)
+- ✅ **Newsletter tasks added to PRD** Phase 2a roadmap (before templatization)
+- ✅ **Recovered lost claude-context-feedback.md** from git history
+- ✅ **Security improvements documented**: webhook sync, Zod validation, private datasets, SPF/DKIM setup
+- ✅ **Hybrid architecture selected**: Sanity + ConvertKit for data ownership + ESP deliverability
 
 ### Session 15B (2025-10-07) - Code Review 100% Complete
 - ✅ **ALL 21 code review issues resolved** (100% completion)
@@ -106,19 +114,23 @@
 ## Active Tasks
 
 ### Immediate Priorities (This Week)
-1. **Email Notification Decision** - User to choose:
-   - Option A: Change NOTIFICATION_EMAIL to Resend signup email (instant)
-   - Option B: Verify rexkirshner.com domain in Resend (10 min, professional)
+1. **Newsletter Feature Decision** - User to decide:
+   - Implement in Phase 2a (before templatization) OR defer to Phase 3?
+   - If approved: 12-18 hours implementation time, $0-9/month cost
+   - Plan ready at `context/tasks/newsletter-plan.md`
+   - Decision factors: Strange Water archived (doesn't need it), but high template value
 
-2. **Review Roadmap Evaluation** - User to read `context/meta/tasks/roadmap-evaluation.md` and decide:
+2. **Review Roadmap Evaluation** - User to read `context/tasks/roadmap-evaluation.md` and decide:
    - Which Tier 1 features to build before templatization?
    - Transcripts (highest ROI for SEO, $25 cost)
    - Episode search (4-6 hours, high UX value)
    - Platform links manual phase (4 hours)
+   - Newsletter (if approved - 12-18 hours)
 
-3. **Address Critical Security Issues** - From code review:
-   - C1: XSS vulnerability in email generation (30 min fix)
-   - C2: Email notifications (resolve with priority #1)
+3. **Git Push Approval** - Ready to push Session 16 changes:
+   - Newsletter plan + PRD updates
+   - Recovered claude-context-feedback.md
+   - Awaiting explicit user permission per critical protocol
 
 ### Pre-Templatization Features (Roadmap Tier 1)
 - [ ] Fix contribution email notifications (blocked on user decision)
@@ -139,30 +151,26 @@
 
 ## Work In Progress
 
-**Current Task:** None - All code review items complete, production-ready codebase
+**Current Task:** Newsletter planning complete, awaiting /code-review and git push approval
 
-**What's Done (Session 15A + 15B):**
-- ✅ ALL 21 code review issues fixed (100% complete)
-- ✅ Security vulnerabilities patched (XSS, input validation)
-- ✅ Query optimization (80% reduction in API calls)
-- ✅ Build-time caching (28% faster builds)
-- ✅ Error handling comprehensive
-- ✅ JSDoc documentation added
-- ✅ 40 passing unit tests (13 new security tests)
-- ✅ 4 git commits created (NOT pushed - awaiting permission)
+**What's Done (Session 16):**
+- ✅ Comprehensive newsletter implementation plan (470 lines, production-grade)
+- ✅ External AI security review incorporated (6 improvement categories)
+- ✅ PRD updated with newsletter tasks in Phase 2a roadmap
+- ✅ Recovered claude-context-feedback.md from git history
+- ✅ Newsletter architecture decided: Hybrid Sanity + ConvertKit
 
-**Ready for Production:**
-- ✅ All security issues resolved
-- ✅ Code quality: A+ (96-98%)
-- ✅ Build successful: 147 pages in 16.5s
-- ✅ Tests passing: 40/40 (100%)
-- ✅ Email notifications configured
+**Ready for Review:**
+- Newsletter plan at `context/tasks/newsletter-plan.md`
+- PRD Phase 2a section updated with implementation details
+- All Session 16 changes uncommitted (awaiting /code-review completion)
 
 **Next Specific Actions:**
-1. User approves git push (4 commits ready)
-2. Deploy to production (triggers Netlify build)
-3. Verify email notifications work in production
-4. Decide on next features: Tier 1 (transcripts, search) OR other roadmap items
+1. Run /code-review to audit codebase
+2. Add any feedback to claude-context-feedback.md
+3. Commit Session 16 changes (newsletter plan, PRD, recovered file)
+4. Request user permission to push to GitHub
+5. User decides on newsletter implementation timing (Phase 2a vs Phase 3)
 
 ---
 
@@ -201,19 +209,24 @@
 ## Next Steps
 
 ### For User (Immediate)
-1. Review roadmap evaluation report (`context/meta/tasks/roadmap-evaluation.md`)
-2. Review code review report (`artifacts/code-reviews/session-14-review.md`)
-3. Decide on email notification fix (Option A or B)
-4. Approve git push of Session 14 work
-5. Prioritize Tier 1 features for next session
+1. **Review newsletter implementation plan** (`context/tasks/newsletter-plan.md`)
+2. **Decide on newsletter timing:** Implement in Phase 2a OR defer to Phase 3?
+3. Review roadmap evaluation report (`context/tasks/roadmap-evaluation.md`)
+4. Review code review report (`artifacts/code-reviews/session-14-review.md`)
+5. **Approve git push** of Session 16 work (newsletter plan, PRD update, recovered file)
+6. Prioritize Tier 1 features for next session
 
 ### For Next Session (After User Decisions)
-1. Fix contribution email notifications
-2. Address critical security issues (C1: XSS, C2: resolved with email fix)
-3. Begin Tier 1 feature implementation (if user approves roadmap)
-   - Transcripts (highest priority, biggest SEO impact)
-   - Episode search (high UX value, low complexity)
-   - Platform links manual phase
+1. **If newsletter approved:** Implement in Phase 2a (12-18 hours)
+   - Set up ConvertKit account and configure webhooks
+   - Create Sanity subscriber schema with private dataset
+   - Build API routes with Zod validation and rate limiting
+   - Create NewsletterSignup.astro component with WCAG compliance
+   - Comprehensive testing (integration tests, accessibility, monitoring)
+2. **If newsletter deferred:** Move to Tier 1 features
+   - Transcripts (highest priority, biggest SEO impact, $25 cost)
+   - Episode search (high UX value, low complexity, 4-6 hours)
+   - Platform links manual phase (4 hours)
 
 ### Long-term (Post-Features, Pre-Templatization)
 1. Address high-priority code review issues (H1-H5)

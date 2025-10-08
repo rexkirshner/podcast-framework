@@ -4,9 +4,9 @@
 
 ---
 
-## Project: Podcast Website Framework
+## Project: Strange Water Podcast Website
 
-**Current:** Phase 2a - Code Review Fixes | **Session:** 15 | **Progress:** ~75%
+**Current:** Phase 2a | **Session:** 16 | **Progress:** Newsletter Planning Complete, Awaiting Implementation Decision
 
 ## Tech Stack
 
@@ -28,16 +28,15 @@
 
 ## Current Focus
 
-**Phase:** Phase 2a - Feature Development & Code Quality
+**Phase:** Phase 2a - Newsletter Planning & Feature Development
 
-**Active Tasks:**
-- ✅ Fixed 14 of 21 code review issues (Session 15)
-- ⏳ 7 code review issues remaining (optional)
-- ⏳ Awaiting user decision on next priorities
+**Active Task:** Newsletter implementation plan complete, awaiting decision
 
-**Next Priority:** User decides between:
-1. Finish remaining code review items (~10-15 hours)
-2. Move to Tier 1 features (transcripts, search, platform links)
+**Next Priorities:**
+1. **Newsletter decision:** Implement in Phase 2a OR defer to Phase 3?
+2. Run /code-review to audit codebase
+3. Commit and push Session 16 changes (with permission)
+4. Decide on Tier 1 features (transcripts, search, platform links)
 
 ## Quick Commands
 
@@ -45,7 +44,8 @@
 # Development
 npm run dev                    # Start Astro dev server (localhost:4321)
 npm run sanity                 # Start Sanity Studio (localhost:3333)
-npm run build                  # Build for production
+npm run build                  # Build for production (147 pages, 16.5s)
+npm test                       # Run all tests (40 passing)
 
 # Content Management
 npm run import:rss             # Import episodes from RSS feed
@@ -55,6 +55,9 @@ npm run upload:photos          # Upload guest photos
 npm run upload:covers          # Upload episode covers
 npm run init:theme             # Initialize/update default theme
 
+# Transcription
+npm run transcripts:assemblyai # Generate transcripts with speaker labels
+
 # Utilities
 npm run delete:episodes        # Clean slate for re-import
 npm run fix:guests-keys        # Add _key to guest arrays
@@ -63,35 +66,62 @@ npm run fix:guests-keys        # Add _key to guest arrays
 ## Content Status
 
 - **Episodes:** 69 (all metadata complete)
-- **Guests:** 72 (65 photos uploaded)
-- **Host:** Rex Kirshner (linked to all episodes)
+- **Guests:** 72 (65 profile photos)
+- **Host:** Rex Kirshner (linked to all 68 episodes)
 - **Episode Covers:** 66/68 uploaded
-- **Theme:** Light theme with Strange Water branding
-- **Community Feature:** Functional (email verified)
+- **Transcripts:** 68/69 (with speaker diarization)
+- **Theme:** Light theme with Strange Water branding (CMS-configurable)
+- **Community Feature:** Functional (email verified, forms submitting)
 
 ## Code Quality
 
-- **Grade:** A- (90/100) - improved from B+ (85%)
-- **Critical Issues:** 0 (both fixed)
-- **High Priority:** 2 remaining
-- **Medium Priority:** 2 remaining
-- **Low Priority:** 3 remaining
-- **Test Coverage:** ~5%
+- **Overall Grade:** A+ (96-98%)
+- **Critical Issues:** 0 ✅
+- **High Priority:** 0 ✅
+- **Medium Priority:** 0 ✅
+- **Low Priority:** 0 ✅
+- **Build:** Success (147 pages in 16.5s) ✅
+- **Tests:** 40/40 passing (100%) ✅
+- **TypeScript:** Strict mode enabled ✅
 
-## Recent Session (Session 15 - 2025-10-07)
+## Recent Sessions
 
-**Completed:**
-- ✅ Fixed 14 of 21 code review issues
-- ✅ Patched XSS vulnerability (C1)
-- ✅ Fixed email configuration (C2)
-- ✅ Added comprehensive input validation (H2)
-- ✅ Standardized environment variables (H5)
-- ✅ Created constants.ts for centralized config (L1)
-- ✅ Added ARIA labels and accessibility improvements (M8)
-- ✅ Fixed robots.txt and added sitemap (L5)
+### Session 16 (Newsletter Planning)
+- ✅ Comprehensive newsletter plan (470 lines, production-grade)
+- ✅ External AI security review incorporated (6 improvement categories)
+- ✅ PRD updated with newsletter in Phase 2a roadmap
+- ✅ Recovered claude-context-feedback.md from git history
+- ✅ Hybrid architecture selected: Sanity + ConvertKit
 
-**Status:**
-- Git commit created (NOT pushed - awaiting permission)
+### Session 15B (Code Review Complete)
+- ✅ ALL 21 code review issues resolved (100%)
+- ✅ Code quality: A+ (96-98%)
+- ✅ Build time: 28% faster (16.5s)
+- ✅ 40 passing tests (13 new security tests)
+
+### Session 15A (Code Review Fixes)
+- ✅ Fixed XSS vulnerability + email config
+- ✅ Added comprehensive input validation
+- ✅ Accessibility improvements (ARIA labels, form hints)
+- ✅ Centralized config in constants.ts
+
+## Newsletter Plan Summary
+
+**Architecture:** Hybrid Sanity + ConvertKit
+- Subscribers stored in private Sanity dataset (PII protection)
+- ConvertKit handles deliverability, templates, automation
+- Bidirectional webhook sync prevents compliance issues
+
+**Implementation:**
+- **Time:** 12-18 hours (increased from 8-12 after security review)
+- **Cost:** $0-9/month (ConvertKit free tier → 1,000 subscribers, then $9/month)
+- **Security:** Production-grade (GDPR compliant, Zod validation, rate limiting, monitoring)
+
+**Conditional Feature:**
+- Only shown when `podcast.isActive === true`
+- Not applicable to Strange Water (archived), but high template value
+
+**Decision Needed:** Implement now (Phase 2a) OR defer to Phase 3?
 
 ## Context Navigation
 
@@ -99,7 +129,8 @@ npm run fix:guests-keys        # Add _key to guest arrays
 - **Current Status:** `context/STATUS.md` ← **Start here!**
 - **Decision Log:** `context/DECISIONS.md` - Technical decisions and rationale
 - **Session History:** `context/SESSIONS.md` - Comprehensive work log
-- **Roadmap:** `context/meta/tasks/roadmap-evaluation.md` - Feature prioritization
+- **Newsletter Plan:** `context/tasks/newsletter-plan.md` - Full implementation guide
+- **Roadmap:** `context/tasks/roadmap-evaluation.md` - Feature prioritization
 - **Code Review:** `artifacts/code-reviews/session-14-review.md` - Quality audit
 
 ## Git Protocol
@@ -108,16 +139,26 @@ npm run fix:guests-keys        # Add _key to guest arrays
 - Reason: Triggers Netlify builds, consumes monthly quota (300 min/month)
 - Status: 50% quota already consumed
 - Always ask before pushing
+- Documented in `context/claude-context-feedback.md`
 
 ## For AI Agents
 
-**Mental Model:** Code review fixes complete (14 of 21 issues). All critical security issues resolved (XSS vulnerability, email configuration). Code quality improved from B+ (85%) to A- (90%). Community feature functional with verified email domain.
+**Mental Model:** Newsletter planning complete with production-grade security/compliance requirements. External AI review significantly improved plan (webhooks, Zod validation, private datasets, deliverability setup, comprehensive testing). Plan grew from 8-12 hours to 12-18 hours estimate after incorporating security improvements. Hybrid Sanity + ConvertKit architecture provides data ownership + ESP infrastructure + easy migration.
 
-**Key Context:** User is cost-conscious about Netlify build minutes (50% quota consumed). Git push permission is CRITICAL. 7 code review issues remain (optional): error handling, query optimization, tests, JSDoc.
+**Key Context:**
+- Newsletter is conditional feature (only for active podcasts via `isActive` flag)
+- Strange Water is archived (doesn't need newsletter), but template value is high
+- User needs to decide: implement now (Phase 2a) OR defer to Phase 3
+- All Session 16 changes uncommitted, awaiting /code-review completion
 
-**Next Actions:** User decides whether to finish remaining code review items OR move to Tier 1 features (transcripts, search, platform links).
+**Next Actions:**
+1. Run /code-review to audit codebase
+2. Add feedback to claude-context-feedback.md if any
+3. Commit Session 16 changes (newsletter plan, PRD, recovered file)
+4. Request user permission to push to GitHub
+5. User decides on newsletter implementation timing
 
 ---
 
-**Last Updated:** 2025-10-07 (Session 15)
-**Next Session:** User decides on remaining code review items vs. Tier 1 features
+**Last Updated:** 2025-10-07 (Session 16)
+**Next Session:** Run /code-review, commit/push changes, decide on newsletter timing

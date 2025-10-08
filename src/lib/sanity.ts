@@ -121,11 +121,14 @@ export interface Episode {
   };
   featured: boolean;
   transcript?: string;
+  transcriptRaw?: string;
   transcriptSegments?: Array<{
+    speaker?: string;
     start: number;
     end: number;
     text: string;
   }>;
+  transcriptSpeakers?: number;
   transcriptDuration?: number;
   transcriptGeneratedAt?: string;
   audioUrl?: string;
@@ -209,6 +212,94 @@ export interface HomepageConfig {
   }>;
 }
 
+export interface HomepageConfig {
+  _id: string;
+  title: string;
+  isActive: boolean;
+  hero?: {
+    enabled: boolean;
+    style?: string;
+    customHeadline?: string;
+    customDescription?: string;
+  };
+  featuredEpisodes?: {
+    enabled: boolean;
+    title: string;
+    autoplay: boolean;
+    interval: number;
+  };
+  recentEpisodes?: {
+    enabled: boolean;
+    title: string;
+    count: number;
+    layout: 'grid' | 'list';
+  };
+  featuredGuests?: {
+    enabled: boolean;
+    title: string;
+    count: number;
+  };
+  subscribe?: {
+    enabled: boolean;
+    title: string;
+    description?: string;
+    style: 'buttons' | 'cards' | 'badges';
+  };
+  about?: {
+    enabled: boolean;
+    title: string;
+    content?: string;
+  };
+  newsletter?: {
+    enabled: boolean;
+    title: string;
+    description?: string;
+    provider?: string;
+    formUrl?: string;
+  };
+  customSections?: Array<{
+    title: string;
+    content: string;
+    order?: number;
+  }>;
+}
+
+export interface AboutPageConfig {
+  _id: string;
+  title: string;
+  isActive: boolean;
+  aboutSection?: {
+    enabled: boolean;
+    title: string;
+    content?: any[];
+  };
+  hostsSection?: {
+    enabled: boolean;
+    title: string;
+    hosts?: Host[];
+    layout?: 'cards' | 'list';
+  };
+  missionSection?: {
+    enabled: boolean;
+    title: string;
+    content?: any[];
+  };
+  subscribeCTA?: {
+    enabled: boolean;
+    customTitle?: string;
+    customDescription?: string;
+  };
+  communitySection?: {
+    enabled: boolean;
+    customText?: string;
+  };
+  customSections?: Array<{
+    title: string;
+    content: any[];
+    order: number;
+  }>;
+}
+
 // Helper function to fetch all episodes
 export async function getAllEpisodes(): Promise<Episode[]> {
   return cachedFetch('all-episodes', async () => {
@@ -226,6 +317,11 @@ export async function getAllEpisodes(): Promise<Episode[]> {
       applePodcastLink,
       "coverImage": coverImage.asset->{url},
       featured,
+      transcript,
+      transcriptSegments,
+      transcriptDuration,
+      transcriptGeneratedAt,
+      showNotes,
       "hosts": hosts[]->{
         _id,
         name,
@@ -277,6 +373,10 @@ export async function getEpisodeBySlug(slug: string): Promise<Episode | null> {
     applePodcastLink,
     "coverImage": coverImage.asset->{url},
     featured,
+    transcript,
+    transcriptSegments,
+    transcriptDuration,
+    transcriptGeneratedAt,
     "hosts": hosts[]->{
       _id,
       name,
@@ -447,6 +547,41 @@ export async function getHomepageConfig(): Promise<HomepageConfig | null> {
     return await sanityClient.fetch(query);
   } catch (error) {
     console.error('Failed to fetch homepage config from Sanity:', error);
+    return null;
+  }
+}
+
+// Helper function to get about page configuration
+export async function getAboutPageConfig(): Promise<AboutPageConfig | null> {
+  const query = `*[_type == "aboutPageConfig" && isActive == true][0] {
+    _id,
+    title,
+    aboutSection,
+    hostsSection {
+      enabled,
+      title,
+      layout,
+      "hosts": hosts[]-> {
+        _id,
+        name,
+        slug,
+        bio,
+        "photo": photo.asset->{url},
+        twitter,
+        website,
+        linkedin
+      }
+    },
+    missionSection,
+    subscribeCTA,
+    communitySection,
+    customSections
+  }`;
+
+  try {
+    return await sanityClient.fetch(query);
+  } catch (error) {
+    console.error('Failed to fetch about page config from Sanity:', error);
     return null;
   }
 }

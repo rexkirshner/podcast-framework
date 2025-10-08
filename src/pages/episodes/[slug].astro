@@ -146,6 +146,13 @@ const ogImage = episode.coverImage?.asset?.url || podcastInfo?.logo?.url || "htt
         <div class="text-gray-700 leading-relaxed prose prose-blue max-w-none [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800" set:html={episode.description} />
       </div>
 
+      <!-- Transcript Viewer -->
+      <TranscriptViewer
+        transcript={episode.transcript}
+        segments={episode.transcriptSegments}
+        episodeNumber={episode.episodeNumber}
+      />
+
       <!-- Audio Player Section -->
       <div class="mb-8 bg-white rounded-lg shadow-sm p-6">
         <iframe
@@ -161,7 +168,7 @@ const ogImage = episode.coverImage?.asset?.url || podcastInfo?.logo?.url || "htt
       </div>
 
       <!-- Platform Links (if available) -->
-      {(episode.spotifyLink || episode.youtubeLink || episode.applePodcastLink) && (
+      {(episode.spotifyLink || episode.youtubeLink || episode.applePodcastLink || podcastInfo?.rssUrl) && (
         <div class="mb-12">
           <h3 class="text-lg font-semibold mb-3 text-center">Listen to this episode on:</h3>
           <div class="flex flex-wrap gap-3 justify-center">
@@ -204,6 +211,19 @@ const ogImage = episode.coverImage?.asset?.url || podcastInfo?.logo?.url || "htt
                 YouTube
               </a>
             )}
+            {podcastInfo?.rssUrl && (
+              <a
+                href={podcastInfo.rssUrl}
+                class="px-5 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-medium inline-flex items-center gap-2"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-3.368c10.58.046 19.152 8.594 19.183 19.188h4.817c-.03-13.231-10.755-23.954-24-24v4.812z"/>
+                </svg>
+                RSS
+              </a>
+            )}
           </div>
         </div>
       )}
@@ -227,73 +247,5 @@ const ogImage = episode.coverImage?.asset?.url || podcastInfo?.logo?.url || "htt
           </div>
         </div>
       )}
-
-      <!-- Transcript Viewer -->
-      <TranscriptViewer
-        transcript={episode.transcript}
-        segments={episode.transcriptSegments}
-        episodeNumber={episode.episodeNumber}
-      />
-
-      <!-- Subscribe or Listen CTA -->
-      <div class="bg-blue-50 rounded-lg p-6 text-center">
-        {podcastInfo?.isActive ? (
-          <>
-            <h3 class="text-xl font-semibold mb-2">Subscribe to {siteName}</h3>
-            <p class="text-gray-600 mb-4">
-              Get notified when new episodes are released
-            </p>
-          </>
-        ) : (
-          <>
-            <h3 class="text-xl font-semibold mb-2">Listen to {siteName}</h3>
-            <p class="text-gray-600 mb-4">
-              Explore the complete archive on your favorite platform
-            </p>
-          </>
-        )}
-        <div class="flex flex-wrap gap-3 justify-center">
-          {podcastInfo?.spotifyUrl && (
-            <a
-              href={podcastInfo.spotifyUrl}
-              class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Spotify
-            </a>
-          )}
-          {podcastInfo?.appleUrl && (
-            <a
-              href={podcastInfo.appleUrl}
-              class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Apple Podcasts
-            </a>
-          )}
-          {podcastInfo?.youtubeUrl && (
-            <a
-              href={podcastInfo.youtubeUrl}
-              class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              YouTube
-            </a>
-          )}
-          {podcastInfo?.rssUrl && (
-            <a
-              href={podcastInfo.rssUrl}
-              class="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              RSS Feed
-            </a>
-          )}
-        </div>
-      </div>
     </main>
 </BaseLayout>

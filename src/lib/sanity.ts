@@ -159,6 +159,9 @@ export interface Podcast {
   rssUrl?: string;
   twitterUrl?: string;
   discordUrl?: string;
+  newsletterEnabled?: boolean;
+  convertKitApiKey?: string;
+  convertKitFormId?: string;
 }
 
 export interface HomepageConfig {
@@ -482,7 +485,10 @@ export async function getPodcastInfo(): Promise<Podcast | null> {
       spotifyUrl,
       rssUrl,
       twitterUrl,
-      discordUrl
+      discordUrl,
+      newsletterEnabled,
+      convertKitApiKey,
+      convertKitFormId
     }`;
 
     try {

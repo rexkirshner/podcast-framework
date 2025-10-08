@@ -6,7 +6,7 @@
 
 ## Project: Strange Water Podcast Website
 
-**Current:** Phase 2a | **Session:** 16 | **Progress:** Newsletter Planning Complete, Awaiting Implementation Decision
+**Current:** Phase 2c | **Session:** 17 | **Progress:** Production Live, Hosting Analysis Complete, Ready for Abstraction Refactor
 
 ## Tech Stack
 
@@ -17,26 +17,27 @@
 - **Language:** TypeScript (strict mode)
 - **Email:** Resend (contribution@noreply.strangewater.xyz verified)
 - **Analytics:** Google Analytics 4
+- **Serverless Functions:** 2 functions (newsletter-subscribe, contribute)
 
 ## URLs
 
-- **Production:** https://strangewater.xyz (not yet deployed)
-- **Staging:** https://staging.strangewater.xyz
+- **Production:** https://strangewater.xyz ✅ LIVE
+- **Staging:** ~~https://staging.strangewater.xyz~~ (decommissioned)
 - **Local (Astro):** http://localhost:4321/
 - **Local (Sanity):** http://localhost:3333/
 - **Repository:** https://github.com/rexkirshner/podcast-framework
 
 ## Current Focus
 
-**Phase:** Phase 2a - Newsletter Planning & Feature Development
+**Phase:** Phase 2c - Production Operations & Hosting Portability
 
-**Active Task:** Newsletter implementation plan complete, awaiting decision
+**Active Task:** Context checkpoint complete, ready for hosting abstraction refactor Sprint 1
 
 **Next Priorities:**
-1. **Newsletter decision:** Implement in Phase 2a OR defer to Phase 3?
-2. Run /code-review to audit codebase
-3. Commit and push Session 16 changes (with permission)
-4. Decide on Tier 1 features (transcripts, search, platform links)
+1. **Git commit** Session 17 changes (contribute fix, hosting analysis, context updates) - **DO NOT PUSH**
+2. **Review hosting migration analysis** (`context/tasks/hosting-migration-analysis.md`)
+3. **Begin Sprint 1 refactor:** Extract business logic to `src/server/` (12-16 hours)
+4. Add unit tests for extracted services (newsletter, contribution)
 
 ## Quick Commands
 
@@ -44,121 +45,115 @@
 # Development
 npm run dev                    # Start Astro dev server (localhost:4321)
 npm run sanity                 # Start Sanity Studio (localhost:3333)
-npm run build                  # Build for production (147 pages, 16.5s)
+npm run build                  # Build for production (146 pages, 30s)
 npm test                       # Run all tests (40 passing)
 
 # Content Management
-npm run import:rss             # Import episodes from RSS feed
-npm run import:guests          # Scrape and import guests
-npm run link:guests            # Auto-link guests to episodes
-npm run upload:photos          # Upload guest photos
-npm run upload:covers          # Upload episode covers
-npm run init:theme             # Initialize/update default theme
+node scripts/import-episodes.js     # Import episodes from Anchor RSS
+node scripts/link-guests.js         # Auto-link guests to episodes
+node scripts/update-durations.js    # Fix episode durations
 
-# Transcription
-npm run transcripts:assemblyai # Generate transcripts with speaker labels
+# Netlify Functions (serverless)
+netlify dev                    # Test functions locally (NOT npm run dev)
 
-# Utilities
-npm run delete:episodes        # Clean slate for re-import
-npm run fix:guests-keys        # Add _key to guest arrays
+# Context System
+/save-context                  # Update all context docs + commit
+/code-review                   # Run comprehensive code audit
+/review-context                # Validate context system integrity
 ```
 
-## Content Status
+## Project Status
 
-- **Episodes:** 69 (all metadata complete)
-- **Guests:** 72 (65 profile photos)
-- **Host:** Rex Kirshner (linked to all 68 episodes)
+**Production:** ✅ Live at strangewater.xyz
+**Build Status:** ✅ 146 pages, zero errors, 30s build time
+**Code Quality:** A+ (96-98%, all issues resolved)
+**Community Features:** ✅ Contribution form fully functional
+**Vendor Lock-in:** 6/10 (moderate - will reduce to 3/10 after abstraction)
+
+## Critical Protocols
+
+⚠️ **GIT PUSH PERMISSION:** NEVER push to GitHub without explicit user permission (triggers Netlify build, consumes quota)
+
+## Recent Work (Session 17)
+
+**Accomplished:**
+- ✅ Site migrated to production domain (strangewater.xyz)
+- ✅ Fixed contribute button serverless compatibility (DOMPurify → escapeHTML)
+- ✅ Created comprehensive hosting migration analysis (2,290 lines)
+- ✅ Documented git push protocol violation #3 with solutions
+- ✅ Selected abstraction strategy: Option A (reduce lock-in 74%)
+
+**Files Changed:**
+- `netlify/functions/contribute.ts` - Serverless compatibility fix
+- `context/tasks/hosting-migration-analysis.md` - NEW (2,290 lines)
+- `context/claude-context-feedback.md` - Git push protocol analysis
+- `context/SESSIONS.md` - Session 17 comprehensive entry
+- `context/STATUS.md` - Updated current state
+
+**Ready to Commit:** All Session 17 changes staged, awaiting commit (NOT push)
+
+## Hosting Abstraction Roadmap
+
+- [x] **Phase 0:** Analyze dependencies, create strategy (✅ Complete - Session 17)
+- [ ] **Sprint 1:** Extract business logic to `src/server/` (12-16 hours) ← NEXT
+- [ ] **Sprint 2:** Add provider adapter pattern (8-12 hours)
+- [ ] **Phase 3:** Replace in-memory rate limiting with Upstash Redis (6-8 hours)
+- [ ] **Phase 4:** Abstract configuration management (4-6 hours)
+
+**Goal:** Reduce vendor lock-in from 6/10 → 3/10, cut migration effort from 31 hours → 8 hours (74% reduction)
+
+## Hosting Providers Comparison
+
+| Provider | Cost | Bandwidth | Lock-in | Migration Effort |
+|----------|------|-----------|---------|------------------|
+| **Netlify (current)** | $0/mo | 100 GB | 6/10 | N/A |
+| **Cloudflare Pages** | $0/mo | ∞ Unlimited | 5/10 | 16-24 hrs (after abstraction: 8 hrs) |
+| **Vercel** | $20/mo | 100 GB | 7/10 | 20-32 hrs (after abstraction: 8 hrs) |
+| **AWS Amplify** | ~$5-10/mo | ~5K visits | 8/10 | 40-60 hrs (no official adapter) |
+
+**Recommendation:** Implement abstraction layer first, then decide on migration based on traffic growth.
+
+## Content Stats
+
+- **Episodes:** 69 (all with metadata, durations, Spotify embeds)
+- **Guests:** 72 (65 with profile photos)
 - **Episode Covers:** 66/68 uploaded
-- **Transcripts:** 68/69 (with speaker diarization)
-- **Theme:** Light theme with Strange Water branding (CMS-configurable)
-- **Community Feature:** Functional (email verified, forms submitting)
+- **Guest-Episode Links:** 63/67 auto-linked
+- **Build Output:** 146 static pages
 
-## Code Quality
+## Key Files
 
-- **Overall Grade:** A+ (96-98%)
-- **Critical Issues:** 0 ✅
-- **High Priority:** 0 ✅
-- **Medium Priority:** 0 ✅
-- **Low Priority:** 0 ✅
-- **Build:** Success (147 pages in 16.5s) ✅
-- **Tests:** 40/40 passing (100%) ✅
-- **TypeScript:** Strict mode enabled ✅
+- **Context Entry Point:** `context/CONTEXT.md`
+- **Current Status:** `context/STATUS.md` (this summary's source)
+- **Session History:** `context/SESSIONS.md`
+- **Decision Log:** `context/DECISIONS.md`
+- **Hosting Analysis:** `context/tasks/hosting-migration-analysis.md`
+- **Git Protocol Feedback:** `context/claude-context-feedback.md`
 
-## Recent Sessions
+## Known Issues
 
-### Session 16 (Newsletter Planning)
-- ✅ Comprehensive newsletter plan (470 lines, production-grade)
-- ✅ External AI security review incorporated (6 improvement categories)
-- ✅ PRD updated with newsletter in Phase 2a roadmap
-- ✅ Recovered claude-context-feedback.md from git history
-- ✅ Hybrid architecture selected: Sanity + ConvertKit
+**None** - All production issues resolved:
+- ✅ Contribute button fixed (serverless compatibility)
+- ✅ DNS migration complete
+- ✅ Email notifications working
 
-### Session 15B (Code Review Complete)
-- ✅ ALL 21 code review issues resolved (100%)
-- ✅ Code quality: A+ (96-98%)
-- ✅ Build time: 28% faster (16.5s)
-- ✅ 40 passing tests (13 new security tests)
+## Next Session Plan
 
-### Session 15A (Code Review Fixes)
-- ✅ Fixed XSS vulnerability + email config
-- ✅ Added comprehensive input validation
-- ✅ Accessibility improvements (ARIA labels, form hints)
-- ✅ Centralized config in constants.ts
+1. **Commit Session 17 changes** (NOT push to GitHub)
+2. **Create `src/server/` directory structure**
+   - `services/` - Business logic (newsletter, contribution)
+   - `adapters/` - Provider interfaces (will add in Sprint 2)
+   - `utils/` - Shared utilities
+3. **Extract newsletter service:**
+   - Create `src/server/services/newsletter-service.ts`
+   - Move ConvertKit logic from `netlify/functions/newsletter-subscribe.ts`
+   - Add unit tests (vitest)
+4. **Extract contribution service:**
+   - Create `src/server/services/contribution-service.ts`
+   - Move Sanity/Resend logic from `netlify/functions/contribute.ts`
+   - Add unit tests (vitest)
+5. **Update Netlify functions to thin wrappers**
+6. **Deploy and verify** (build succeeds, all forms work)
 
-## Newsletter Plan Summary
-
-**Architecture:** Hybrid Sanity + ConvertKit
-- Subscribers stored in private Sanity dataset (PII protection)
-- ConvertKit handles deliverability, templates, automation
-- Bidirectional webhook sync prevents compliance issues
-
-**Implementation:**
-- **Time:** 12-18 hours (increased from 8-12 after security review)
-- **Cost:** $0-9/month (ConvertKit free tier → 1,000 subscribers, then $9/month)
-- **Security:** Production-grade (GDPR compliant, Zod validation, rate limiting, monitoring)
-
-**Conditional Feature:**
-- Only shown when `podcast.isActive === true`
-- Not applicable to Strange Water (archived), but high template value
-
-**Decision Needed:** Implement now (Phase 2a) OR defer to Phase 3?
-
-## Context Navigation
-
-- **Orientation:** `context/CONTEXT.md` - Developer guide, architecture, methodology
-- **Current Status:** `context/STATUS.md` ← **Start here!**
-- **Decision Log:** `context/DECISIONS.md` - Technical decisions and rationale
-- **Session History:** `context/SESSIONS.md` - Comprehensive work log
-- **Newsletter Plan:** `context/tasks/newsletter-plan.md` - Full implementation guide
-- **Roadmap:** `context/tasks/roadmap-evaluation.md` - Feature prioritization
-- **Code Review:** `artifacts/code-reviews/session-14-review.md` - Quality audit
-
-## Git Protocol
-
-⚠️ **CRITICAL:** Never push to GitHub without explicit user permission
-- Reason: Triggers Netlify builds, consumes monthly quota (300 min/month)
-- Status: 50% quota already consumed
-- Always ask before pushing
-- Documented in `context/claude-context-feedback.md`
-
-## For AI Agents
-
-**Mental Model:** Newsletter planning complete with production-grade security/compliance requirements. External AI review significantly improved plan (webhooks, Zod validation, private datasets, deliverability setup, comprehensive testing). Plan grew from 8-12 hours to 12-18 hours estimate after incorporating security improvements. Hybrid Sanity + ConvertKit architecture provides data ownership + ESP infrastructure + easy migration.
-
-**Key Context:**
-- Newsletter is conditional feature (only for active podcasts via `isActive` flag)
-- Strange Water is archived (doesn't need newsletter), but template value is high
-- User needs to decide: implement now (Phase 2a) OR defer to Phase 3
-- All Session 16 changes uncommitted, awaiting /code-review completion
-
-**Next Actions:**
-1. Run /code-review to audit codebase
-2. Add feedback to claude-context-feedback.md if any
-3. Commit Session 16 changes (newsletter plan, PRD, recovered file)
-4. Request user permission to push to GitHub
-5. User decides on newsletter implementation timing
-
----
-
-**Last Updated:** 2025-10-07 (Session 16)
-**Next Session:** Run /code-review, commit/push changes, decide on newsletter timing
+**Estimated Time:** 12-16 hours (Sprint 1)
+**Goal:** Portable business logic, reduced lock-in to 4/10

@@ -1,9 +1,23 @@
 import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
 import { createClient } from "@sanity/client";
 import { Resend } from "resend";
-import { sanitizeHTML } from "../../src/lib/utils";
 import { RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS, MAX_FIELD_LENGTHS } from "../../src/config/constants";
 import { initSentry, captureException } from "../../src/lib/sentry";
+
+/**
+ * Simple HTML entity encoding for serverless environment
+ * Prevents XSS in email content without requiring DOM libraries
+ */
+function escapeHTML(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+    .replace(/\n/g, '<br/>');
+}
 
 // Initialize Sentry for error monitoring
 initSentry();
@@ -319,9 +333,9 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
 
 // Helper: Generate email content
 function generateEmailContent(data: any): string {
-  // Sanitize all user inputs to prevent XSS
-  const fromName = sanitizeHTML(data.submitterName || "Anonymous");
-  const fromEmail = sanitizeHTML(data.submitterEmail || "No email provided");
+  // Escape all user inputs to prevent XSS in email
+  const fromName = escapeHTML(data.submitterName || "Anonymous");
+  const fromEmail = escapeHTML(data.submitterEmail || "No email provided");
   const typeLabel = getTypeLabel(data.contributionType);
 
   let content = `
@@ -335,29 +349,29 @@ function generateEmailContent(data: any): string {
   if (data.contributionType === "episode-idea") {
     content += `
       <h3 style="color: #374151;">Episode Idea</h3>
-      <p><strong>Topic:</strong> ${sanitizeHTML(data.episodeTopic)}</p>
-      <p><strong>Description:</strong><br/>${sanitizeHTML(data.episodeDescription || "")}</p>
-      ${data.episodeRationale ? `<p><strong>Why This Would Resonate:</strong><br/>${sanitizeHTML(data.episodeRationale)}</p>` : ""}
+      <p><strong>Topic:</strong> ${escapeHTML(data.episodeTopic)}</p>
+      <p><strong>Description:</strong><br/>${escapeHTML(data.episodeDescription || "")}</p>
+      ${data.episodeRationale ? `<p><strong>Why This Would Resonate:</strong><br/>${escapeHTML(data.episodeRationale)}</p>` : ""}
     `;
   } else if (data.contributionType === "guest-recommendation") {
     content += `
       <h3 style="color: #374151;">Guest Recommendation</h3>
-      <p><strong>Name:</strong> ${sanitizeHTML(data.guestName)}</p>
-      <p><strong>Background:</strong><br/>${sanitizeHTML(data.guestBackground || "")}</p>
-      <p><strong>Why This Guest:</strong><br/>${sanitizeHTML(data.guestRationale || "")}</p>
-      ${data.guestContact ? `<p><strong>Contact Info:</strong> ${sanitizeHTML(data.guestContact)}</p>` : ""}
+      <p><strong>Name:</strong> ${escapeHTML(data.guestName)}</p>
+      <p><strong>Background:</strong><br/>${escapeHTML(data.guestBackground || "")}</p>
+      <p><strong>Why This Guest:</strong><br/>${escapeHTML(data.guestRationale || "")}</p>
+      ${data.guestContact ? `<p><strong>Contact Info:</strong> ${escapeHTML(data.guestContact)}</p>` : ""}
     `;
   } else if (data.contributionType === "question") {
     content += `
       <h3 style="color: #374151;">Question</h3>
-      <p><strong>Question:</strong><br/>${sanitizeHTML(data.question)}</p>
-      ${data.questionContext ? `<p><strong>Context:</strong><br/>${sanitizeHTML(data.questionContext)}</p>` : ""}
+      <p><strong>Question:</strong><br/>${escapeHTML(data.question)}</p>
+      ${data.questionContext ? `<p><strong>Context:</strong><br/>${escapeHTML(data.questionContext)}</p>` : ""}
     `;
   } else if (data.contributionType === "feedback") {
     content += `
       <h3 style="color: #374151;">Feedback</h3>
       <p><strong>Type:</strong> ${getFeedbackTypeLabel(data.feedbackType)}</p>
-      <p><strong>Content:</strong><br/>${sanitizeHTML(data.feedbackContent)}</p>
+      <p><strong>Content:</strong><br/>${escapeHTML(data.feedbackContent)}</p>
     `;
   }
 

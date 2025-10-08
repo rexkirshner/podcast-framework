@@ -160,8 +160,9 @@ export interface Podcast {
   twitterUrl?: string;
   discordUrl?: string;
   newsletterEnabled?: boolean;
-  convertKitApiKey?: string;
-  convertKitFormId?: string;
+  // NOTE: convertKitApiKey and convertKitFormId are NOT included here
+  // because they should never be exposed to the frontend for security.
+  // They are only fetched server-side in Netlify Functions.
 }
 
 export interface HomepageConfig {
@@ -486,9 +487,11 @@ export async function getPodcastInfo(): Promise<Podcast | null> {
       rssUrl,
       twitterUrl,
       discordUrl,
-      newsletterEnabled,
-      convertKitApiKey,
-      convertKitFormId
+      newsletterEnabled
+      // NOTE: convertKitApiKey and convertKitFormId are intentionally excluded
+      // from this query for security. They are only fetched server-side in
+      // netlify/functions/newsletter-subscribe.ts where they cannot be exposed
+      // to the client.
     }`;
 
     try {

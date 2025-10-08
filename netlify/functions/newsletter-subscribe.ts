@@ -147,7 +147,7 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          api_key: convertKitApiKey,
+          api_secret: convertKitApiKey,
           email: email,
         }),
       }

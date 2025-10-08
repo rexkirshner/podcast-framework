@@ -94,9 +94,9 @@ export default defineType({
     }),
     defineField({
       name: 'convertKitApiKey',
-      title: 'ConvertKit API Key',
+      title: 'ConvertKit V3 API Secret',
       type: 'string',
-      description: 'Your ConvertKit API key (find in Account Settings → API Keys)',
+      description: 'Your ConvertKit V3 API Secret (not V4 key - find in Account Settings → API Keys → V3 Key)',
       hidden: ({ document }) => !document?.newsletterEnabled,
     }),
     defineField({

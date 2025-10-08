@@ -359,10 +359,10 @@ function generateEmailContent(data: any): string {
 // Helper: Get type label
 function getTypeLabel(type: string): string {
   const labels: Record<string, string> = {
-    "episode-idea": "💡 Episode Idea",
-    "guest-recommendation": "🎙️ Guest Recommendation",
-    "question": "❓ Question",
-    "feedback": "💬 Feedback",
+    "episode-idea": "Episode Idea",
+    "guest-recommendation": "Guest Recommendation",
+    "question": "Question",
+    "feedback": "Feedback",
   };
   return labels[type] || type;
 }

@@ -1,17 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
-import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://strangewater.xyz',
-  output: 'static', // SSG mode
-  adapter: cloudflare({
-    mode: 'directory', // Deploy to Cloudflare Pages
-    functionPerRoute: false, // Use single _worker.js file
-  }),
   integrations: [sitemap()],
   image: {
     // Enable image optimization with Sharp (already installed)

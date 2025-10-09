@@ -9,6 +9,10 @@
  * Usage: node scripts/validate-env.js
  */
 
+// Load .env file for local development
+import { config } from 'dotenv';
+config();
+
 // Required environment variables for the build
 const REQUIRED_PUBLIC_VARS = [
   'PUBLIC_SANITY_PROJECT_ID',

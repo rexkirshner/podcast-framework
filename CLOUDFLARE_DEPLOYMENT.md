@@ -28,8 +28,8 @@ The following variables need to be configured in Cloudflare Pages dashboard:
 - `SANITY_API_TOKEN` - **SECRET** - Sanity write token from sanity.io/manage
 - `PUBLIC_GA_MEASUREMENT_ID` - Google Analytics measurement ID
 - `RESEND_API_KEY` - **SECRET** - Resend email API key
-- `NOTIFICATION_EMAIL` - Email address for notifications
-- `RESEND_FROM_EMAIL` - "From" email address for Resend
+- `NOTIFICATION_EMAIL` - Email address for notifications (e.g., swrequests@rexkirshner.com)
+- `RESEND_FROM_EMAIL` - "From" email address for Resend (e.g., contribution@noreply.strangewater.xyz)
 - `UPSTASH_REDIS_REST_URL` - Upstash Redis REST URL
 - `UPSTASH_REDIS_REST_TOKEN` - **SECRET** - Upstash Redis token
 - `ASSEMBLYAI_API_KEY` - **SECRET** - AssemblyAI API key

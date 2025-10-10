@@ -1,12 +1,7 @@
 import type { APIRoute } from 'astro';
 import { RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS } from '../../config/constants';
 import { ContributionService } from '../../server/services/contribution-service';
-
-// Note: Sentry disabled in Cloudflare Workers due to Node.js compatibility issues
-// Errors will be logged to console and visible in Cloudflare Functions logs
-function captureException(error: unknown, context?: any) {
-  console.error('[API Error]', error, context);
-}
+import { getServiceConfig, getClientIP, logError } from '../../lib/hosting-adapter';
 
 /**
  * Rate limiting: In-memory store
@@ -64,7 +59,9 @@ export const OPTIONS: APIRoute = async () => {
 };
 
 // POST handler for contribution submissions
-export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
+export const POST: APIRoute = async (context) => {
+  const { request } = context;
+
   const corsHeaders = {
     "Access-Control-Allow-Origin": import.meta.env.ALLOWED_ORIGIN || "https://strangewater.xyz",
     "Access-Control-Allow-Headers": "Content-Type",
@@ -72,8 +69,8 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
   };
 
   try {
-    // Rate limiting
-    const clientIP = clientAddress || "unknown";
+    // Rate limiting (using platform-agnostic IP detection)
+    const clientIP = getClientIP(context);
     if (!checkRateLimit(clientIP)) {
       return new Response(
         JSON.stringify({ message: "Too many submissions. Please try again later." }),
@@ -86,20 +83,19 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
 
     const data = await request.json();
 
-    // Access environment variables from Cloudflare runtime
-    // In Cloudflare Pages Functions, env vars are in locals.runtime.env
-    const env = (locals as any).runtime?.env || import.meta.env;
+    // Get service configuration using hosting adapter
+    const config = getServiceConfig(context);
 
     // Initialize contribution service (lazy initialization to avoid module-level errors)
     const contributionService = new ContributionService({
-      sanityProjectId: env.SANITY_PROJECT_ID || "",
-      sanityDataset: env.SANITY_DATASET || "production",
-      sanityApiToken: env.SANITY_API_TOKEN || "",
-      sanityApiVersion: "2024-01-01",
-      resendApiKey: env.RESEND_API_KEY || "",
-      resendFromEmail: env.RESEND_FROM_EMAIL || "contribution@noreply.strangewater.xyz",
-      notificationEmail: env.NOTIFICATION_EMAIL || "swrequests@rexkirshner.com",
-      studioUrl: env.STUDIO_URL || env.URL || "https://strangewater.xyz",
+      sanityProjectId: config.sanity.projectId || "",
+      sanityDataset: config.sanity.dataset || "production",
+      sanityApiToken: config.sanity.apiToken || "",
+      sanityApiVersion: config.sanity.apiVersion,
+      resendApiKey: config.email.resendApiKey || "",
+      resendFromEmail: config.email.fromEmail,
+      notificationEmail: config.email.notificationEmail,
+      studioUrl: import.meta.env.STUDIO_URL || import.meta.env.URL || "https://strangewater.xyz",
     });
 
     // Call contribution service
@@ -123,16 +119,14 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
 
     // Handle service result
     if (!result.success) {
-      // Log service errors to Sentry
+      // Log service errors
       if (result.error) {
-        captureException(new Error(result.error), {
-          tags: { function: 'contribute', operation: 'submit' },
-          extra: {
-            contributionType: data.contributionType,
-            message: result.message,
-          },
-          level: 'error',
-        });
+        logError(new Error(result.error), {
+          function: 'contribute',
+          operation: 'submit',
+          contributionType: data.contributionType,
+          message: result.message,
+        }, context);
       }
 
       return new Response(
@@ -156,15 +150,10 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
       }
     );
   } catch (error) {
-    const clientIP = clientAddress || "unknown";
-
-    captureException(error, {
-      level: 'error',
-      tags: { function: 'contribute' },
-      extra: {
-        ip: clientIP,
-      },
-    });
+    logError(error, {
+      function: 'contribute',
+      ip: getClientIP(context),
+    }, context);
 
     console.error("Contribution submission error:", error);
     return new Response(

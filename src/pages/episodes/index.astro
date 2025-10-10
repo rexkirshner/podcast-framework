@@ -12,8 +12,6 @@ const episodes = await getAllEpisodes();
 const podcastInfo = await getPodcastInfo();
 const siteName = podcastInfo?.name || "Podcast";
 ---
-export const prerender = true;
-
 
 <BaseLayout
   title={`All Episodes - ${siteName}`}

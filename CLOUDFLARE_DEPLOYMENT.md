@@ -17,29 +17,24 @@
 
 **Required for Cloudflare Pages:**
 
-```bash
-# Sanity CMS
-PUBLIC_SANITY_PROJECT_ID=ej6443ov
-PUBLIC_SANITY_DATASET=production
-SANITY_PROJECT_ID=ej6443ov
-SANITY_DATASET=production
-SANITY_API_TOKEN=skQlOpVZPpE7YDDFTGpaOIvvEdlKyL5h03qfVg1yqJkw8k4lhdVDFOeGIBY85t41mGDkduFCokSH8RuMR9dK7rZdcSzpc6dxV9waiMLBD5OwXTjdCgxceB1p5FzQVZtf4HhyLmXMsBZbxQVTV8BT2uGFEKlOJ3HPIyhcemtfFTiRMI8OVznM
+⚠️ **IMPORTANT:** Copy these from your local `.env` file. **DO NOT commit secrets to Git!**
 
-# Google Analytics
-PUBLIC_GA_MEASUREMENT_ID=G-V74NXPXZWQ
+The following variables need to be configured in Cloudflare Pages dashboard:
 
-# Email (Resend)
-RESEND_API_KEY=re_RTbkduRh_B7joppk42TFMhRDbhH7nZfoA
-NOTIFICATION_EMAIL=contribution@noreply.strangewater.xyz
-RESEND_FROM_EMAIL=contribution@noreply.strangewater.xyz
+- `PUBLIC_SANITY_PROJECT_ID` - Your Sanity project ID
+- `PUBLIC_SANITY_DATASET` - Sanity dataset (usually "production")
+- `SANITY_PROJECT_ID` - Same as PUBLIC_SANITY_PROJECT_ID
+- `SANITY_DATASET` - Same as PUBLIC_SANITY_DATASET
+- `SANITY_API_TOKEN` - **SECRET** - Sanity write token from sanity.io/manage
+- `PUBLIC_GA_MEASUREMENT_ID` - Google Analytics measurement ID
+- `RESEND_API_KEY` - **SECRET** - Resend email API key
+- `NOTIFICATION_EMAIL` - Email address for notifications
+- `RESEND_FROM_EMAIL` - "From" email address for Resend
+- `UPSTASH_REDIS_REST_URL` - Upstash Redis REST URL
+- `UPSTASH_REDIS_REST_TOKEN` - **SECRET** - Upstash Redis token
+- `ASSEMBLYAI_API_KEY` - **SECRET** - AssemblyAI API key
 
-# Upstash Redis (for distributed rate limiting)
-UPSTASH_REDIS_REST_URL=https://loyal-lionfish-11645.upstash.io
-UPSTASH_REDIS_REST_TOKEN=AS19AAIncDIzYjk3NDEzM2ZjYmM0MjFhYmVjNzcxZDM0MjFiOGQzMXAyMTE2NDU
-
-# AssemblyAI (transcript generation)
-ASSEMBLYAI_API_KEY=161bb5f1bb4a461bb36bc6d4e41b2fa4
-```
+**Total: 12 environment variables**
 
 ## Deployment Steps
 

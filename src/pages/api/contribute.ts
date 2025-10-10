@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro';
 import { RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS } from '../../config/constants';
-import { initSentry, captureException } from '../../lib/sentry';
 import { ContributionService } from '../../server/services/contribution-service';
 
-// Initialize Sentry for error monitoring
-initSentry();
+// Note: Sentry disabled in Cloudflare Workers due to Node.js compatibility issues
+// Errors will be logged to console and visible in Cloudflare Functions logs
+function captureException(error: unknown, context?: any) {
+  console.error('[API Error]', error, context);
+}
 
 /**
  * Rate limiting: In-memory store

@@ -593,8 +593,7 @@ Create comprehensive report of what was done:
 context/
 ├── .context-config.json ⭐ new
 ├── CONTEXT.md ✏️ augmented (or CLAUDE.md renamed)
-├── STATUS.md ⭐ new (single source of truth)
-├── QUICK_REF.md ⭐ new (auto-generated)
+├── STATUS.md ⭐ new (single source of truth, includes auto-generated Quick Reference section at top)
 ├── DECISIONS.md ✏️ augmented
 ├── SESSIONS.md ⭐ new (structured format)
 ├── PRD.md ✏️ augmented (if exists)

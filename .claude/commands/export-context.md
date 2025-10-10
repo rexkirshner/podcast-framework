@@ -72,7 +72,7 @@ Gather all markdown files in order:
 FILES=(
   "context/CONTEXT.md"          # or CLAUDE.md for pre-v2.0
   "context/STATUS.md"            # v2.0+ single source of truth
-  "context/QUICK_REF.md"         # v2.0+ auto-generated dashboard
+  "context/STATUS.md (includes Quick Reference)"         # v2.0+ auto-generated dashboard
   "context/DECISIONS.md"
   "context/SESSIONS.md"
   "context/PRD.md"               # optional
@@ -108,7 +108,7 @@ Create header with project information:
 **Included Sections:**
 - Project Orientation (CONTEXT.md)
 - Current Status (STATUS.md)
-- Quick Reference (QUICK_REF.md)
+- Quick Reference (STATUS.md (includes Quick Reference))
 - Decision Log (DECISIONS.md)
 - Session History (SESSIONS.md)
 - Product Requirements (PRD.md, if exists)
@@ -272,7 +272,7 @@ echo "   Total: $TOTAL_SIZE"
 - ✅ STATUS.md (Current Status)
 - ✅ DECISIONS.md (Decision Log)
 - ✅ SESSIONS.md (Session History)
-- ✅ QUICK_REF.md (Quick Reference)
+- ✅ STATUS.md (includes Quick Reference) (Quick Reference)
 - ✅ PRD.md (Product Requirements, if exists)
 - ✅ ARCHITECTURE.md (Technical Design, if exists)
 - ✅ [Additional .md files]

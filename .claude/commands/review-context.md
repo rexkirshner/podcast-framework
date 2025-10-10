@@ -98,6 +98,53 @@ Would you like to update now? [Y/n]
 **If version check fails (network issue, etc.):**
 - Silently continue to Step 2 (don't block review on network)
 
+### Step 1.6: Critical Protocol Reminder
+
+**🚨 Set session flags and remind about critical protocols:**
+
+**ACTION:** Initialize session state and display critical reminders
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚨 CRITICAL PROTOCOL REMINDER - Session Start
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**Git Push Permission Protocol:**
+
+RULE: NEVER push to GitHub without explicit user permission.
+
+Why this matters:
+- Triggers builds (costs quota/money)
+- Deploys to production (user controls timing)
+- Trust issue (autonomous actions erode confidence)
+
+SESSION FLAG SET:
+PUSH_APPROVED = false
+
+This flag MUST be explicitly set to true with user approval before ANY push.
+
+APPROVAL PHRASES (from .context-config.json):
+✅ "push to github"
+✅ "deploy this"
+✅ "yes push"
+✅ "go ahead"
+
+NOT APPROVAL:
+❌ "save and push" in workflow description
+❌ "then push" in instructions
+❌ Any mention of push without explicit "do it now"
+
+BEFORE EVERY PUSH, ASK YOURSELF:
+"Did the user say YES PUSH THIS in their LAST message?"
+
+If no → STOP and ask for approval
+If yes → Verify by re-reading, auto-log approval, then push
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**This reminder is displayed at session start to prevent git push violations.**
+
 ### Step 2: Load All Documentation
 
 Read and parse all context files:
@@ -105,11 +152,11 @@ Read and parse all context files:
 ```
 Files to load:
 - context/CONTEXT.md (v2.0+) or context/CLAUDE.md (pre-v2.0)
-- context/STATUS.md (v2.0+ - single source of truth)
+- context/STATUS.md (v2.1+ includes Quick Reference section)
 - context/DECISIONS.md
 - context/SESSIONS.md
-- context/QUICK_REF.md (auto-generated)
 - context/PRD.md (optional)
+- context/CODE_MAP.md (optional, v2.1+)
 - context/ARCHITECTURE.md (optional)
 - context/CODE_STYLE.md (optional)
 - context/KNOWN_ISSUES.md (optional)
@@ -147,20 +194,28 @@ Check each file against reality:
 
 #### CONTEXT.md Verification
 
-**Commands section:**
-- [ ] Run `npm run` to list available scripts
-- [ ] Verify commands listed in docs actually exist
-- [ ] Check if new scripts exist that aren't documented
+**Getting Started section:**
+- [ ] Verify links to STATUS.md, SESSIONS.md, DECISIONS.md work
+- [ ] Check that orientation paths (5-min, 30-min) are accurate
 
-**Architecture section:**
+**Tech Stack section:**
+- [ ] Verify listed technologies match package.json (or equivalent)
+- [ ] Check links to DECISIONS.md for rationale are correct
+
+**High-Level Architecture section:**
+- [ ] Verify architecture pattern matches actual implementation
+- [ ] Check system diagram reflects current structure
+- [ ] Confirm key components are accurately described
+
+**Directory Structure section:**
 - [ ] Check directories mentioned actually exist
 - [ ] Verify file paths are correct
 - [ ] Confirm folder structure matches description
 
-**Critical Path:**
-- [ ] Compare "Current Status" with git log and file state
-- [ ] Verify "Last updated" is recent
-- [ ] Check if listed accomplishments match git history
+**Environment Setup section:**
+- [ ] Run listed commands to verify they exist (dev, test, build)
+- [ ] Check prerequisites are accurate
+- [ ] Verify environment variables section is current
 
 **Issues found:**
 - List specific inaccuracies
@@ -257,10 +312,19 @@ Check each file against reality:
 - Incomplete WIP capture
 - Gap in session history
 
-#### STATUS.md Verification (v2.0+)
+#### STATUS.md Verification (v2.1+)
 
-**Current state:**
-- [ ] Active tasks are accurate
+**Quick Reference section (auto-generated):**
+- [ ] Project info accurate (name, phase, status)
+- [ ] URLs current (production, staging, repository)
+- [ ] Tech stack summary matches CONTEXT.md
+- [ ] Commands work (dev, test, build)
+- [ ] Current focus reflects first active task
+- [ ] Last session link works
+- [ ] Documentation health timestamp recent
+
+**Active Tasks section:**
+- [ ] Tasks are accurate and current
 - [ ] Completed items marked done
 - [ ] Work In Progress section reflects reality
 - [ ] Blockers are current
@@ -275,27 +339,15 @@ Check each file against reality:
 - Stale tasks
 - Missing recent work
 - Incorrect WIP state
-
-#### QUICK_REF.md Verification (v2.0+)
-
-**Dashboard accuracy:**
-- [ ] Auto-generated from STATUS.md
-- [ ] Progress % calculated correctly
-- [ ] URLs and commands current
-- [ ] Last updated timestamp recent
-
-**Issues found:**
-- Out of sync with STATUS.md
-- Incorrect progress calculation
-- Stale information
+- Quick Reference out of sync (needs /save or /save-full)
 
 ### Step 5: Check Cross-Document Consistency
 
 Verify documentation tells coherent story:
 
 **Status consistency:**
-- [ ] STATUS.md == QUICK_REF.md (must match - QUICK_REF is auto-generated)
-- [ ] STATUS.md == latest SESSIONS.md entry
+- [ ] STATUS.md Quick Reference section reflects current state
+- [ ] STATUS.md matches latest SESSIONS.md entry
 - [ ] Progress matches across docs
 - [ ] Dates/versions align
 
@@ -385,10 +437,9 @@ Provide comprehensive report:
    Run /update-context-system when convenient
 
 ✅ **Accurate Documentation:**
-- CONTEXT.md - All commands verified
-- STATUS.md - Current state matches reality
-- SESSIONS.md - Complete WIP capture
-- QUICK_REF.md - Auto-generated, up to date
+- CONTEXT.md - Architecture and setup verified
+- STATUS.md - Current state matches reality (Quick Reference up to date)
+- SESSIONS.md - Complete WIP capture with TL;DR summaries
 
 ⚠️ **Issues Found:**
 - KNOWN_ISSUES.md - 2 resolved issues not removed

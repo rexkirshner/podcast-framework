@@ -5,23 +5,23 @@ description: Initialize Claude Context System for this project
 
 # /init-context Command
 
-Initialize a **minimal overhead** context system for this project. Creates 5 core files (CONTEXT.md, STATUS.md, DECISIONS.md, SESSIONS.md, QUICK_REF.md), with optional files suggested when complexity demands.
+Initialize a **minimal overhead** context system for this project. Creates 4 core files (CONTEXT.md, STATUS.md, DECISIONS.md, SESSIONS.md) plus 1 AI header (claude.md), with optional files (CODE_MAP.md, other AI headers) suggested when complexity demands.
 
-**Philosophy:** Minimal overhead during work. Good-enough recovery when needed. Single source of truth.
+**Philosophy:** Minimal overhead during work. Good-enough recovery when needed. Single source of truth. Platform-neutral core with tool-specific entry points.
 
 **See also:**
 - `.claude/docs/command-philosophy.md` for core principles
 
 ## What This Command Does
 
-Creates **5 core files** that serve dual purpose (developer productivity + AI agent review/takeover):
-1. **CONTEXT.md** - Orientation (rarely changes: who/what/how/why)
-2. **STATUS.md** - Current state (frequently updated: tasks/blockers/next)
-3. **DECISIONS.md** - Decision log (WHY choices made - critical for AI agents)
-4. **SESSIONS.md** - History (structured, comprehensive, append-only)
-5. **QUICK_REF.md** - Dashboard (auto-generated from STATUS.md)
+Creates **4 core files + 1 AI header** that serve dual purpose (developer productivity + AI agent review/takeover):
+1. **claude.md** - AI header (entry point for Claude, points to CONTEXT.md)
+2. **CONTEXT.md** - Orientation (rarely changes: who/what/how/why, platform-neutral)
+3. **STATUS.md** - Current state with auto-generated Quick Reference at top
+4. **DECISIONS.md** - Decision log (WHY choices made - critical for AI agents)
+5. **SESSIONS.md** - History (structured, comprehensive, append-only with mandatory TL;DR)
 
-Optional files (PRD.md, ARCHITECTURE.md) suggested when complexity demands.
+Optional files (CODE_MAP.md, cursor.md, aider.md, PRD.md, ARCHITECTURE.md) suggested when complexity demands.
 
 ## Why 5 Core Files?
 
@@ -35,13 +35,15 @@ Optional files (PRD.md, ARCHITECTURE.md) suggested when complexity demands.
 - TodoWrite for productivity during work, rich docs for AI at save points
 - DECISIONS.md is critical - AI needs rationale, constraints, tradeoffs
 
-**v1.8.0 approach:**
-- CONTEXT.md for orientation (rarely changes)
-- STATUS.md for current state (single source of truth)
+**v2.1.0 approach:**
+- claude.md as AI header (tool-specific entry point)
+- CONTEXT.md for orientation (platform-neutral, ~300 lines)
+- STATUS.md for current state (with auto-generated Quick Reference section)
 - **DECISIONS.md for rationale (AI agents understand WHY)**
-- SESSIONS.md structured but comprehensive (mental models, 40-60 lines)
-- QUICK_REF.md auto-generated (fast orientation)
-- PRD/ARCHITECTURE when complexity demands
+- SESSIONS.md structured + comprehensive (mental models, mandatory TL;DR, git operations auto-logged)
+- Optional: CODE_MAP.md (only if project complexity demands)
+- Optional: Other AI headers (cursor.md, aider.md) for multi-tool teams
+- Optional: PRD/ARCHITECTURE when complexity demands
 
 ## Execution Steps
 
@@ -132,18 +134,28 @@ mkdir -p artifacts/coverage
 
 ### Step 4: Generate Core Documentation Files
 
-Create the **5 core files** from templates:
+Create the **4 core files + 1 AI header** from templates:
 
-**context/CONTEXT.md** - Orientation (rarely changes)
+**context/claude.md** - AI header (entry point)
+- 7-line file pointing to CONTEXT.md
+- Created from claude.md.template
+- **Tool-specific entry point for platform-neutral docs**
+
+**context/CONTEXT.md** - Orientation (platform-neutral, ~300 lines)
 - Project overview (from README or git description)
+- **"Getting Started Path"** with 5-min and 30-min orientations
 - Tech stack (from package analysis)
-- Commands (from package.json scripts or Makefile)
-- Architecture basics (inferred from folder structure)
+- High-level architecture with links to DECISIONS.md for details
+- Development workflow and principles
+- Environment setup
 - **Communication preferences and workflow rules**
-- **"Core Development Methodology" section**
 - **References other files for current work** (no duplication)
 
-**context/STATUS.md** - Current state (frequently updated)
+**context/STATUS.md** - Current state with auto-generated Quick Reference
+- **Quick Reference section (auto-generated, DO NOT edit manually)**
+  - Project info, URLs, tech stack from .context-config.json
+  - Current phase, active tasks, status indicator
+  - Documentation health from validation
 - Current phase/focus
 - Active tasks (checkboxes)
 - Work in progress
@@ -158,18 +170,10 @@ Create the **5 core files** from templates:
 - **Critical for AI agents to understand WHY choices were made**
 
 **context/SESSIONS.md** - History (structured, comprehensive)
-- First entry documenting initialization (structured format with mental models)
+- First entry documenting initialization (with mandatory TL;DR)
 - Session index table
-- Template for future entries (40-60 lines with depth)
-- **Comprehensive enough for AI agent understanding**
-
-**context/QUICK_REF.md** - Dashboard (auto-generated)
-- Project name and current phase
-- Tech stack summary
-- URLs (production, staging, local, repo)
-- Current focus and next priority
-- Quick commands
-- Auto-generated by `/save-context`
+- Template for future entries (TL;DR, accomplishments, git operations, tests)
+- **Mandatory TL;DR ensures perfect continuity**
 
 ### Step 5: Create Configuration
 
@@ -191,27 +195,142 @@ curl -sL https://raw.githubusercontent.com/rexkirshner/claude-context-system/mai
    - `[web-app|cli|library|api]` → actual project type
    - `[YYYY-MM-DD]` → today's date
 
-### Step 6: Explain Dual-Purpose Philosophy
+### Step 6: Optional Enhancements
+
+**ACTION:** Prompt user for optional files based on project complexity
+
+#### 6.1: CODE_MAP.md (Optional)
+
+**Evaluate adoption criteria:**
+
+```bash
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📍 Optional: CODE_MAP.md"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "CODE_MAP.md helps navigate code in complex projects."
+echo ""
+echo "Answer these questions:"
+echo ""
+echo "1. Project has >20 files across multiple directories? [y/N]"
+read -n 1 HAS_SIZE
+echo ""
+
+echo "2. Multiple developers or frequent AI agent handoffs? [y/N]"
+read -n 1 HAS_TEAM
+echo ""
+
+echo "3. Clear separation (services, functions, components)? [y/N]"
+read -n 1 HAS_STRUCTURE
+echo ""
+
+echo "4. Finding code takes >5 minutes? [y/N]"
+read -n 1 HAS_PAIN
+echo ""
+
+# Count yes answers
+SCORE=0
+[[ $HAS_SIZE =~ ^[Yy]$ ]] && SCORE=$((SCORE + 1))
+[[ $HAS_TEAM =~ ^[Yy]$ ]] && SCORE=$((SCORE + 1))
+[[ $HAS_STRUCTURE =~ ^[Yy]$ ]] && SCORE=$((SCORE + 1))
+[[ $HAS_PAIN =~ ^[Yy]$ ]] && SCORE=$((SCORE + 1))
+
+echo ""
+if [ $SCORE -eq 0 ] || [ $SCORE -eq 1 ]; then
+  echo "📊 Score: $SCORE/4 - CODE_MAP not recommended for this project size"
+  echo "You can add it later with /add-code-map if needed"
+elif [ $SCORE -eq 2 ] || [ $SCORE -eq 3 ]; then
+  echo "📊 Score: $SCORE/4 - CODE_MAP optional (marginal value)"
+  read -p "Create CODE_MAP.md? [y/N]: " -n 1 -r
+  echo ""
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    cp templates/CODE_MAP.template.md context/CODE_MAP.md
+    echo "✅ Created CODE_MAP.md - customize it with your project structure"
+  else
+    echo "⏭️  Skipped CODE_MAP.md"
+  fi
+else
+  echo "📊 Score: $SCORE/4 - CODE_MAP recommended for complex projects"
+  read -p "Create CODE_MAP.md? [Y/n]: " -n 1 -r
+  echo ""
+  if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+    cp templates/CODE_MAP.template.md context/CODE_MAP.md
+    echo "✅ Created CODE_MAP.md - customize it with your project structure"
+  else
+    echo "⏭️  Skipped CODE_MAP.md"
+  fi
+fi
+```
+
+#### 6.2: Additional AI Headers (Optional)
+
+**If team uses multiple AI tools:**
+
+```bash
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🤖 Optional: Additional AI Tool Headers"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Do you use other AI coding tools besides Claude? [y/N]"
+read -n 1 -r
+echo ""
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  echo ""
+  echo "Select AI tools (space-separated numbers, enter when done):"
+  echo "  1. Cursor"
+  echo "  2. Aider"
+  echo "  3. GitHub Copilot"
+  echo "  4. Other (will prompt for name)"
+  echo ""
+  read -p "Selection: " TOOLS
+
+  # Create selected headers
+  for tool in $TOOLS; do
+    case $tool in
+      1) cp templates/cursor.md.template context/cursor.md
+         echo "✅ Created cursor.md" ;;
+      2) cp templates/aider.md.template context/aider.md
+         echo "✅ Created aider.md" ;;
+      3) cp templates/codex.md.template context/codex.md
+         echo "✅ Created codex.md" ;;
+      4) read -p "Enter AI tool name: " CUSTOM_TOOL
+         /add-ai-header "$CUSTOM_TOOL" ;;
+    esac
+  done
+else
+  echo "⏭️  Skipped additional AI headers"
+  echo "💡 Tip: Use /add-ai-header [tool] to add later"
+fi
+```
+
+### Step 7: Explain Dual-Purpose Philosophy
 
 After initialization, explain to the user:
 
 ```
-✅ Context System Initialized (v2.0.0)
+✅ Context System Initialized (v2.1.0)
 
-Created 5 core files:
-- context/CONTEXT.md - Orientation (who/what/how/why)
-- context/STATUS.md - Current state (tasks/blockers/next)
+Created 4 core files + 1 AI header:
+- context/claude.md - AI header (entry point for Claude)
+- context/CONTEXT.md - Orientation (platform-neutral, ~300 lines)
+- context/STATUS.md - Current state (with auto-generated Quick Reference)
 - context/DECISIONS.md - Decision log (WHY choices made)
-- context/SESSIONS.md - History (structured, comprehensive)
-- context/QUICK_REF.md - Dashboard (auto-generated)
+- context/SESSIONS.md - History (mandatory TL;DR, auto-logged git ops)
 - context/.context-config.json - Configuration
+
+Optional files created (if selected):
+- context/CODE_MAP.md - Code location guide (if complex project)
+- context/[tool].md - Additional AI headers (if multi-tool team)
 
 ⚡ Two-Tier Workflow:
 
 **Tier 1: Quick Updates (Most Sessions)**
 Run /save at session end - 2-3 minutes
 - Updates STATUS.md (current tasks, blockers, next steps)
-- Auto-generates QUICK_REF.md
+- Auto-generates Quick Reference section in STATUS.md
 - Minimal overhead, continuous work
 
 **Tier 2: Comprehensive Documentation (Occasional)**
@@ -242,9 +361,10 @@ This system enables AI agents to:
 
 Each piece of information lives in ONE place:
 - Current tasks → STATUS.md
-- Project overview → CONTEXT.md
+- Quick reference info → STATUS.md (auto-generated section at top)
+- Project overview → CONTEXT.md (platform-neutral)
 - Decision rationale → DECISIONS.md
-- History + mental models → SESSIONS.md (created by /save-full)
+- History + mental models → SESSIONS.md (created by /save-full with mandatory TL;DR)
 
 🤖 For AI Agents:
 
@@ -261,8 +381,10 @@ Each piece of information lives in ONE place:
 📈 Growing Your Documentation:
 
 When complexity demands it, I'll suggest:
+- **CODE_MAP.md** → Code location guide (for complex projects)
 - **PRD.md** → Product vision documentation
 - **ARCHITECTURE.md** → System design documentation
+- **[tool].md** → Additional AI headers (for multi-tool teams)
 
 Next Steps:
 1. Review context/CONTEXT.md for accuracy
@@ -336,7 +458,7 @@ When `/save-context` runs, it should check if additional documentation is needed
 - CONTEXT.md references other files, doesn't duplicate
 - SESSIONS.md uses structured format (40-60 lines with mental models)
 - **Structured ≠ minimal** - AI agents need comprehensive depth
-- QUICK_REF.md is auto-generated, never edited manually
+- Quick Reference section in STATUS.md is auto-generated, never edited manually
 - Use bullet points and clear headings
 - **Dual purpose:** developer productivity + AI agent review/takeover
 
@@ -351,11 +473,12 @@ If errors occur:
 ## Success Criteria
 
 Command succeeds when:
-- 5 core files (CONTEXT.md, STATUS.md, DECISIONS.md, SESSIONS.md, QUICK_REF.md) created with available data
-- All files use v2.0 structure and format
+- 4 core files + 1 AI header (claude.md, CONTEXT.md, STATUS.md, DECISIONS.md, SESSIONS.md) created with available data
+- All files use v2.1 structure and format
+- STATUS.md includes auto-generated Quick Reference section
 - Configuration valid
 - Installation files cleaned up
 - User understands dual-purpose philosophy (developer + AI agent)
 - User knows DECISIONS.md is for AI agent understanding
-- User can immediately run /save-context
+- User can immediately run /save or /save-full
 - Clear next steps provided

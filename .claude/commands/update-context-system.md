@@ -138,29 +138,54 @@ CURRENT_VERSION=$(grep -m 1 '"version":' context/.context-config.json | cut -d'"
 echo "📦 Current version: $CURRENT_VERSION"
 echo ""
 
-if [[ "$CURRENT_VERSION" == "1.9.0" ]]; then
+if [[ "$CURRENT_VERSION" == "2.0.0" ]]; then
+  echo "🔄 Migration to v2.1.0 available!"
+  echo ""
+  echo "⚠️  v2.1.0 includes file consolidation:"
+  echo "   - QUICK_REF.md merged into STATUS.md (auto-generated section)"
+  echo "   - Creates claude.md AI header"
+  echo "   - Reduces file count: 6 → 5 files"
+  echo "   - Adds automated staleness detection"
+  echo ""
+  echo "Migration time: 10-15 minutes"
+  echo "Difficulty: Easy (mostly automatic)"
+  echo ""
+  echo "📖 Full migration guide:"
+  echo "  https://github.com/rexkirshner/claude-context-system/blob/main/MIGRATION_GUIDE_v2.0_to_v2.1.md"
+  echo ""
+  echo "Quick migration (copy-paste to terminal):"
+  echo "  curl -sL https://raw.githubusercontent.com/rexkirshner/claude-context-system/main/MIGRATION_GUIDE_v2.0_to_v2.1.md | grep -A 100 'Run in terminal:' | bash"
+  echo ""
+elif [[ "$CURRENT_VERSION" == "1.9.0" ]]; then
   echo "🔄 Migration to v2.0.0 available!"
   echo ""
   echo "⚠️  v2.0.0 includes major file structure changes:"
   echo "   - CLAUDE.md → CONTEXT.md"
   echo "   - Creates STATUS.md (single source of truth)"
   echo "   - Creates DECISIONS.md, SESSIONS.md (structured)"
-  echo "   - Auto-generates QUICK_REF.md"
+  echo "   - Auto-generates Quick Reference"
   echo ""
   echo "Migration options:"
-  echo "  1. MANUAL: Follow MIGRATION_GUIDE.md (recommended for now)"
-  echo "  2. AUTOMATED: Coming in v2.1 (dry-run, backup, rollback)"
+  echo "  1. MANUAL: Follow MIGRATION_GUIDE.md (recommended)"
+  echo "  2. AUTOMATED: Use migration script (backup first)"
   echo ""
   echo "For manual migration, see:"
   echo "  https://github.com/rexkirshner/claude-context-system/blob/main/MIGRATION_GUIDE.md"
   echo ""
 elif [[ "$CURRENT_VERSION" < "1.9.0" ]]; then
-  echo "🔄 Running migration to v1.9.0..."
-  ./scripts/migrate-to-1-9-0.sh
+  echo "🔄 Multi-step migration required..."
   echo ""
-  echo "✅ Migrated to v1.9.0"
+  echo "Your version: $CURRENT_VERSION"
+  echo "Latest version: 2.1.0"
   echo ""
-  echo "💡 To migrate to v2.0.0, run /update-context-system again"
+  echo "Migration path:"
+  echo "  1. Upgrade to v1.9.0 first"
+  echo "  2. Then upgrade to v2.0.0"
+  echo "  3. Finally upgrade to v2.1.0"
+  echo ""
+  echo "Start with:"
+  echo "  https://github.com/rexkirshner/claude-context-system/releases"
+  echo ""
 else
   echo "✅ Already on latest version structure"
 fi
@@ -241,10 +266,10 @@ Provide a clear summary to the user:
 
 Review templates/ directory for new reference content you may want to adopt:
 - templates/CONTEXT.template.md
-- templates/STATUS.template.md
+- templates/STATUS.template.md (includes Quick Reference section at top in v2.1)
 - templates/DECISIONS.template.md
 - templates/SESSIONS.template.md
-- templates/QUICK_REF.template.md
+- templates/CODE_MAP.template.md (optional)
 
 ## Next Steps
 

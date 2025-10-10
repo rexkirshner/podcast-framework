@@ -1,9 +1,22 @@
 ---
 name: save-context
-description: Update all meta-documentation to reflect current code state
+description: "[DEPRECATED in v2.1] Use /save (quick) or /save-full (comprehensive) instead"
 ---
 
 # /save-context Command
+
+**⚠️ DEPRECATED IN v2.1.0**
+
+This command has been split into two focused commands for better workflow:
+- **`/save`** - Quick save (2-3 min): Updates STATUS.md with auto-generated Quick Reference section
+- **`/save-full`** - Comprehensive save (10-15 min): Everything /save does + SESSIONS.md entry
+
+**For new projects:** Use `/save` and `/save-full`
+**For backward compatibility:** This command still works but is not actively maintained
+
+---
+
+## Original Command (v2.0 and earlier)
 
 Update context documentation to reflect current state AND enable AI agent review/takeover. **Dual purpose:** low overhead for developer, rich context for AI agents.
 
@@ -37,7 +50,7 @@ Update context documentation to reflect current state AND enable AI agent review
 3. **Analyzes what changed** - updates only relevant files
 4. **Documents decision rationale** - WHY choices were made (DECISIONS.md)
 5. **Creates comprehensive session log** - structured with depth for AI (40-60 lines)
-6. **Auto-generates QUICK_REF.md** - dashboard for fast orientation
+6. **Auto-generates Quick Reference in STATUS.md** - dashboard for fast orientation (v2.1: section, not separate file)
 7. **Suggests new files** when complexity demands it
 8. **Preserves work-in-progress** - exact resume point with mental model
 
@@ -228,7 +241,9 @@ Only update these if the file already exists:
 - Code style → CONTEXT.md preferences
 - Known issues → STATUS.md blockers section
 
-### Step 5: Auto-Generate QUICK_REF.md
+### Step 5: Auto-Generate Quick Reference in STATUS.md
+
+**Note:** In v2.1, Quick Reference is a section within STATUS.md, not a separate file.
 
 **Always generate** - provides fast orientation dashboard:
 
@@ -314,7 +329,7 @@ Ask if:
 Quick verification that docs tell coherent story:
 - Does STATUS.md reflect current reality?
 - Are DECISIONS.md entries linked from SESSIONS.md?
-- Is QUICK_REF.md accurate?
+- Is Quick Reference section in STATUS.md accurate?
 - Do files reference each other correctly?
 
 If inconsistencies found → fix them.
@@ -346,7 +361,7 @@ Clear, concise summary:
 - SESSIONS.md - Comprehensive session log (Problem Solved, Mental Models, WIP)
 - STATUS.md - Updated current tasks, blockers, next priorities
 - DECISIONS.md - [Documented Decision D[ID] / No new decisions]
-- QUICK_REF.md - Auto-generated dashboard
+- Quick Reference section in STATUS.md - Auto-generated dashboard
 - .sessions-data.json - Machine-readable export for multi-agent workflows
 
 **Optional Updates:**
@@ -396,7 +411,7 @@ Clear, concise summary:
 - **SESSIONS.md entry** - Comprehensive with mental models (40-60 lines)
 - **STATUS.md update** - Current tasks, blockers, next priorities
 - **DECISIONS.md entry** - If significant decisions made (WHY)
-- **QUICK_REF.md** - Auto-generated dashboard
+- **Quick Reference section in STATUS.md** - Auto-generated dashboard
 - **Work in progress** state - Exact resume point with mental model
 - **TodoWrite state** - Capture what was completed vs. pending
 
@@ -448,7 +463,7 @@ Clear, concise summary:
 - **Capture TodoWrite state + mental models for AI agents**
 - **Document decision rationale** (DECISIONS.md)
 - Update core 3 files (CONTEXT, STATUS, DECISIONS)
-- **Auto-generate QUICK_REF.md**
+- **Auto-generate Quick Reference section in STATUS.md**
 - Structured but comprehensive
 - **Enable AI agent review and takeover**
 
@@ -460,14 +475,14 @@ Clear, concise summary:
 ✅ WIP state captured precisely with mental model
 ✅ STATUS.md updated as single source of truth
 ✅ DECISIONS.md updated if significant decisions made
-✅ QUICK_REF.md auto-generated
+✅ Quick Reference section in STATUS.md auto-generated
 ✅ Can resume seamlessly next session
 ✅ **AI agents can review with full context**
 ✅ **AI agents can take over development with understanding**
 
 ## Time Investment
 
-- Simple session: 3-5 minutes (comprehensive SESSIONS.md + STATUS.md + QUICK_REF.md)
+- Simple session: 3-5 minutes (comprehensive SESSIONS.md + STATUS.md + Quick Reference section in STATUS.md)
 - Complex session with decisions: 5-8 minutes (+ DECISIONS.md entry)
 - With new optional file: 8-12 minutes (create ARCHITECTURE/PRD)
 

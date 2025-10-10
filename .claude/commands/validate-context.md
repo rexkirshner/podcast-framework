@@ -26,8 +26,10 @@ Verify that all context documentation follows the expected structure, flag missi
 4. Validates .context-config.json format
 5. Verifies all 9 slash commands present
 6. Checks template files exist
-7. Reports documentation health score
-8. Provides actionable recommendations
+7. **Analyzes documentation staleness** (v2.1: configurable thresholds, visual indicators)
+8. Audits git push protocol compliance (v2.1)
+9. Reports documentation health score
+10. Provides actionable recommendations
 
 ## Execution Steps
 
@@ -62,11 +64,11 @@ The script performs these checks:
 🔍 Validating Claude Context System...
 
 📄 Checking required documentation files...
+  ✅ context/claude.md (AI header)
   ✅ context/CONTEXT.md
-  ✅ context/STATUS.md
+  ✅ context/STATUS.md (with Quick Reference section)
   ✅ context/DECISIONS.md
   ✅ context/SESSIONS.md
-  ✅ context/QUICK_REF.md
   ...
 
 🔎 Checking for unresolved placeholders...
@@ -85,6 +87,192 @@ OR
 OR
 ❌ 2 error(s) found
 ```
+
+### Step 2.5: Git Push Protocol Validation
+
+**ACTION:** Verify git push protocol compliance in recent sessions
+
+```bash
+# Check last 3 sessions in SESSIONS.md for git push protocol compliance
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🔒 Git Push Protocol Audit"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Extract last 3 sessions and check for Git Operations section
+# This is a simplified check - actual implementation would parse SESSIONS.md more thoroughly
+
+SESSIONS_WITH_PUSH=0
+SESSIONS_WITH_APPROVAL=0
+SESSIONS_WITHOUT_APPROVAL=0
+
+# For each of the last 3 sessions:
+# 1. Check if "Git Operations" section exists
+# 2. If Pushed: YES, verify approval is logged
+# 3. Report any sessions with push but no approval
+
+echo "Checking last 3 sessions:"
+echo ""
+
+# Session 18 example check
+if grep -A 10 "^## Session 18" context/SESSIONS.md | grep -q "Pushed: YES"; then
+  SESSIONS_WITH_PUSH=$((SESSIONS_WITH_PUSH + 1))
+  if grep -A 10 "^## Session 18" context/SESSIONS.md | grep "Approval:" | grep -v "Not pushed" > /dev/null; then
+    echo "Session 18: ✅ Pushed with approval logged"
+    SESSIONS_WITH_APPROVAL=$((SESSIONS_WITH_APPROVAL + 1))
+  else
+    echo "Session 18: ⚠️  Pushed but no approval logged"
+    SESSIONS_WITHOUT_APPROVAL=$((SESSIONS_WITHOUT_APPROVAL + 1))
+  fi
+elif grep -A 10 "^## Session 18" context/SESSIONS.md | grep -q "Git Operations"; then
+  echo "Session 18: ✅ No push (local commits only)"
+else
+  echo "Session 18: ⚠️  Missing Git Operations section"
+fi
+
+# Repeat for last 2 more sessions...
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Git Push Protocol Compliance:"
+echo ""
+echo "Sessions with push: $SESSIONS_WITH_PUSH"
+echo "Approvals logged: $SESSIONS_WITH_APPROVAL"
+echo "Missing approvals: $SESSIONS_WITHOUT_APPROVAL"
+echo ""
+
+if [ $SESSIONS_WITHOUT_APPROVAL -eq 0 ]; then
+  echo "✅ Protocol compliance: 100%"
+  echo "✅ Auto-logging working correctly"
+  echo ""
+  echo "Recommendation: Continue current practice"
+else
+  echo "⚠️  Protocol compliance: Issues detected"
+  echo ""
+  echo "Recommendation:"
+  echo "- Verify git push approvals are being auto-logged"
+  echo "- Check .context-config.json pushProtection settings"
+  echo "- Ensure /save-full command includes git operations logging"
+fi
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+```
+
+**Why this validation matters:**
+- Ensures git push protocol is being followed
+- Verifies auto-logging is working correctly
+- Identifies any sessions where push approval wasn't logged
+- Helps maintain audit trail compliance
+
+### Step 2.7: Documentation Staleness Check ✨ v2.1
+
+**ACTION:** Check file freshness against configurable thresholds
+
+```bash
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📅 Documentation Staleness Analysis"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Get current date in seconds since epoch
+CURRENT_DATE=$(date +%s)
+
+# Function to check file staleness
+check_staleness() {
+  local file=$1
+  local green_days=$2
+  local yellow_days=$3
+  local red_days=$4
+  local validate_only_if_exists=${5:-false}
+
+  # Skip if file doesn't exist and validateOnlyIfExists is true
+  if [ "$validate_only_if_exists" = "true" ] && [ ! -f "$file" ]; then
+    echo "  ⚪ $file - Not present (optional)"
+    return
+  fi
+
+  if [ ! -f "$file" ]; then
+    echo "  ❌ $file - Missing"
+    return
+  fi
+
+  # Get file modification time
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    FILE_MOD_TIME=$(stat -f %m "$file")
+  else
+    # Linux
+    FILE_MOD_TIME=$(stat -c %Y "$file")
+  fi
+
+  # Calculate days since last update
+  DAYS_OLD=$(( (CURRENT_DATE - FILE_MOD_TIME) / 86400 ))
+
+  # Determine status
+  if [ $DAYS_OLD -le $green_days ]; then
+    echo "  🟢 $file - Fresh ($DAYS_OLD days old)"
+  elif [ $DAYS_OLD -le $yellow_days ]; then
+    echo "  🟡 $file - Aging ($DAYS_OLD days old, consider updating)"
+  else
+    echo "  🔴 $file - Stale ($DAYS_OLD days old, update recommended)"
+  fi
+}
+
+# Load thresholds from config (with fallbacks)
+STATUS_GREEN=$(jq -r '.validation.stalenessThresholds."STATUS.md".green' context/.context-config.json 2>/dev/null || echo "7")
+STATUS_YELLOW=$(jq -r '.validation.stalenessThresholds."STATUS.md".yellow' context/.context-config.json 2>/dev/null || echo "14")
+STATUS_RED=$(jq -r '.validation.stalenessThresholds."STATUS.md".red' context/.context-config.json 2>/dev/null || echo "30")
+
+SESSIONS_GREEN=$(jq -r '.validation.stalenessThresholds."SESSIONS.md".green' context/.context-config.json 2>/dev/null || echo "7")
+SESSIONS_YELLOW=$(jq -r '.validation.stalenessThresholds."SESSIONS.md".yellow' context/.context-config.json 2>/dev/null || echo "14")
+SESSIONS_RED=$(jq -r '.validation.stalenessThresholds."SESSIONS.md".red' context/.context-config.json 2>/dev/null || echo "21")
+
+CONTEXT_GREEN=$(jq -r '.validation.stalenessThresholds."CONTEXT.md".green' context/.context-config.json 2>/dev/null || echo "90")
+CONTEXT_YELLOW=$(jq -r '.validation.stalenessThresholds."CONTEXT.md".yellow' context/.context-config.json 2>/dev/null || echo "180")
+CONTEXT_RED=$(jq -r '.validation.stalenessThresholds."CONTEXT.md".red' context/.context-config.json 2>/dev/null || echo "365")
+
+CODEMAP_GREEN=$(jq -r '.validation.stalenessThresholds."CODE_MAP.md".green' context/.context-config.json 2>/dev/null || echo "30")
+CODEMAP_YELLOW=$(jq -r '.validation.stalenessThresholds."CODE_MAP.md".yellow' context/.context-config.json 2>/dev/null || echo "60")
+CODEMAP_RED=$(jq -r '.validation.stalenessThresholds."CODE_MAP.md".red' context/.context-config.json 2>/dev/null || echo "90")
+
+# Check each file
+check_staleness "context/STATUS.md" $STATUS_GREEN $STATUS_YELLOW $STATUS_RED
+check_staleness "context/SESSIONS.md" $SESSIONS_GREEN $SESSIONS_YELLOW $SESSIONS_RED
+check_staleness "context/CONTEXT.md" $CONTEXT_GREEN $CONTEXT_YELLOW $CONTEXT_RED
+check_staleness "context/CODE_MAP.md" $CODEMAP_GREEN $CODEMAP_YELLOW $CODEMAP_RED "true"
+
+# DECISIONS.md is append-only, no staleness check
+echo "  ✅ context/DECISIONS.md - Append-only (no staleness check)"
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Staleness Thresholds (configured in .context-config.json):"
+echo ""
+echo "STATUS.md:    🟢 ≤${STATUS_GREEN}d | 🟡 ≤${STATUS_YELLOW}d | 🔴 >${STATUS_YELLOW}d"
+echo "SESSIONS.md:  🟢 ≤${SESSIONS_GREEN}d | 🟡 ≤${SESSIONS_YELLOW}d | 🔴 >${SESSIONS_YELLOW}d"
+echo "CONTEXT.md:   🟢 ≤${CONTEXT_GREEN}d | 🟡 ≤${CONTEXT_YELLOW}d | 🔴 >${CONTEXT_YELLOW}d"
+echo "CODE_MAP.md:  🟢 ≤${CODEMAP_GREEN}d | 🟡 ≤${CODEMAP_YELLOW}d | 🔴 >${CODEMAP_YELLOW}d (if exists)"
+echo ""
+echo "💡 Tip: Adjust thresholds in context/.context-config.json"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+```
+
+**Why staleness detection matters:**
+- Prevents outdated context from misleading AI agents
+- Configurable per-project (fast-moving vs. stable projects)
+- Visual indicators make staleness obvious
+- Specific recommendations based on which docs are stale
+
+**Recommendations based on staleness:**
+- 🔴 STATUS.md stale → Run /save or /save-full immediately
+- 🔴 SESSIONS.md stale → Run /save-full to capture recent work
+- 🔴 CONTEXT.md stale → Review architecture changes, update if needed
+- 🔴 CODE_MAP.md stale → Review new features, update location guide
 
 ### Step 3: Generate Recommendations Report
 

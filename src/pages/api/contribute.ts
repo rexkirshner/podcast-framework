@@ -49,27 +49,14 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-// CORS headers for all responses
-const corsHeaders = {
-  "Access-Control-Allow-Origin": import.meta.env.ALLOWED_ORIGIN || "https://strangewater.xyz",
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
-
-// Initialize contribution service
-const contributionService = new ContributionService({
-  sanityProjectId: import.meta.env.SANITY_PROJECT_ID || "",
-  sanityDataset: import.meta.env.SANITY_DATASET || "production",
-  sanityApiToken: import.meta.env.SANITY_API_TOKEN || "",
-  sanityApiVersion: "2024-01-01",
-  resendApiKey: import.meta.env.RESEND_API_KEY || "",
-  resendFromEmail: import.meta.env.RESEND_FROM_EMAIL || "contribution@noreply.strangewater.xyz",
-  notificationEmail: import.meta.env.NOTIFICATION_EMAIL || "swrequests@rexkirshner.com",
-  studioUrl: import.meta.env.STUDIO_URL || import.meta.env.URL || "https://strangewater.xyz",
-});
-
 // OPTIONS handler for CORS preflight
 export const OPTIONS: APIRoute = async () => {
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": import.meta.env.ALLOWED_ORIGIN || "https://strangewater.xyz",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+
   return new Response(null, {
     status: 204,
     headers: corsHeaders,
@@ -78,6 +65,12 @@ export const OPTIONS: APIRoute = async () => {
 
 // POST handler for contribution submissions
 export const POST: APIRoute = async ({ request, clientAddress }) => {
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": import.meta.env.ALLOWED_ORIGIN || "https://strangewater.xyz",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+
   try {
     // Rate limiting
     const clientIP = clientAddress || "unknown";
@@ -92,6 +85,18 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     }
 
     const data = await request.json();
+
+    // Initialize contribution service (lazy initialization to avoid module-level errors)
+    const contributionService = new ContributionService({
+      sanityProjectId: import.meta.env.SANITY_PROJECT_ID || "",
+      sanityDataset: import.meta.env.SANITY_DATASET || "production",
+      sanityApiToken: import.meta.env.SANITY_API_TOKEN || "",
+      sanityApiVersion: "2024-01-01",
+      resendApiKey: import.meta.env.RESEND_API_KEY || "",
+      resendFromEmail: import.meta.env.RESEND_FROM_EMAIL || "contribution@noreply.strangewater.xyz",
+      notificationEmail: import.meta.env.NOTIFICATION_EMAIL || "swrequests@rexkirshner.com",
+      studioUrl: import.meta.env.STUDIO_URL || import.meta.env.URL || "https://strangewater.xyz",
+    });
 
     // Call contribution service
     const result = await contributionService.submitContribution({

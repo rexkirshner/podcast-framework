@@ -64,7 +64,7 @@ export const OPTIONS: APIRoute = async () => {
 };
 
 // POST handler for contribution submissions
-export const POST: APIRoute = async ({ request, clientAddress }) => {
+export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
   const corsHeaders = {
     "Access-Control-Allow-Origin": import.meta.env.ALLOWED_ORIGIN || "https://strangewater.xyz",
     "Access-Control-Allow-Headers": "Content-Type",
@@ -86,16 +86,20 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     const data = await request.json();
 
+    // Access environment variables from Cloudflare runtime
+    // In Cloudflare Pages Functions, env vars are in locals.runtime.env
+    const env = (locals as any).runtime?.env || import.meta.env;
+
     // Initialize contribution service (lazy initialization to avoid module-level errors)
     const contributionService = new ContributionService({
-      sanityProjectId: import.meta.env.SANITY_PROJECT_ID || "",
-      sanityDataset: import.meta.env.SANITY_DATASET || "production",
-      sanityApiToken: import.meta.env.SANITY_API_TOKEN || "",
+      sanityProjectId: env.SANITY_PROJECT_ID || "",
+      sanityDataset: env.SANITY_DATASET || "production",
+      sanityApiToken: env.SANITY_API_TOKEN || "",
       sanityApiVersion: "2024-01-01",
-      resendApiKey: import.meta.env.RESEND_API_KEY || "",
-      resendFromEmail: import.meta.env.RESEND_FROM_EMAIL || "contribution@noreply.strangewater.xyz",
-      notificationEmail: import.meta.env.NOTIFICATION_EMAIL || "swrequests@rexkirshner.com",
-      studioUrl: import.meta.env.STUDIO_URL || import.meta.env.URL || "https://strangewater.xyz",
+      resendApiKey: env.RESEND_API_KEY || "",
+      resendFromEmail: env.RESEND_FROM_EMAIL || "contribution@noreply.strangewater.xyz",
+      notificationEmail: env.NOTIFICATION_EMAIL || "swrequests@rexkirshner.com",
+      studioUrl: env.STUDIO_URL || env.URL || "https://strangewater.xyz",
     });
 
     // Call contribution service

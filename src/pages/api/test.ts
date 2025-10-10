@@ -1,12 +1,17 @@
 import type { APIRoute } from 'astro';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ locals }) => {
+  // Access environment variables from Cloudflare runtime
+  const env = (locals as any).runtime?.env || import.meta.env;
+
   return new Response(
     JSON.stringify({
       message: "Test endpoint working",
       env: {
-        hasSanityToken: !!import.meta.env.SANITY_API_TOKEN,
-        hasResendKey: !!import.meta.env.RESEND_API_KEY,
+        hasSanityToken: !!env.SANITY_API_TOKEN,
+        hasResendKey: !!env.RESEND_API_KEY,
+        hasSanityProjectId: !!env.SANITY_PROJECT_ID,
+        sanityProjectIdValue: env.SANITY_PROJECT_ID || "NOT_FOUND",
       }
     }),
     {

@@ -5,7 +5,14 @@
  */
 
 import { DEFAULT_LOCALE } from "../config/constants";
-import DOMPurify from 'isomorphic-dompurify';
+
+// Lazy import DOMPurify only when needed (browser-only)
+let DOMPurify: any = null;
+if (typeof window !== 'undefined') {
+  import('isomorphic-dompurify').then(module => {
+    DOMPurify = module.default;
+  });
+}
 
 /**
  * Format a date string to human-readable format
@@ -63,12 +70,22 @@ export function stripHTML(html: string): string {
 
 /**
  * Sanitize HTML to prevent XSS attacks while preserving safe formatting
- * Uses DOMPurify for robust, production-grade HTML sanitization
+ * Uses DOMPurify for robust, production-grade HTML sanitization (client-side only)
+ * For server-side rendering, falls back to simple tag stripping
  * @param html - HTML string to sanitize
  * @returns Sanitized HTML safe for rendering
  */
 export function sanitizeHTML(html: string): string {
-  // Use DOMPurify for comprehensive XSS protection
+  // Server-side: use simple tag filtering as fallback
+  if (typeof window === 'undefined' || !DOMPurify) {
+    return html
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+      .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+      .replace(/javascript:/gi, '');
+  }
+
+  // Client-side: Use DOMPurify for comprehensive XSS protection
   // Configured to allow basic formatting while blocking scripts and dangerous attributes
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],

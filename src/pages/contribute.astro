@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getPodcastInfo } from "../lib/sanity";
 
@@ -10,6 +12,7 @@ if (!podcastInfo?.isActive) {
   return Astro.redirect("/404");
 }
 ---
+
 
 <BaseLayout
   title={`Contribute - ${siteName}`}
@@ -376,7 +379,7 @@ if (!podcastInfo?.isActive) {
     }
 
     try {
-      const response = await fetch('/.netlify/functions/contribute', {
+      const response = await fetch('/api/contribute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { sanityClient, getAllGuests, getPodcastInfo } from "../../lib/sanity";
 import { stripHTML } from "../../lib/utils";
@@ -50,6 +52,8 @@ const siteName = podcastInfo?.name || "Podcast";
 // OG Image: Use guest photo, fallback to podcast logo
 const ogImage = guest.photo?.url || podcastInfo?.logo?.url || "https://cdn.sanity.io/images/ej6443ov/production/398d8e6cd3b0ed0fff212b8fb5feca016fc0eb07-1200x1200.png";
 ---
+export const prerender = true;
+
 
 <BaseLayout
   title={`${guest.name} - ${siteName}`}

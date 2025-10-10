@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 // Dynamic episode page - fetches from Sanity based on slug
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TranscriptViewer from "../../components/TranscriptViewer.astro";
@@ -39,6 +41,8 @@ const metaDescription = stripHTML(episode.description).substring(0, 160);
 const pageTitle = `${episode.title} - ${siteName}`;
 const ogImage = episode.coverImage?.asset?.url || podcastInfo?.logo?.url || "https://cdn.sanity.io/images/ej6443ov/production/398d8e6cd3b0ed0fff212b8fb5feca016fc0eb07-1200x1200.png";
 ---
+export const prerender = true;
+
 
 <BaseLayout title={pageTitle} description={metaDescription} ogImage={ogImage}>
 

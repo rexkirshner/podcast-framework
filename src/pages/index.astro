@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getAllEpisodes, getFeaturedEpisodes, getPodcastInfo, getHomepageConfig } from "../lib/sanity";
 import { formatDate, stripHTML } from "../lib/utils";

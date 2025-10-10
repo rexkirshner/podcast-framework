@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getAllGuests, getPodcastInfo } from "../../lib/sanity";
 
@@ -10,6 +12,8 @@ const siteName = podcastInfo?.name || "Podcast";
 // Sort guests alphabetically by name
 const sortedGuests = guests.sort((a, b) => a.name.localeCompare(b.name));
 ---
+export const prerender = true;
+
 
 <BaseLayout
   title={`Guests - ${siteName}`}

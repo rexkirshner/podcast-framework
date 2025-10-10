@@ -2,12 +2,13 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
-// import cloudflare from '@astrojs/cloudflare'; // Not needed for pure SSG deployment
+import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://strangewater.xyz',
-  output: 'static', // Pure SSG mode - no adapter needed for Cloudflare Pages
+  output: 'server', // Server mode with prerendering for static pages
+  adapter: cloudflare({ imageService: 'compile' }),
   integrations: [sitemap()],
   image: {
     // Enable image optimization with Sharp (already installed)

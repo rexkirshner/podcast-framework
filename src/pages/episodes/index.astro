@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 // Episodes list page - fetching from Sanity
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import EpisodeSearch from "../../components/EpisodeSearch.astro";
@@ -10,6 +12,8 @@ const episodes = await getAllEpisodes();
 const podcastInfo = await getPodcastInfo();
 const siteName = podcastInfo?.name || "Podcast";
 ---
+export const prerender = true;
+
 
 <BaseLayout
   title={`All Episodes - ${siteName}`}

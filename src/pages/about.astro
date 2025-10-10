@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 // About page - dynamically configured from Sanity
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BlockContent from "../components/BlockContent.astro";
@@ -12,6 +14,8 @@ const siteName = podcastInfo?.name || "Podcast";
 // Fallback to default content if no config exists
 const hasConfig = !!aboutConfig;
 ---
+export const prerender = true;
+
 
 <BaseLayout
   title={`About - ${siteName}`}

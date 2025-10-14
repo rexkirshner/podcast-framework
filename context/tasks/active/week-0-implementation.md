@@ -27,27 +27,49 @@ Week 0 is **CRITICAL** - these tasks must be completed before starting developme
 npm info @podcast-framework
 ```
 
-**Result:** _[To be filled after check]_
+**Result:** ✅ AVAILABLE (404 - not taken)
 
-**Options if taken:**
-- `@podcast-fm`
-- `@podframework`
-- `@podcast-web`
-- `@podcastframework`
-- Other creative names
+**Checked alternatives:**
+- `@podframework` - Available
+- `@podcast-fm` - Available
+- `@podcast-web` - Available
+- `@podcastframework` - Available
+- `@podcast-site` - Available
+- `@podcast-builder` - Available
 
-**Decision:** _[To be documented]_
+**Decision:** ✅ **@podcast-framework** (chosen 2025-10-14)
+
+**Rationale:**
+- Professional, clear name
+- Matches GitHub organization naturally
+- Industry standard pattern (-framework suffix)
+- Good for SEO and marketing
 
 #### 1.2 Create NPM Organization
 
+**Scope Chosen:** `@podcast-framework`
+
+**Steps to create:**
+
+1. **Log in to npm** (if not already logged in):
 ```bash
 npm login
-# Then: https://www.npmjs.com/org/create
 ```
 
+2. **Create organization:**
+   - Open: https://www.npmjs.com/org/create
+   - Organization name: `podcast-framework`
+   - Choose plan: Free (can upgrade later)
+   - Click "Create"
+
+3. **Verify organization:**
+   - URL: https://www.npmjs.com/org/podcast-framework
+   - Settings → confirm name is correct
+
+- [ ] Logged in to npm
 - [ ] Organization created
-- [ ] Scope: ________________
-- [ ] URL: https://www.npmjs.com/org/[scope-name]
+- [ ] Scope: `@podcast-framework`
+- [ ] URL: https://www.npmjs.com/org/podcast-framework
 
 #### 1.3 Enable 2FA
 

@@ -29,6 +29,11 @@
 
 ## 1. Executive Summary
 
+**⚠️ CRITICAL ADDENDUM:** See `templatization-services-addendum.md` for essential details on:
+- Third-party service architecture (per-podcast vs shared services)
+- Strange Water repository migration strategy
+- Sanity CMS architecture (one project per podcast)
+
 ### Vision
 Transform the Strange Water podcast framework into a production-ready, maintainable template system that enables rapid deployment of new podcast websites while preserving upgradeability and customization options.
 

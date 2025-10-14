@@ -283,7 +283,7 @@ if (!transcript) {
     // Initialize transcript formatting on load
     const contentEl = transcriptContent.querySelector('.transcript-text');
     if (contentEl && transcriptText) {
-      contentEl.innerHTML = formatTranscriptHTML(transcriptText);
+      renderTranscriptDOM(transcriptText, contentEl);
     }
 
     // Event listeners

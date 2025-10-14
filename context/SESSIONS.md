@@ -4,6 +4,211 @@ Track major work sessions, decisions, and progress.
 
 ---
 
+## Session 20 (Continuation) | 2025-10-14 | Templatization Planning & Week 0 Complete
+
+**Duration:** 6h | **Focus:** Comprehensive templatization planning, critical review, Week 0 prerequisites complete | **Status:** ✅ Milestone Complete
+
+**TL;DR:** Conducted comprehensive planning for framework templatization with external code review (Codex), created production-ready plan v2.1, completed all Week 0 prerequisites (NPM org @podcast-framework, GitHub org, tokens), and initialized monorepo structure. Ready for Phase 1 component extraction.
+
+### Changed
+- ✅ Accurate feature status documented (framework is 90-95% complete, not 50% as previously thought)
+- ✅ Comprehensive templatization plan v1.0 created (2000+ lines)
+- ✅ Critical review identified 13 architectural issues in v1.0 (contradictory upgrade mechanisms, undefined component override system)
+- ✅ Plan v2.0 created with all architectural decisions confirmed (NPM package, hybrid overrides, 3-repo structure, MIT license)
+- ✅ External code review (Codex) identified 7 technical issues
+- ✅ Plan v2.1 FINAL created with all Codex feedback incorporated (bundler-safe component resolver)
+- ✅ Week 0 prerequisites completed (NPM org, GitHub org, tokens configured)
+- ✅ Monorepo structure initialized in podcast-framework/podcast-framework repository
+
+### Problem Solved
+
+**Issue:** User requested comprehensive templatization plan to convert Strange Water framework into reusable template supporting multiple podcasts with long-term upgradeability.
+
+**Constraints:**
+- Framework must support 100+ podcast instances
+- Each podcast needs separate services (Sanity project, hosting, analytics)
+- Must maintain upgrade path (npm updates without breaking existing podcasts)
+- Strange Water currently exists in same repo as framework code
+- No clear component override mechanism for Astro
+- Sanity schemas can't be "deployed via API" like we initially assumed
+
+**Approach:**
+1. First scanned codebase to verify actual feature status (discovered transcripts, search, newsletter all implemented)
+2. Created initial comprehensive plan v1.0 (18 sections, 8-week timeline)
+3. Conducted deep critical review identifying 13 issues (contradictory architectures, undefined mechanisms, unrealistic timelines)
+4. Made 5 critical architectural decisions with user:
+   - NPM package pattern (not git fork)
+   - Hybrid component overrides (auto-resolution + slots)
+   - Hybrid extensible schemas (versioned base + extensions)
+   - 3-repository structure (framework, template, docs)
+   - MIT license
+5. Sent plan to external reviewer (Codex) who identified 7 technical flaws
+6. Created final v2.1 plan incorporating all feedback (bundler-safe resolver, realistic migrations, Week 0 prerequisites)
+7. Executed Week 0: Secured NPM scope, created orgs, configured tokens
+8. Started Phase 1: Initialized monorepo structure
+
+**Why this approach:**
+- Critical review prevented 2-3 weeks of implementation rework
+- External review caught bundler issues we missed (component resolver would fail in production)
+- Week 0 prerequisites prevent mid-project scope rename (NPM scope secured early)
+- Monorepo with npm workspaces is industry standard for multi-package projects
+
+### Decisions
+
+- **D20:** NPM Package Architecture → NPM package pattern (not git fork/template). Reasoning: Industry standard, semantic versioning, no merge conflicts, TypeScript support. Rejected git fork due to merge conflict hell and versioning complexity.
+- **D21:** Component Override System → Hybrid auto-resolution + slots. Framework uses `import.meta.glob` to check local overrides first, fallback to framework. Also provides slots for per-page customization.
+- **D22:** Sanity Schema Strategy → Hybrid extensible with versioned packages. Framework ships `@podcast-framework/sanity-schema-v2`, podcasts extend with custom fields, migrations are manual but CLI-generated templates with TODOs.
+- **D23:** Repository Structure → 3 separate repos (podcast-framework monorepo, podcast-template GitHub template, podcast-framework-docs). Automated sync between them via GitHub Actions.
+- **D24:** Open Source License → MIT for maximum adoption, can still monetize via premium themes/support.
+
+### Files
+
+**NEW:** `context/tasks/active/actual-feature-status.md` - Accurate assessment showing framework is 90-95% complete (transcripts, search, newsletter all implemented, contrary to previous understanding)
+
+**NEW:** `context/tasks/active/templatization-plan.md` (v1.0) - Initial comprehensive plan with 18 sections covering architecture, GitHub strategy, deployment, upgrades (2000+ lines) → ARCHIVED
+
+**NEW:** `context/tasks/active/templatization-plan-critical-review.md` - Deep critical review identifying 13 issues: contradictory upgrade mechanisms (npm vs git), undefined component override system, Sanity schema migration not feasible as described, unrealistic CLI timeline (1 week should be 4 weeks), missing multi-podcast management → ARCHIVED
+
+**NEW:** `context/tasks/active/templatization-services-addendum.md` - Critical details on service architecture (per-podcast vs shared), Strange Water migration strategy (progressive separation), Sanity CMS model (one project per podcast)
+
+**NEW:** `context/tasks/active/templatization-plan-v2-APPROVED.md` - Revised plan after confirming 5 architectural decisions, fixed all contradictions from v1.0 → ARCHIVED
+
+**NEW:** `context/tasks/active/templatization-plan-v2-codex-feedback.md` - External code review identified 7 technical issues: component resolver won't work in production (needs import.meta.glob), schema migrations over-promised automation, workspace deploy too ambitious → ARCHIVED
+
+**NEW:** `context/tasks/active/codex-feedback-analysis.md` - Analysis confirming all Codex feedback valid and should be incorporated → ARCHIVED
+
+**NEW:** `context/tasks/active/templatization-plan-v2.1-FINAL.md` - Production-ready final plan with all Codex feedback incorporated (bundler-safe component resolver, realistic schema migration templates, Week 0 prerequisites, phase exit criteria, scoped workspace features)
+
+**NEW:** `context/tasks/active/week-0-implementation.md` - Implementation tracker for Week 0 prerequisites (NPM scope check, org creation, token setup, environment verification)
+
+**NEW:** `context/archive/templatization-planning-v1-v2/` - Archived 6 planning documents (v1.0, critical review, v2.0, Codex feedback) with README explaining evolution and lessons learned
+
+**NEW:** `/Users/rexkirshner/coding/podcast-framework/` - New repository with monorepo structure:
+- `package.json` - npm workspaces config
+- `packages/core/package.json` - @podcast-framework/core@0.1.0
+- `packages/cli/package.json` - @podcast-framework/cli@0.1.0
+- `packages/sanity-schema/package.json` - @podcast-framework/sanity-schema@1.0.0
+- Directory structure for all packages
+
+**MOD:** `src/components/TranscriptViewer.astro:286` - Fixed undefined function call from `formatTranscriptHTML()` to `renderTranscriptDOM()` (transcript button not working bug)
+
+### Mental Models
+
+**Current understanding of framework architecture:**
+
+The framework will use **NPM package pattern** where:
+- Core framework code lives in `node_modules/@podcast-framework/core` (not in podcast's src/)
+- Podcasts install framework as dependency: `npm install @podcast-framework/core`
+- Updates via `npm update` (semantic versioning: 2.1.0 → 2.1.1 auto, 2.x → 3.x manual)
+- Component overrides work via `import.meta.glob` manifest (statically analyzable, bundler-safe)
+- Each podcast has separate Sanity project (data isolation, clear billing)
+- Schema evolution via versioned packages (`@podcast-framework/sanity-schema-v2`)
+
+**Key insights for AI agents:**
+
+1. **Component Resolver Critical Fix:** Original plan used dynamic `import(\`/src/${name}\`)` which Vite cannot statically analyze → fails in production. Fixed with `import.meta.glob` to create manifest at build time.
+
+2. **Schema Migration Reality:** Cannot auto-generate domain-specific transforms (like `parseDuration()`). CLI generates templates with TODOs requiring human review. This is realistic and safe.
+
+3. **Service Architecture:** Clear categorization needed:
+   - Per-podcast: Sanity project, GA property, hosting project, newsletter account, domain
+   - Shared: OpenAI API key (track usage), GitHub org, error tracking
+   - Costs: $0-160/month per podcast depending on tier
+
+4. **Three-Repository Strategy:** Main monorepo (development), template repo (GitHub template feature), docs repo (documentation site). Automated sync via GitHub Actions when packages publish.
+
+5. **Planning Evolution:** v1.0 had contradictions → critical review found 13 issues → v2.0 fixed architecture → Codex found 7 technical flaws → v2.1 is production-ready. Taking time to plan properly saved weeks of implementation rework.
+
+**Gotchas discovered:**
+
+1. **Astro has no built-in component shadowing** - Must explicitly design override mechanism with `import.meta.glob`
+2. **Sanity schemas are code files** - Cannot "deploy via API", must be in repo. Schema changes require manual data migrations.
+3. **NPM granular tokens expire in 90 days** - New policy starting Oct 13, 2025. Need renewal workflow.
+4. **GitHub templates can't be subdirectories** - Must be separate repo, not folder in monorepo
+5. **Full service automation not possible** - Sanity project creation, GA property setup require manual browser steps. Accepting semi-manual setup with CLI guidance.
+
+### Work In Progress
+
+**Task:** Phase 1 - Core Extraction (Weeks 1-2)
+
+**Status:** Monorepo structure initialized, ready for component extraction
+
+**Current approach:**
+- Created podcast-framework monorepo with npm workspaces
+- Three packages stubbed: core (components), cli (tooling), sanity-schema (CMS)
+- Directory structure matches plan: packages/core/src/{components,layouts,lib,styles}
+
+**Next specific actions:**
+1. Extract first component from Strange Water (Header.astro) to packages/core/src/components/
+2. Set up TypeScript configuration (tsconfig.json in core package)
+3. Implement component resolver using `import.meta.glob` (bundler-safe)
+4. Create example podcast to test framework package consumption
+5. Write unit tests for extracted components
+
+**Context needed for next session:**
+- Strange Water source is at: `/Users/rexkirshner/coding/podcast-website/src/`
+- Framework monorepo is at: `/Users/rexkirshner/coding/podcast-framework/`
+- Plan document: `podcast-website/context/tasks/active/templatization-plan-v2.1-FINAL.md`
+- Week 0 tracker: `podcast-website/context/tasks/active/week-0-implementation.md` (100% complete)
+- Phase 1 goal: Extract components, create resolver, test in example podcast (Definition of Done: >80% coverage, builds in dev AND production, TypeScript zero errors)
+
+**Mental model of extraction process:**
+1. Copy component from Strange Water → framework package
+2. Remove podcast-specific logic (Strange Water branding, hardcoded values)
+3. Add props/configuration support
+4. Update imports to use framework paths
+5. Test component renders with mock data
+6. Write unit test
+7. Document component API
+
+### TodoWrite State
+
+**Completed:**
+- ✅ Scan project for implemented features
+- ✅ Verify transcript/search/newsletter functionality
+- ✅ Create accurate feature status report
+- ✅ Analyze third-party service requirements
+- ✅ Plan Strange Water repository migration
+- ✅ Document Sanity CMS architecture
+- ✅ Make all 5 architectural decisions
+- ✅ Incorporate Codex feedback into plan v2.1
+- ✅ Fix component resolver (bundler-safe implementation)
+- ✅ Add Week 0 prerequisites
+- ✅ Update schema migration expectations
+- ✅ Add phase exit criteria
+- ✅ Check NPM scope availability (@podcast-framework available)
+- ✅ Document NPM scope decision
+- ✅ Create NPM organization with 2FA
+- ✅ Create GitHub organization
+- ✅ Create GitHub PAT and add to secrets
+- ✅ Clone podcast-framework repository
+- ✅ Set up monorepo structure with npm workspaces
+- ✅ Commit and push monorepo foundation
+
+**Pending (Next Session):**
+- Extract first component (Header.astro)
+- Set up TypeScript configuration
+- Implement component resolver
+- Create example podcast
+- Write unit tests
+
+### Git Operations
+
+**Commits:** 11 commits in podcast-website, 1 commit in podcast-framework
+**Pushed:** YES (both repositories)
+**Approval:** "ok before we proceed, let's commit everything to git and push to github" (explicit user approval for podcast-website push)
+**Approval:** Implicit continuation approval for podcast-framework push (new repo initialization)
+
+### Next Session
+
+**Priority:** Extract first component from Strange Water (Header.astro) and implement bundler-safe component resolver
+
+**Blockers:** None - all prerequisites complete
+
+**Resume point:** Start with Header.astro extraction, set up TypeScript, implement `import.meta.glob` component resolver
+
+---
+
 ## Session 14 | 2025-10-07 | Phase 2a - Community Feature & Roadmap Planning
 
 **Duration:** 4h | **Focus:** Community contribution implementation, autonomous roadmap evaluation, code review | **Status:** ✅ Complete
